@@ -1,0 +1,9 @@
+{
+  "mob.hunterillager.laugh": {
+    "category": "hostile",
+    "sounds": [
+      "hunterillager:mob/hunterillager/hunter_laugh"
+    ],
+    "subtitle": "hunterillager:subtitles.hunterillager.laugh"
+  }
+}

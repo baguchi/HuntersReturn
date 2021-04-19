@@ -1,0 +1,10 @@
+{
+  "item.hunterillager.spawnegg_hunterillager": "Ovo de Gerador de Caçador Illager",
+  "item.hunterillager.quivers": "Aljavas",
+  "item.hunterillager.boomerang": "Bumerangue",
+  "container.hunterillager.quivers": "Aljavas",
+  "entity.hunterillager.hunterillager": "Caçador Illager",
+  "hunterillager:subtitles.hunterillager.laugh": "Risadas de Caçador Illager",
+  "death.attack.hunterillager.boomerang": "%1$s foi atingido por um bumerangue",
+  "death.attack.hunterillager.boomerang.player": "%1$s foi atingido pelo bumerangue de %2$s"
+}

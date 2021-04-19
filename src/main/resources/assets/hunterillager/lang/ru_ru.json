@@ -1,0 +1,12 @@
+{
+  "item.hunterillager.spawnegg_hunterillager": "Яйцо призыва егеря",
+  "item.hunterillager.quivers": "Колчан",
+  "item.hunterillager.boomerang": "Бумеранг",
+  "container.hunterillager.quivers": "Колчан",
+  "entity.hunterillager.hunterillager": "Егерь",
+  "subtitles.hunterillager.laugh": "Егерь смеётся",
+  "death.attack.hunterillager.boomerang": "%1$s был прибит бумерангом",
+  "death.attack.hunterillager.boomerang.player": "%1$s был прибит бумерангом %2$s",
+  "hunterillager.config.generateHunterHouse": "generate HunterHouse In OverWorld",
+  "hunterillager.config.spawnHunterIllagerOnPatrol": "Spawn HunterIllager On Patrol"
+}
