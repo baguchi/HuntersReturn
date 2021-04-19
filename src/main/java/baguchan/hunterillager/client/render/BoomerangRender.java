@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
@@ -28,8 +27,9 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 
 	public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();
+		matrixStackIn.translate(0.0F, entityIn.getEyeHeight() / 2, 0.0F);
 		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot)));
-		matrixStackIn.mulPose(Vector3f.XP.rotationDegrees( 90.0F));
+		matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(90.0F));
 		matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
 
 		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * ((float) entityIn.getSpeed() * 80.0F)));

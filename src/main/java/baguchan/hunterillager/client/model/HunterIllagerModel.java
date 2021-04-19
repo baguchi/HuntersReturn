@@ -1,14 +1,11 @@
 package baguchan.hunterillager.client.model;
 
 import baguchan.hunterillager.entity.HunterIllagerEntity;
-
-import java.util.Iterator;
-
 import net.minecraft.client.renderer.entity.model.IllagerModel;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.AbstractIllagerEntity;
+
+import java.util.Iterator;
 
 public class HunterIllagerModel<T extends HunterIllagerEntity> extends IllagerModel<T> {
 	private ModelRenderer _body;
@@ -52,5 +49,6 @@ public class HunterIllagerModel<T extends HunterIllagerEntity> extends IllagerMo
 		this.quiver.zRot = 0.5235988F;
 		this.cape.xRot = 0.17453294F * limbSwingAmount * 1.75F;
 		this.capeLower.xRot = 0.09817477F * limbSwingAmount * 1.75F;
+		this.getHat().visible = true;
 	}
 }

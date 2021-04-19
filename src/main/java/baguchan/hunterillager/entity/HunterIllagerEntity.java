@@ -5,21 +5,26 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
-import baguchan.hunterillager.entity.HunterIllagerEntity;
-import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
 import net.minecraft.entity.monster.AbstractIllagerEntity;
 import net.minecraft.entity.monster.AbstractRaiderEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.BannerItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -33,10 +38,23 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class HunterIllagerEntity extends AbstractIllagerEntity {
+	public static final Predicate<LivingEntity> TARGET_FOOD_SELECTOR = (p_213616_0_) -> {
+		return !p_213616_0_.isBaby() && p_213616_0_.getType() != EntityType.CAT && p_213616_0_.getType() != EntityType.PARROT && p_213616_0_.getType() != EntityType.WOLF && p_213616_0_.getType() != EntityType.PANDA;
+	};
+	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
+		return p_213616_0_.getItem().getItem().getFoodProperties() != null && p_213616_0_.getItem().getItem().getFoodProperties().isMeat();
+	};
+
+	private final Inventory inventory = new Inventory(5);
+
 	@Nullable
 	private BlockPos homeTarget;
+	private int cooldown;
+
 	public HunterIllagerEntity(EntityType<? extends HunterIllagerEntity> p_i48556_1_, World p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
 		((GroundPathNavigator) this.getNavigation()).setCanOpenDoors(true);
@@ -50,13 +68,63 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 		this.goalSelector.addGoal(3, new AbstractRaiderEntity.FindTargetGoal(this, 10.0F));
 		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true));
 		this.goalSelector.addGoal(5, new MoveToGoal(this, 26.0D, 1.0D));
+		this.goalSelector.addGoal(6, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, AbstractRaiderEntity.class)).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillagerEntity.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, AnimalEntity.class, 10, true, false, TARGET_FOOD_SELECTOR) {
+			@Override
+			public boolean canUse() {
+				return cooldown <= 0 && super.canUse();
+			}
+		});
 		this.goalSelector.addGoal(8, new RandomWalkingGoal(this, 0.6D));
 		this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
+	}
+
+	protected void completeUsingItem() {
+		Hand hand = this.getUsedItemHand();
+		if (this.useItem.equals(this.getItemInHand(hand))) {
+			if (!this.useItem.isEmpty() && this.isUsingItem()) {
+				ItemStack copy = this.useItem.copy();
+
+				if (copy.getItem().getFoodProperties() != null) {
+					this.heal(copy.getItem().getFoodProperties().getNutrition());
+				}
+			}
+		}
+		super.completeUsingItem();
+	}
+
+	public void aiStep() {
+		if (!this.level.isClientSide && this.isAlive()) {
+			if (!this.isUsingItem()) {
+				ItemStack food = ItemStack.EMPTY;
+
+				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.0025F) {
+					food = this.findFood();
+				}
+
+				if (!food.isEmpty()) {
+					this.setItemSlot(EquipmentSlotType.OFFHAND, food);
+					this.startUsingItem(Hand.OFF_HAND);
+				}
+			}
+		}
+
+		super.aiStep();
+	}
+
+	private ItemStack findFood() {
+		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
+			ItemStack itemstack = this.inventory.getItem(i);
+			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && itemstack.getItem().getFoodProperties().isMeat()) {
+				return itemstack.split(1);
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public static AttributeModifierMap.MutableAttribute createAttributes() {
@@ -68,7 +136,18 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 		if (this.homeTarget != null) {
 			p_213281_1_.put("HomeTarget", NBTUtil.writeBlockPos(this.homeTarget));
 		}
+		ListNBT listnbt = new ListNBT();
 
+		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
+			ItemStack itemstack = this.inventory.getItem(i);
+			if (!itemstack.isEmpty()) {
+				listnbt.add(itemstack.save(new CompoundNBT()));
+			}
+		}
+
+		p_213281_1_.put("Inventory", listnbt);
+
+		p_213281_1_.putInt("HuntingCooldown", this.cooldown);
 	}
 
 	public void readAdditionalSaveData(CompoundNBT p_70037_1_) {
@@ -76,7 +155,19 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 		if (p_70037_1_.contains("HomeTarget")) {
 			this.homeTarget = NBTUtil.readBlockPos(p_70037_1_.getCompound("HomeTarget"));
 		}
+		ListNBT listnbt = p_70037_1_.getList("Inventory", 10);
+
+		for (int i = 0; i < listnbt.size(); ++i) {
+			ItemStack itemstack = ItemStack.of(listnbt.getCompound(i));
+			if (!itemstack.isEmpty()) {
+				this.inventory.addItem(itemstack);
+			}
+		}
+
+		this.cooldown = p_70037_1_.getInt("HuntingCooldown");
+		this.setCanPickUpLoot(true);
 	}
+
 	@OnlyIn(Dist.CLIENT)
 	public AbstractIllagerEntity.ArmPose getArmPose() {
 		if (this.isAggressive()) {
@@ -89,6 +180,44 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 	@Override
 	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
 
+	}
+
+	protected void pickUpItem(ItemEntity p_175445_1_) {
+		ItemStack itemstack = p_175445_1_.getItem();
+		if (itemstack.getItem() instanceof BannerItem) {
+			super.pickUpItem(p_175445_1_);
+		} else {
+			Item item = itemstack.getItem();
+			if (this.wantsFood(itemstack)) {
+				this.onItemPickup(p_175445_1_);
+				this.take(p_175445_1_, itemstack.getCount());
+				ItemStack itemstack1 = this.inventory.addItem(itemstack);
+				if (itemstack1.isEmpty()) {
+					p_175445_1_.remove();
+				} else {
+					itemstack.setCount(itemstack1.getCount());
+				}
+			}
+		}
+
+	}
+
+	public boolean setSlot(int p_174820_1_, ItemStack p_174820_2_) {
+		if (super.setSlot(p_174820_1_, p_174820_2_)) {
+			return true;
+		} else {
+			int i = p_174820_1_ - 300;
+			if (i >= 0 && i < this.inventory.getContainerSize()) {
+				this.inventory.setItem(i, p_174820_2_);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	private boolean wantsFood(ItemStack p_213672_1_) {
+		return p_213672_1_.getItem().getFoodProperties() != null && p_213672_1_.getItem().getFoodProperties().isMeat();
 	}
 
 	@Nullable
@@ -137,6 +266,7 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 	public void killed(ServerWorld p_241847_1_, LivingEntity p_241847_2_) {
 		super.killed(p_241847_1_, p_241847_2_);
 		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH, this.getSoundVolume(), this.getVoicePitch());
+		this.cooldown = 300;
 	}
 
 	public void setHomeTarget(@Nullable BlockPos p_213726_1_) {
@@ -149,43 +279,80 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 	}
 
 	class MoveToGoal extends Goal {
-		final HunterIllagerEntity trader;
+		final HunterIllagerEntity hunter;
 		final double stopDistance;
 		final double speedModifier;
 
 		MoveToGoal(HunterIllagerEntity p_i50459_2_, double p_i50459_3_, double p_i50459_5_) {
-			this.trader = p_i50459_2_;
+			this.hunter = p_i50459_2_;
 			this.stopDistance = p_i50459_3_;
 			this.speedModifier = p_i50459_5_;
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
 		public void stop() {
-			this.trader.setHomeTarget((BlockPos)null);
+			this.hunter.setHomeTarget((BlockPos) null);
 			HunterIllagerEntity.this.navigation.stop();
 		}
 
 		public boolean canUse() {
-			BlockPos blockpos = this.trader.getHomeTarget();
-			return blockpos != null && this.isTooFarAway(blockpos, this.stopDistance);
+			BlockPos blockpos = this.hunter.getHomeTarget();
+
+			double distance = this.hunter.level.isDay() ? this.stopDistance : this.stopDistance / 3.0F;
+
+			return blockpos != null && this.isTooFarAway(blockpos, distance);
 		}
 
 		public void tick() {
-			BlockPos blockpos = this.trader.getHomeTarget();
+			BlockPos blockpos = this.hunter.getHomeTarget();
 			if (blockpos != null && HunterIllagerEntity.this.navigation.isDone()) {
 				if (this.isTooFarAway(blockpos, 10.0D)) {
-					Vector3d vector3d = (new Vector3d((double)blockpos.getX() - this.trader.getX(), (double)blockpos.getY() - this.trader.getY(), (double)blockpos.getZ() - this.trader.getZ())).normalize();
-					Vector3d vector3d1 = vector3d.scale(10.0D).add(this.trader.getX(), this.trader.getY(), this.trader.getZ());
+					Vector3d vector3d = (new Vector3d((double) blockpos.getX() - this.hunter.getX(), (double) blockpos.getY() - this.hunter.getY(), (double) blockpos.getZ() - this.hunter.getZ())).normalize();
+					Vector3d vector3d1 = vector3d.scale(10.0D).add(this.hunter.getX(), this.hunter.getY(), this.hunter.getZ());
 					HunterIllagerEntity.this.navigation.moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speedModifier);
 				} else {
-					HunterIllagerEntity.this.navigation.moveTo((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), this.speedModifier);
+					HunterIllagerEntity.this.navigation.moveTo((double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), this.speedModifier);
 				}
 			}
 
 		}
 
 		private boolean isTooFarAway(BlockPos p_220846_1_, double p_220846_2_) {
-			return !p_220846_1_.closerThan(this.trader.position(), p_220846_2_);
+			return !p_220846_1_.closerThan(this.hunter.position(), p_220846_2_);
+		}
+	}
+
+	public class GetFoodGoal<T extends HunterIllagerEntity> extends Goal {
+		private final T mob;
+
+		public GetFoodGoal(T p_i50572_2_) {
+			this.mob = p_i50572_2_;
+			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+		}
+
+		public boolean canUse() {
+			if (!this.mob.hasActiveRaid()) {
+
+				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), HunterIllagerEntity.ALLOWED_ITEMS);
+				if (!list.isEmpty()) {
+					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.15F);
+				}
+
+
+				return false;
+			} else {
+				return false;
+			}
+		}
+
+		public void tick() {
+			if (this.mob.getNavigation().getTargetPos().closerThan(this.mob.position(), 1.414D)) {
+				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), HunterIllagerEntity.ALLOWED_ITEMS);
+				if (!list.isEmpty()) {
+					this.mob.pickUpItem(list.get(0));
+				}
+			}
+
 		}
 	}
 }
