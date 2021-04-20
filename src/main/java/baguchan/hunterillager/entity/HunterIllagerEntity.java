@@ -100,7 +100,7 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 
 	public void aiStep() {
 		if (!this.level.isClientSide && this.isAlive()) {
-			if (!this.isUsingItem()) {
+			if (!this.isUsingItem() && this.getItemInHand(Hand.OFF_HAND).isEmpty()) {
 				ItemStack food = ItemStack.EMPTY;
 
 				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.0025F) {
