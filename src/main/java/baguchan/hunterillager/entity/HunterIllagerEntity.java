@@ -1,6 +1,10 @@
 package baguchan.hunterillager.entity;
 
 import baguchan.hunterillager.HunterSounds;
+import com.google.common.collect.Maps;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -29,9 +33,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.raid.Raid;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,6 +45,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class HunterIllagerEntity extends AbstractIllagerEntity {
@@ -179,7 +186,26 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 
 	@Override
 	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
+		ItemStack itemstack = new ItemStack(Items.STONE_SWORD);
 
+		Raid raid = this.getCurrentRaid();
+		int i = 1;
+		if (p_213660_1_ > raid.getNumGroups(Difficulty.NORMAL)) {
+			i = 2;
+		}
+
+		inventory.addItem(new ItemStack(Items.PORKCHOP, 6));
+
+		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
+		if (flag) {
+			Map<Enchantment, Integer> map = Maps.newHashMap();
+			map.put(Enchantments.SHARPNESS, i);
+			EnchantmentHelper.setEnchantments(map, itemstack);
+
+			inventory.addItem(new ItemStack(Items.GOLDEN_APPLE));
+		}
+
+		this.setItemInHand(Hand.MAIN_HAND, itemstack);
 	}
 
 	protected void pickUpItem(ItemEntity p_175445_1_) {
@@ -229,8 +255,21 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 		return ilivingentitydata;
 	}
 
+	protected void dropEquipment() {
+		super.dropEquipment();
+		if (this.inventory != null) {
+			for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
+				ItemStack itemstack = this.inventory.getItem(i);
+				if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
+					this.spawnAtLocation(itemstack);
+				}
+			}
+		}
+	}
+
 	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_) {
 		if (this.getCurrentRaid() == null) {
+			inventory.addItem(new ItemStack(Items.PORKCHOP, 4));
 			this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 		}
 	}

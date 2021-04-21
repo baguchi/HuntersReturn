@@ -21,7 +21,7 @@ public class HunterEntityRegistry {
 		GlobalEntityTypeAttributes.put(HUNTERILLAGER, HunterIllagerEntity.createAttributes().build());
 		event.getRegistry().register(HUNTERILLAGER.setRegistryName("hunterillager"));
 		event.getRegistry().register(BOOMERANG.setRegistryName("boomerang"));
-		Raid.WaveMember.create("hunterillager", HUNTERILLAGER, new int[] { 0, 0, 1, 0, 1, 0, 1, 2 });
+		Raid.WaveMember.create("hunterillager", HUNTERILLAGER, new int[]{0, 0, 1, 2, 2, 1, 2, 3});
 	}
 
 	private static String prefix(String path) {
