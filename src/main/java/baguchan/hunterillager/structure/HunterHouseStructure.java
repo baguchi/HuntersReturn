@@ -1,27 +1,24 @@
 package baguchan.hunterillager.structure;
 
 import com.mojang.serialization.Codec;
-
-import java.util.Random;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.*;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 import net.minecraft.world.gen.settings.StructureSeparationSettings;
+
+import java.util.Random;
 
 public class HunterHouseStructure extends Structure<NoFeatureConfig> {
 	public HunterHouseStructure(Codec<NoFeatureConfig> p_i51440_1_) {
@@ -108,7 +105,7 @@ public class HunterHouseStructure extends Structure<NoFeatureConfig> {
 									break;
 								}
 
-								p_230366_1_.setBlock(blockpos1, Blocks.COBBLESTONE.defaultBlockState(), 2);
+								p_230366_1_.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
 							}
 						}
 					}
