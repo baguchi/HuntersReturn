@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class BoomerangEntity extends ThrowableEntity {
@@ -248,6 +247,10 @@ public class BoomerangEntity extends ThrowableEntity {
 			setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
 		}
 		collideWithNearbyEntities();
+	}
+
+	protected float getGravity() {
+		return isReturning() ? 0.0F : 0.03F;
 	}
 
 	@Override
