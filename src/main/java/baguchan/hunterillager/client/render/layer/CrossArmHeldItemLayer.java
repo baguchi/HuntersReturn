@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.IHasArm;
 import net.minecraft.client.renderer.entity.model.IllagerModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.AbstractIllagerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -21,7 +19,7 @@ public class CrossArmHeldItemLayer<T extends AbstractIllagerEntity, M extends Il
 	}
 
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-		if (!entitylivingbaseIn.isInvisible()) {
+		if (!entitylivingbaseIn.isInvisible() && !entitylivingbaseIn.isAggressive()) {
 			matrixStackIn.pushPose();
 			matrixStackIn.translate(0.0D, (double) 0.4F, (double) -0.4F);
 			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(180.0F));
