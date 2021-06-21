@@ -32,11 +32,8 @@ public class HunterHouseStructure extends Structure<NoFeatureConfig> {
 		int j = p_230363_7_ >> 4;
 		p_230363_5_.setSeed((long) (i ^ j << 4) ^ p_230363_3_);
 		p_230363_5_.nextInt();
-		if (p_230363_5_.nextInt(5) != 0) {
-			return false;
-		} else {
-			return !this.isNearVillage(p_230363_1_, p_230363_3_, p_230363_5_, p_230363_6_, p_230363_7_);
-		}
+
+		return !this.isNearVillage(p_230363_1_, p_230363_3_, p_230363_5_, p_230363_6_, p_230363_7_);
 	}
 
 	private boolean isNearVillage(ChunkGenerator p_242782_1_, long p_242782_2_, SharedSeedRandom p_242782_4_, int p_242782_5_, int p_242782_6_) {
