@@ -2,7 +2,7 @@
   "pools": [
     {
       "rolls": {
-        "min": 4,
+        "min": 8,
         "max": 10
       },
       "name": "main",
@@ -45,6 +45,34 @@
               "count": {
                 "min": 1,
                 "max": 4
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:leather",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_ingot",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 1,
+                "max": 2
               }
             }
           ]
