@@ -190,15 +190,6 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		this.setCanPickUpLoot(true);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public AbstractIllagerEntity.ArmPose getArmPose() {
-		if (this.isAggressive()) {
-			return AbstractIllagerEntity.ArmPose.ATTACKING;
-		} else {
-			return this.isCelebrating() ? AbstractIllagerEntity.ArmPose.CELEBRATING : AbstractIllagerEntity.ArmPose.CROSSED;
-		}
-	}
-
 	@Override
 	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
 		ItemStack itemstack;
@@ -361,6 +352,15 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		return SoundEvents.VINDICATOR_HURT;
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public AbstractIllagerEntity.ArmPose getArmPose() {
+		if (this.isAggressive()) {
+			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG) ? AbstractIllagerEntity.ArmPose.BOW_AND_ARROW : AbstractIllagerEntity.ArmPose.ATTACKING;
+		} else {
+			return this.isCelebrating() ? AbstractIllagerEntity.ArmPose.CELEBRATING : AbstractIllagerEntity.ArmPose.CROSSED;
+		}
+	}
+
 	@Override
 	public void killed(ServerWorld p_241847_1_, LivingEntity p_241847_2_) {
 		super.killed(p_241847_1_, p_241847_2_);
@@ -401,6 +401,7 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level.addFreshEntity(boomerang);
+		this.getOffhandItem().shrink(1);
 	}
 
 	class MoveToGoal extends Goal {
