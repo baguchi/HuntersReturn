@@ -17,12 +17,11 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -32,6 +31,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class HunterIllagerEntity extends AbstractIllagerEntity {
+public class HunterIllagerEntity extends AbstractIllagerEntity implements IRangedAttackMob {
 	public static final Predicate<LivingEntity> TARGET_FOOD_SELECTOR = (p_213616_0_) -> {
 		return !p_213616_0_.isBaby() && p_213616_0_.getType() != EntityType.CAT && p_213616_0_.getType() != EntityType.PARROT && p_213616_0_.getType() != EntityType.WOLF && p_213616_0_.getType() != EntityType.PANDA;
 	};
@@ -73,7 +73,13 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllagerEntity.RaidOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new AbstractRaiderEntity.FindTargetGoal(this, 10.0F));
-		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true));
+		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0F, 50, 1.6F));
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true) {
+			@Override
+			public boolean canUse() {
+				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canUse();
+			}
+		});
 		this.goalSelector.addGoal(5, new MoveToGoal(this, 26.0D, 1.0D));
 		this.goalSelector.addGoal(6, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, AbstractRaiderEntity.class)).setAlertOthers());
@@ -270,7 +276,11 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_) {
 		if (this.getCurrentRaid() == null) {
 			inventory.addItem(new ItemStack(Items.PORKCHOP, 4));
-			this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+			if (this.random.nextFloat() < 0.5F) {
+				this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
+			} else {
+				this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+			}
 		}
 	}
 
@@ -315,6 +325,21 @@ public class HunterIllagerEntity extends AbstractIllagerEntity {
 	@Nullable
 	private BlockPos getHomeTarget() {
 		return this.homeTarget;
+	}
+
+	@Override
+	public void performRangedAttack(LivingEntity p_82196_1_, float p_82196_2_) {
+		ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileHelper.getWeaponHoldingHand(this, Items.BOW)));
+		AbstractArrowEntity abstractarrowentity = ProjectileHelper.getMobArrow(this, itemstack, p_82196_2_);
+		if (this.getMainHandItem().getItem() instanceof net.minecraft.item.BowItem)
+			abstractarrowentity = ((net.minecraft.item.BowItem) this.getMainHandItem().getItem()).customArrow(abstractarrowentity);
+		double d0 = p_82196_1_.getX() - this.getX();
+		double d1 = p_82196_1_.getY(0.3333333333333333D) - abstractarrowentity.getY();
+		double d2 = p_82196_1_.getZ() - this.getZ();
+		double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+		abstractarrowentity.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
+		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+		this.level.addFreshEntity(abstractarrowentity);
 	}
 
 	class MoveToGoal extends Goal {
