@@ -73,11 +73,16 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllagerEntity.RaidOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new AbstractRaiderEntity.FindTargetGoal(this, 10.0F));
-		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0F, 50, 1.6F));
+		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true) {
 			@Override
 			public boolean canUse() {
 				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canUse();
+			}
+
+			@Override
+			public boolean canContinueToUse() {
+				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
 		this.goalSelector.addGoal(5, new MoveToGoal(this, 26.0D, 1.0D));
