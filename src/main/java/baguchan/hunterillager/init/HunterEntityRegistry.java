@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(modid = "hunterillager", bus = EventBusSubscriber.Bus.MOD)
 public class HunterEntityRegistry {
-	public static final EntityType<HunterIllagerEntity> HUNTERILLAGER = EntityType.Builder.of(HunterIllagerEntity::new, EntityClassification.CREATURE).sized(0.6F, 1.95F).build(prefix("hunterillager"));
+	public static final EntityType<HunterIllagerEntity> HUNTERILLAGER = EntityType.Builder.of(HunterIllagerEntity::new, EntityClassification.MONSTER).sized(0.6F, 1.95F).build(prefix("hunterillager"));
 
 	public static final EntityType<BoomerangEntity> BOOMERANG = EntityType.Builder.<BoomerangEntity>of(BoomerangEntity::new, EntityClassification.MISC).setCustomClientFactory(BoomerangEntity::new).sized(0.3F, 0.3F).build(prefix("boomerang"));
 
