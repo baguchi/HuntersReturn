@@ -1,6 +1,9 @@
 package baguchan.hunterillager.entity;
 
 import baguchan.hunterillager.HunterSounds;
+import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
+import baguchan.hunterillager.entity.projectile.BoomerangEntity;
+import baguchan.hunterillager.init.HunterItems;
 import com.google.common.collect.Maps;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -74,6 +77,7 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		this.goalSelector.addGoal(2, new AbstractIllagerEntity.RaidOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new AbstractRaiderEntity.FindTargetGoal(this, 10.0F));
 		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0F, 50, 16.0F));
+		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
 		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true) {
 			@Override
 			public boolean canUse() {
@@ -197,25 +201,53 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 
 	@Override
 	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
-		ItemStack itemstack = new ItemStack(Items.STONE_SWORD);
+		ItemStack itemstack;
+		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG);
+
 
 		Raid raid = this.getCurrentRaid();
+
+
 		int i = 1;
 		if (p_213660_1_ > raid.getNumGroups(Difficulty.NORMAL)) {
 			i = 2;
+		}
+
+		if (raid.getBadOmenLevel() < 2 || p_213660_1_ <= raid.getNumGroups(Difficulty.NORMAL)) {
+			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.STONE_SWORD);
+		} else {
+			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
 		}
 
 		inventory.addItem(new ItemStack(Items.PORKCHOP, 6));
 
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
-			Map<Enchantment, Integer> map = Maps.newHashMap();
-			map.put(Enchantments.SHARPNESS, i);
-			EnchantmentHelper.setEnchantments(map, itemstack);
+			if (itemstack.getItem() == Items.BOW) {
+				Map<Enchantment, Integer> map = Maps.newHashMap();
+				map.put(Enchantments.POWER_ARROWS, i);
+				EnchantmentHelper.setEnchantments(map, itemstack);
+			} else {
+				Map<Enchantment, Integer> map = Maps.newHashMap();
+				map.put(Enchantments.SHARPNESS, i);
+				EnchantmentHelper.setEnchantments(map, itemstack);
+			}
 
-			inventory.addItem(new ItemStack(Items.GOLDEN_APPLE));
+			inventory.addItem(new ItemStack(Items.COOKED_BEEF, 2));
+
+
+			Map<Enchantment, Integer> map2 = Maps.newHashMap();
+			map2.put(Enchantments.SHARPNESS, i);
+			EnchantmentHelper.setEnchantments(map2, offHandStack);
 		}
 
+		if (this.random.nextFloat() < 0.25F) {
+			Map<Enchantment, Integer> map3 = Maps.newHashMap();
+			map3.put(Enchantments.LOYALTY, i);
+			EnchantmentHelper.setEnchantments(map3, offHandStack);
+
+			this.setItemInHand(Hand.OFF_HAND, offHandStack);
+		}
 		this.setItemInHand(Hand.MAIN_HAND, itemstack);
 	}
 
@@ -234,6 +266,10 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 				} else {
 					itemstack.setCount(itemstack1.getCount());
 				}
+			} else if (item == HunterItems.BOOMERANG && this.getOffhandItem().isEmpty()) {
+				this.onItemPickup(p_175445_1_);
+				this.take(p_175445_1_, itemstack.getCount());
+				this.setItemInHand(Hand.OFF_HAND, itemstack);
 			}
 		}
 
@@ -285,6 +321,15 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 				this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
 			} else {
 				this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+				if (this.random.nextBoolean()) {
+					ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG);
+
+					Map<Enchantment, Integer> map3 = Maps.newHashMap();
+					map3.put(Enchantments.LOYALTY, 1);
+					EnchantmentHelper.setEnchantments(map3, offHandStack);
+
+					this.setItemInHand(Hand.OFF_HAND, offHandStack);
+				}
 			}
 		}
 	}
@@ -345,6 +390,17 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 		abstractarrowentity.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level.addFreshEntity(abstractarrowentity);
+	}
+
+	public void performBoomeranAttack(LivingEntity p_82196_1_, float p_82196_2_) {
+		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem());
+		double d0 = p_82196_1_.getX() - this.getX();
+		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
+		double d2 = p_82196_1_.getZ() - this.getZ();
+		double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
+		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+		this.level.addFreshEntity(boomerang);
 	}
 
 	class MoveToGoal extends Goal {
