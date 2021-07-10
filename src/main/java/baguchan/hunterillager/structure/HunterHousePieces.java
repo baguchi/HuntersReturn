@@ -24,7 +24,10 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
-import net.minecraft.world.gen.feature.template.*;
+import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
+import net.minecraft.world.gen.feature.template.PlacementSettings;
+import net.minecraft.world.gen.feature.template.Template;
+import net.minecraft.world.gen.feature.template.TemplateManager;
 
 import java.util.List;
 import java.util.Map;
@@ -80,7 +83,7 @@ public class HunterHousePieces {
 			BlockPos blockpos1 = this.templatePosition;
 			int i = worldIn.getHeight(Heightmap.Type.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
 			BlockPos blockpos2 = this.templatePosition;
-			this.templatePosition = this.templatePosition.offset(0, i - 90 - 1, 0);
+			this.templatePosition = this.templatePosition.offset(0, i - 90 - 2, 0);
 			boolean flag = super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
 			this.templatePosition = blockpos2;
 			return flag;
