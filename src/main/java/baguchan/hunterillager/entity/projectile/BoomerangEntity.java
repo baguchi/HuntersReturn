@@ -1,5 +1,6 @@
 package baguchan.hunterillager.entity.projectile;
 
+import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -33,10 +34,9 @@ public class BoomerangEntity extends ThrowableEntity {
 	private static final DataParameter<Byte> LOYALTY_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
 
 	private static final DataParameter<Byte> PIERCING_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
+	private static final DataParameter<Byte> BOUNCE_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
 	private static final DataParameter<Boolean> RETURNING = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<ItemStack> BOOMERANG = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.ITEM_STACK);
-
-	private int entityHits;
 
 	private int totalHits;
 
@@ -52,6 +52,7 @@ public class BoomerangEntity extends ThrowableEntity {
 		setBoomerang(boomerang);
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(boomerang));
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, boomerang));
+		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE, boomerang));
 		this.totalHits = 0;
 	}
 
@@ -92,11 +93,19 @@ public class BoomerangEntity extends ThrowableEntity {
 
 					});
 				double speed = getSpeed();
-				if (piercingLevel < 1 || this.entityHits >= piercingLevel || speed < 0.4000000059604645D) {
+				if (piercingLevel < 1 && this.totalHits >= this.getBounceLevel() || this.totalHits >= piercingLevel + this.getBounceLevel() && speed > 0.4000000059604645D) {
 					returnToOwner = true;
-					this.totalHits++;
+
+				} else if (piercingLevel < 1 && this.totalHits < this.getBounceLevel() || this.totalHits < piercingLevel + this.getBounceLevel() && speed <= 0.4000000059604645D) {
+					Vector3d motion = getDeltaMovement();
+					double motionX = motion.x;
+					double motionY = motion.y;
+					double motionZ = motion.z;
+					motionX = -motionX;
+					motionZ = -motionZ;
+					setDeltaMovement(motionX, motionY, motionZ);
 				}
-				this.entityHits++;
+				this.totalHits++;
 			}
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
@@ -123,7 +132,6 @@ public class BoomerangEntity extends ThrowableEntity {
 				motionX = -motionX;
 				motionZ = -motionZ;
 				setDeltaMovement(motionX, motionY, motionZ);
-				//func_70018_K();
 				if (loyaltyLevel > 0 && !isReturning() &&
 						entity != null) {
 					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
@@ -268,6 +276,7 @@ public class BoomerangEntity extends ThrowableEntity {
 	protected void defineSynchedData() {
 		this.entityData.define(LOYALTY_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(PIERCING_LEVEL, Byte.valueOf((byte) 0));
+		this.entityData.define(BOUNCE_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(RETURNING, Boolean.valueOf(false));
 		this.entityData.define(BOOMERANG, ItemStack.EMPTY);
 	}
@@ -276,7 +285,6 @@ public class BoomerangEntity extends ThrowableEntity {
 	protected void addAdditionalSaveData(CompoundNBT nbt) {
 		super.addAdditionalSaveData(nbt);
 		nbt.put("boomerang", getBoomerang().save(new CompoundNBT()));
-		nbt.putInt("entityHits", this.entityHits);
 		nbt.putInt("totalHits", this.totalHits);
 		nbt.putBoolean("returning", isReturning());
 	}
@@ -286,11 +294,11 @@ public class BoomerangEntity extends ThrowableEntity {
 	protected void readAdditionalSaveData(CompoundNBT nbt) {
 		super.readAdditionalSaveData(nbt);
 		setBoomerang(ItemStack.of(nbt.getCompound("boomerang")));
-		this.entityHits = nbt.getInt("entityHits");
 		this.totalHits = nbt.getInt("totalHits");
 		setReturning(nbt.getBoolean("returning"));
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(getBoomerang()));
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, getBoomerang()));
+		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE, getBoomerang()));
 	}
 
 
@@ -308,9 +316,10 @@ public class BoomerangEntity extends ThrowableEntity {
 
 	private int getBounceLevel() {
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
+		int bounceLevel = (this.entityData.get(BOUNCE_LEVEL)).byteValue();
 		if (loyaltyLevel > 0)
-			return 0;
-		return 8;
+			return 0 + bounceLevel * 8;
+		return 8 + bounceLevel * 8;
 	}
 
 	public boolean isReturning() {
