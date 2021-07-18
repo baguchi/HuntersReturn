@@ -2,6 +2,9 @@ package baguchan.hunterillager.entity;
 
 import baguchan.hunterillager.HunterSounds;
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
+import baguchan.hunterillager.entity.ai.DoSleepingGoal;
+import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
+import baguchan.hunterillager.entity.ai.WakeUpGoal;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import baguchan.hunterillager.init.HunterItems;
 import com.google.common.collect.Maps;
@@ -72,6 +75,8 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 
 	protected void registerGoals() {
 		super.registerGoals();
+		this.goalSelector.addGoal(0, new WakeUpGoal(this));
+		this.goalSelector.addGoal(0, new DoSleepingGoal(this));
 		this.goalSelector.addGoal(0, new SwimGoal(this));
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllagerEntity.RaidOpenDoorGoal(this));
@@ -89,8 +94,9 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new MoveToGoal(this, 26.0D, 1.0D));
-		this.goalSelector.addGoal(6, new GetFoodGoal<>(this));
+		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 0.85F, 6));
+		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.0D));
+		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, AbstractRaiderEntity.class)).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillagerEntity.class, true));
@@ -460,10 +466,9 @@ public class HunterIllagerEntity extends AbstractIllagerEntity implements IRange
 			if (!this.mob.hasActiveRaid()) {
 
 				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), HunterIllagerEntity.ALLOWED_ITEMS);
-				if (!list.isEmpty()) {
-					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.15F);
+				if (!list.isEmpty() && this.mob.canSee(list.get(0))) {
+					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.1F);
 				}
-
 
 				return false;
 			} else {
