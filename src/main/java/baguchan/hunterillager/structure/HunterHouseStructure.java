@@ -25,7 +25,7 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 
 	@Override
 	public String getFeatureName() {
-		return "hunterillager:hunterhouse";
+		return "hunterillager:hunter_house";
 	}
 
 	protected boolean isFeatureChunk(ChunkGenerator p_160197_, BiomeSource p_160198_, long p_160199_, WorldgenRandom p_160200_, ChunkPos p_160201_, Biome p_160202_, ChunkPos p_160203_, NoneFeatureConfiguration p_160204_, LevelHeightAccessor p_160205_) {
