@@ -1,6 +1,5 @@
 package baguchan.hunterillager;
 
-import baguchan.hunterillager.client.HunterRenderingRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -32,7 +31,6 @@ public class HunterIllager {
 	}
 
 	private void doClientStuff(FMLClientSetupEvent event) {
-		HunterRenderingRegistry.registerRenderers();
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
