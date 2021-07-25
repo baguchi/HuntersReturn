@@ -1,24 +1,25 @@
 package baguchan.hunterillager.structure;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.gen.feature.template.TemplateManager;
-import net.minecraft.world.gen.settings.StructureSeparationSettings;
 
-public class HunterHouseStructure extends Structure<NoFeatureConfig> {
-	public HunterHouseStructure(Codec<NoFeatureConfig> p_i51440_1_) {
+import com.mojang.serialization.Codec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+
+public class HunterHouseStructure extends StructureFeature<NoneFeatureConfiguration> {
+	public HunterHouseStructure(Codec<NoneFeatureConfiguration> p_i51440_1_) {
 		super(p_i51440_1_);
 	}
 
@@ -27,24 +28,27 @@ public class HunterHouseStructure extends Structure<NoFeatureConfig> {
 		return "hunterillager:hunterhouse";
 	}
 
-	protected boolean isFeatureChunk(ChunkGenerator p_230363_1_, BiomeProvider p_230363_2_, long p_230363_3_, SharedSeedRandom p_230363_5_, int p_230363_6_, int p_230363_7_, Biome p_230363_8_, ChunkPos p_230363_9_, NoFeatureConfig p_230363_10_) {
-		int i = p_230363_6_ >> 4;
-		int j = p_230363_7_ >> 4;
-		p_230363_5_.setSeed((long) (i ^ j << 4) ^ p_230363_3_);
-		p_230363_5_.nextInt();
+	protected boolean isFeatureChunk(ChunkGenerator p_160197_, BiomeSource p_160198_, long p_160199_, WorldgenRandom p_160200_, ChunkPos p_160201_, Biome p_160202_, ChunkPos p_160203_, NoneFeatureConfiguration p_160204_, LevelHeightAccessor p_160205_) {
+		int i = p_160201_.x >> 4;
+		int j = p_160201_.z >> 4;
+		p_160200_.setSeed((long) (i ^ j << 4) ^ p_160199_);
+		p_160200_.nextInt();
 
-		return !this.isNearVillage(p_230363_1_, p_230363_3_, p_230363_5_, p_230363_6_, p_230363_7_);
+		return !this.isNearVillage(p_160197_, p_160199_, p_160200_, p_160201_);
 	}
 
-	private boolean isNearVillage(ChunkGenerator p_242782_1_, long p_242782_2_, SharedSeedRandom p_242782_4_, int p_242782_5_, int p_242782_6_) {
-		StructureSeparationSettings structureseparationsettings = p_242782_1_.getSettings().getConfig(Structure.VILLAGE);
-		if (structureseparationsettings == null) {
+	private boolean isNearVillage(ChunkGenerator p_160182_, long p_160183_, WorldgenRandom p_160184_, ChunkPos p_160185_) {
+		StructureFeatureConfiguration structurefeatureconfiguration = p_160182_.getSettings().getConfig(StructureFeature.VILLAGE);
+		if (structurefeatureconfiguration == null) {
 			return false;
 		} else {
-			for (int i = p_242782_5_ - 10; i <= p_242782_5_ + 10; ++i) {
-				for (int j = p_242782_6_ - 10; j <= p_242782_6_ + 10; ++j) {
-					ChunkPos chunkpos = Structure.VILLAGE.getPotentialFeatureChunk(structureseparationsettings, p_242782_2_, p_242782_4_, i, j);
-					if (i == chunkpos.x && j == chunkpos.z) {
+			int i = p_160185_.x;
+			int j = p_160185_.z;
+
+			for (int k = i - 10; k <= i + 10; ++k) {
+				for (int l = j - 10; l <= j + 10; ++l) {
+					ChunkPos chunkpos = StructureFeature.VILLAGE.getPotentialFeatureChunk(structurefeatureconfiguration, p_160183_, p_160184_, k, l);
+					if (k == chunkpos.x && l == chunkpos.z) {
 						return true;
 					}
 				}
@@ -54,25 +58,24 @@ public class HunterHouseStructure extends Structure<NoFeatureConfig> {
 		}
 	}
 
-	public IStartFactory getStartFactory() {
-		return Start::new;
+	@Override
+	public GenerationStep.Decoration step() {
+		return GenerationStep.Decoration.SURFACE_STRUCTURES;
 	}
 
-	public GenerationStage.Decoration step() {
-		return GenerationStage.Decoration.SURFACE_STRUCTURES;
+	public StructureFeature.StructureStartFactory<NoneFeatureConfiguration> getStartFactory() {
+		return FeatureStart::new;
 	}
 
-	public static class Start extends StructureStart<NoFeatureConfig> {
-		public Start(Structure<NoFeatureConfig> p_i225806_1_, int p_i225806_2_, int p_i225806_3_, MutableBoundingBox p_i225806_4_, int p_i225806_5_, long p_i225806_6_) {
-			super(p_i225806_1_, p_i225806_2_, p_i225806_3_, p_i225806_4_, p_i225806_5_, p_i225806_6_);
+	public static class FeatureStart extends StructureStart<NoneFeatureConfiguration> {
+		public FeatureStart(StructureFeature<NoneFeatureConfiguration> p_159888_, ChunkPos p_159889_, int p_159890_, long p_159891_) {
+			super(p_159888_, p_159889_, p_159890_, p_159891_);
 		}
 
-		@Override
-		public void generatePieces(DynamicRegistries p_230364_1_, ChunkGenerator p_230364_2_, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biome, NoFeatureConfig p_230364_7_) {
-			BlockPos blockpos = new BlockPos(chunkX * 16, 90, chunkZ * 16);
-			Rotation rotation = Rotation.values()[this.random.nextInt((Rotation.values()).length)];
-			HunterHousePieces.addStructure(templateManagerIn, blockpos, rotation, this.pieces, this.random, biome);
-			this.calculateBoundingBox();
+		public void generatePieces(RegistryAccess p_159901_, ChunkGenerator p_159902_, StructureManager p_159903_, ChunkPos p_159904_, Biome p_159905_, NoneFeatureConfiguration p_159906_, LevelHeightAccessor p_159907_) {
+			BlockPos blockpos = new BlockPos(p_159904_.getMinBlockX(), 90, p_159904_.getMinBlockZ());
+			Rotation rotation = Rotation.getRandom(this.random);
+			HunterHousePieces.addStructure(p_159903_, blockpos, rotation, this, this.random);
 		}
 	}
 }

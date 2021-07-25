@@ -1,14 +1,14 @@
 package baguchan.hunterillager.entity.ai;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
 public class DoSleepingGoal extends Goal {
-	private final CreatureEntity creature;
+	private final PathfinderMob creature;
 
-	public DoSleepingGoal(CreatureEntity creature) {
+	public DoSleepingGoal(PathfinderMob creature) {
 		this.creature = creature;
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}

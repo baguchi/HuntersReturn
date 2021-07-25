@@ -1,20 +1,20 @@
 package baguchan.hunterillager.entity.ai;
 
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.Property;
 
 public class SleepOnBedGoal extends MoveToBlockGoal {
-	private final CreatureEntity creature;
+	private final PathfinderMob creature;
 
-	public SleepOnBedGoal(CreatureEntity creature, double speedIn, int length) {
+	public SleepOnBedGoal(PathfinderMob creature, double speedIn, int length) {
 		super(creature, speedIn, length);
 		this.creature = creature;
 	}
@@ -30,10 +30,12 @@ public class SleepOnBedGoal extends MoveToBlockGoal {
 		}
 	}
 
-	protected boolean isValidTarget(IWorldReader worldIn, BlockPos pos) {
+	@Override
+	protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
 		BlockState blockstate = worldIn.getBlockState(pos);
 		Block block = blockstate.getBlock();
 		return blockstate.hasProperty((Property) BedBlock.PART) && blockstate.is(BlockTags.BEDS) && blockstate.getValue((Property) BedBlock.PART) == BedPart.HEAD;
+
 	}
 
 	protected boolean findNearestBlock() {

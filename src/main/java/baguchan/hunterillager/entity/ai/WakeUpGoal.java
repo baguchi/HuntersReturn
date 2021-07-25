@@ -1,12 +1,13 @@
 package baguchan.hunterillager.entity.ai;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.Goal;
+
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 public class WakeUpGoal extends Goal {
-	private final CreatureEntity creature;
+	private final PathfinderMob creature;
 
-	public WakeUpGoal(CreatureEntity creature) {
+	public WakeUpGoal(PathfinderMob creature) {
 		this.creature = creature;
 	}
 

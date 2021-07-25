@@ -1,11 +1,11 @@
 package baguchan.hunterillager.enchantment;
 
 import baguchan.hunterillager.init.HunterEnchantments;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class BounceEnchantment extends Enchantment {
-	public BounceEnchantment(Enchantment.Rarity p_i50019_1_, EquipmentSlotType... p_i50019_2_) {
+	public BounceEnchantment(Enchantment.Rarity p_i50019_1_, EquipmentSlot... p_i50019_2_) {
 		super(p_i50019_1_, HunterEnchantments.BOOMERANG, p_i50019_2_);
 	}
 

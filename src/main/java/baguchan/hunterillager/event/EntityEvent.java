@@ -2,16 +2,11 @@ package baguchan.hunterillager.event;
 
 import baguchan.hunterillager.HunterIllager;
 import baguchan.hunterillager.entity.HunterIllagerEntity;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
-import net.minecraft.entity.monster.AbstractIllagerEntity;
-import net.minecraft.world.spawner.WanderingTraderSpawner;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -20,16 +15,16 @@ public class EntityEvent {
 
 	@SubscribeEvent()
 	public static void addSpawn(EntityJoinWorldEvent event) {
-		if(event.getEntity() instanceof VillagerEntity){
-			VillagerEntity abstractVillagerEntity = (VillagerEntity) event.getEntity();
+		if (event.getEntity() instanceof Villager) {
+			Villager abstractVillager = (Villager) event.getEntity();
 
-			abstractVillagerEntity.goalSelector.addGoal(1, new AvoidEntityGoal((CreatureEntity)abstractVillagerEntity, HunterIllagerEntity.class, 16.0F ,0.8F, 0.85F));
+			abstractVillager.goalSelector.addGoal(1, new AvoidEntityGoal((PathfinderMob) abstractVillager, HunterIllagerEntity.class, 16.0F, 0.8F, 0.85F));
 		}
 
-		if(event.getEntity() instanceof WanderingTraderEntity){
-			WanderingTraderEntity wanderingTraderEntity = (WanderingTraderEntity) event.getEntity();
+		if (event.getEntity() instanceof WanderingTrader) {
+			WanderingTrader wanderingTraderEntity = (WanderingTrader) event.getEntity();
 
-			wanderingTraderEntity.goalSelector.addGoal(1, new AvoidEntityGoal((CreatureEntity)wanderingTraderEntity, HunterIllagerEntity.class, 16.0F ,0.8F, 0.85F));
+			wanderingTraderEntity.goalSelector.addGoal(1, new AvoidEntityGoal((PathfinderMob) wanderingTraderEntity, HunterIllagerEntity.class, 16.0F, 0.8F, 0.85F));
 		}
 	}
 }

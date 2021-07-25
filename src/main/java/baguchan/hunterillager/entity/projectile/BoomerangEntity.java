@@ -2,51 +2,60 @@ package baguchan.hunterillager.entity.projectile;
 
 import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ThrowableEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
 
 import java.util.List;
 
-public class BoomerangEntity extends ThrowableEntity {
-	private static final DataParameter<Byte> LOYALTY_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
+public class BoomerangEntity extends ThrowableItemProjectile {
+	private static final EntityDataAccessor<Byte> LOYALTY_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
 
-	private static final DataParameter<Byte> PIERCING_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
-	private static final DataParameter<Byte> BOUNCE_LEVEL = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BYTE);
-	private static final DataParameter<Boolean> RETURNING = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<ItemStack> BOOMERANG = EntityDataManager.defineId(BoomerangEntity.class, DataSerializers.ITEM_STACK);
+	private static final EntityDataAccessor<Byte> PIERCING_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Byte> BOUNCE_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
+	private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
 
 	private int totalHits;
 
 	private int flyTick;
 
-	public BoomerangEntity(EntityType<? extends BoomerangEntity> entityEntityType, World world) {
+	public BoomerangEntity(EntityType<? extends BoomerangEntity> entityEntityType, Level world) {
 		super(entityEntityType, world);
 	}
 
-	public BoomerangEntity(EntityType<? extends BoomerangEntity> type, World world, LivingEntity shootingEntity, ItemStack boomerang) {
+	public BoomerangEntity(EntityType<? extends BoomerangEntity> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
 		super(type, shootingEntity, world);
 		setOwner(shootingEntity);
 		setBoomerang(boomerang);
@@ -56,28 +65,28 @@ public class BoomerangEntity extends ThrowableEntity {
 		this.totalHits = 0;
 	}
 
-	public BoomerangEntity(FMLPlayMessages.SpawnEntity spawnEntity, World world) {
+	public BoomerangEntity(FMLPlayMessages.SpawnEntity spawnEntity, Level world) {
 		this(HunterEntityRegistry.BOOMERANG, world);
 	}
 
-	public BoomerangEntity(World world, LivingEntity entity, ItemStack boomerang) {
+	public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
 		this(HunterEntityRegistry.BOOMERANG, world, entity, boomerang);
 	}
 
 
-	private void onHitFluid(BlockRayTraceResult result) {
+	private void onHitFluid(BlockHitResult result) {
 		double velocity = getVelocity();
 		double horizontal = getDeltaMovement().y * getDeltaMovement().y;
 		if (!this.level.isClientSide &&
-				result.getType() == RayTraceResult.Type.BLOCK && result.isInside() &&
+				result.getType() == HitResult.Type.BLOCK && result.isInside() &&
 				velocity >= 0.6499999761581421D && horizontal < 0.17499999701976776D)
 			if (!this.level.getBlockState(result.getBlockPos()).isAir() && this.level.getFluidState(result.getBlockPos()).is(FluidTags.WATER)) {
-				setDeltaMovement(getDeltaMovement().x, MathHelper.clamp(getDeltaMovement().y + 0.10000000149011612D, -0.10000000149011612D, 0.30000001192092896D), getDeltaMovement().z);
+				setDeltaMovement(getDeltaMovement().x, Mth.clamp(getDeltaMovement().y + 0.10000000149011612D, -0.10000000149011612D, 0.30000001192092896D), getDeltaMovement().z);
 				this.hasImpulse = true;
 			}
 	}
 
-	protected void onHitEntity(EntityRayTraceResult result) {
+	protected void onHitEntity(EntityHitResult result) {
 		super.onHitEntity(result);
 		boolean returnToOwner = false;
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
@@ -97,7 +106,7 @@ public class BoomerangEntity extends ThrowableEntity {
 					returnToOwner = true;
 
 				} else if (piercingLevel < 1 && this.totalHits < this.getBounceLevel() || this.totalHits < piercingLevel + this.getBounceLevel() && speed <= 0.4000000059604645D) {
-					Vector3d motion = getDeltaMovement();
+					Vec3 motion = getDeltaMovement();
 					double motionX = motion.x;
 					double motionY = motion.y;
 					double motionZ = motion.z;
@@ -110,8 +119,8 @@ public class BoomerangEntity extends ThrowableEntity {
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
 				Entity shooter = getOwner();
-				this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
-				Vector3d motion = getDeltaMovement();
+				this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+				Vec3 motion = getDeltaMovement();
 				double motionX = motion.x;
 				double motionY = motion.y;
 				double motionZ = motion.z;
@@ -121,11 +130,11 @@ public class BoomerangEntity extends ThrowableEntity {
 				//func_70018_K();
 				if (loyaltyLevel > 0 && !isReturning() &&
 						entity != null) {
-					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			} else {
-				Vector3d motion = getDeltaMovement();
+				Vec3 motion = getDeltaMovement();
 				double motionX = motion.x;
 				double motionY = motion.y;
 				double motionZ = motion.z;
@@ -134,28 +143,28 @@ public class BoomerangEntity extends ThrowableEntity {
 				setDeltaMovement(motionX, motionY, motionZ);
 				if (loyaltyLevel > 0 && !isReturning() &&
 						entity != null) {
-					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
 	}
 
 	@Override
-	protected void onHitBlock(BlockRayTraceResult result) {
+	protected void onHitBlock(BlockHitResult result) {
 		super.onHitBlock(result);
 		BlockPos pos = result.getBlockPos();
 		BlockState state = this.level.getBlockState(pos);
-		SoundType soundType = state.getSoundType((IWorldReader) this.level, pos, this);
+		SoundType soundType = state.getSoundType(this.level, pos, this);
 		if (!isReturning())
-			this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundCategory.BLOCKS, soundType.getVolume() * 0.45F, soundType.getPitch());
+			this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume() * 0.45F, soundType.getPitch());
 		this.totalHits++;
 		BlockState blockstate = this.level.getBlockState(result.getBlockPos());
 		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
 		int piercingLevel = this.entityData.get(PIERCING_LEVEL).byteValue();
 		Entity entity = getOwner();
-		if (!isReturning() && !blockstate.getCollisionShape((IBlockReader) this.level, result.getBlockPos()).isEmpty()) {
+		if (!isReturning() && !blockstate.getCollisionShape(this.level, result.getBlockPos()).isEmpty()) {
 			Direction face = result.getDirection();
-			Vector3d motion = getDeltaMovement();
+			Vec3 motion = getDeltaMovement();
 			double motionX = motion.x;
 			double motionY = motion.y;
 			double motionZ = motion.z;
@@ -175,14 +184,14 @@ public class BoomerangEntity extends ThrowableEntity {
 			setDeltaMovement(motionX, motionY, motionZ);
 			if (loyaltyLevel > 0 && !isReturning() && this.totalHits >= getBounceLevel() &&
 					entity != null) {
-				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 				setReturning(true);
 			}
 		}
 		checkInsideBlocks();
 	}
 
-	protected void onHit(RayTraceResult result) {
+	protected void onHit(HitResult result) {
 		super.onHit(result);
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		if (loyaltyLevel < 1 && this.totalHits >= getBounceLevel() &&
@@ -193,11 +202,11 @@ public class BoomerangEntity extends ThrowableEntity {
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
-			return (!(entity instanceof net.minecraft.entity.player.ServerPlayerEntity) || !entity.isSpectator());
+			return (!(entity instanceof ServerPlayer) || !entity.isSpectator());
 		return false;
 	}
 
-	public void playerTouch(PlayerEntity entityIn) {
+	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
 		if (!this.level.isClientSide && this.flyTick >= 6 && entityIn == getOwner())
 			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
@@ -210,45 +219,49 @@ public class BoomerangEntity extends ThrowableEntity {
 	}
 
 	public void drop(double x, double y, double z) {
-		if (!(getOwner() instanceof PlayerEntity) || (getOwner() instanceof PlayerEntity && !((PlayerEntity) getOwner()).isCreative()))
+		if (!(getOwner() instanceof Player) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative()))
 			this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().copy()));
-		remove();
+		discard();
 	}
 
 	public void tick() {
 		super.tick();
 		this.flyTick++;
-		Vector3d vec3d = getDeltaMovement();
-		Vector3d vec3d1 = this.position();
-		Vector3d vec3d2 = new Vector3d(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-		BlockRayTraceResult fluidRaytraceResult = this.level.clip(new RayTraceContext(vec3d1, vec3d2, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, this));
-		onHitFluid(fluidRaytraceResult);
-		float f = MathHelper.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().z * getDeltaMovement().z);
-		this.yRot = (float) (MathHelper.atan2(getDeltaMovement().x, getDeltaMovement().z) * 57.2957763671875D);
-		for (this.xRot = (float) (MathHelper.atan2(getDeltaMovement().y, f) * 57.2957763671875D); this.xRot - this.xRotO < -180.0F; this.xRotO -= 360.0F)
+		Vec3 vec3d = getDeltaMovement();
+		Vec3 vec3d1 = this.position();
+		Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+		BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
+		onHitFluid(fluidHitResult);
+
+		float xRotation;
+		float yRotation;
+		float f = Mth.sqrt((float) (getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().z * getDeltaMovement().z));
+		yRotation = (float) (Mth.atan2(getDeltaMovement().x, getDeltaMovement().z) * 57.2957763671875D);
+		for (xRotation = (float) (Mth.atan2(getDeltaMovement().y, f) * 57.2957763671875D); xRotation - this.xRotO < -180.0F; this.xRotO -= 360.0F)
 			;
-		while (this.xRot - this.xRotO >= 180.0F)
+		while (xRotation - this.xRotO >= 180.0F)
 			this.xRotO += 360.0F;
-		while (this.yRot - this.yRotO < -180.0F)
+		while (yRotation - this.yRotO < -180.0F)
 			this.yRotO -= 360.0F;
-		while (this.yRot - this.yRotO >= 180.0F)
+		while (yRotation - this.yRotO >= 180.0F)
 			this.yRotO += 360.0F;
-		this.xRot = this.xRotO + (this.xRot - this.xRotO) * 0.2F;
-		this.yRot = this.yRotO + (this.yRot - this.yRotO) * 0.2F;
+		xRotation = this.xRotO + (this.getXRot() - this.xRotO) * 0.2F;
+		yRotation = this.yRotO + (this.getYRot() - this.yRotO) * 0.2F;
+		this.setRot(xRotation, yRotation);
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		Entity entity = getOwner();
 		if (loyaltyLevel > 0 && !isReturning() && this.flyTick >= 100 &&
 				entity != null) {
-			this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+			this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 			setReturning(true);
 		}
 		if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
 			if (!this.level.isClientSide)
 				drop(getX(), getY(), getZ());
-			remove();
+			discard();
 		} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
 			this.noPhysics = true;
-			Vector3d vec3d3 = new Vector3d(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
+			Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
 			if (this.level.isClientSide)
 				this.yOld = getY();
 			double d0 = 0.05D * loyaltyLevel;
@@ -273,6 +286,11 @@ public class BoomerangEntity extends ThrowableEntity {
 	}
 
 	@Override
+	protected Item getDefaultItem() {
+		return this.getBoomerang().getItem();
+	}
+
+	@Override
 	protected void defineSynchedData() {
 		this.entityData.define(LOYALTY_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(PIERCING_LEVEL, Byte.valueOf((byte) 0));
@@ -282,16 +300,16 @@ public class BoomerangEntity extends ThrowableEntity {
 	}
 
 	@Override
-	protected void addAdditionalSaveData(CompoundNBT nbt) {
+	public void addAdditionalSaveData(CompoundTag nbt) {
 		super.addAdditionalSaveData(nbt);
-		nbt.put("boomerang", getBoomerang().save(new CompoundNBT()));
+		nbt.put("boomerang", getBoomerang().save(new CompoundTag()));
 		nbt.putInt("totalHits", this.totalHits);
 		nbt.putBoolean("returning", isReturning());
 	}
 
 
 	@Override
-	protected void readAdditionalSaveData(CompoundNBT nbt) {
+	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
 		setBoomerang(ItemStack.of(nbt.getCompound("boomerang")));
 		this.totalHits = nbt.getInt("totalHits");
@@ -304,7 +322,7 @@ public class BoomerangEntity extends ThrowableEntity {
 
 	protected void collideWithNearbyEntities() {
 		if (isReturning()) {
-			List<Entity> list = this.level.getEntities(this, getBoundingBox(), EntityPredicates.pushableBy(this));
+			List<Entity> list = this.level.getEntities(this, getBoundingBox(), EntitySelector.pushableBy(this));
 			if (!list.isEmpty())
 				for (int l = 0; l < list.size(); l++) {
 					Entity entity = list.get(l);
@@ -351,7 +369,7 @@ public class BoomerangEntity extends ThrowableEntity {
 	}
 
 
-	public IPacket<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
+	public Packet<?> getAddEntityPacket() {
+		return new ClientboundAddEntityPacket(this);
 	}
 }
