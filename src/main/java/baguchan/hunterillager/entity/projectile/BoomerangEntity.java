@@ -226,6 +226,15 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 
 	public void tick() {
 		super.tick();
+		Vec3 vec3 = this.getDeltaMovement();
+		if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+			double d0 = vec3.horizontalDistance();
+			this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
+			this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
+			this.yRotO = this.getYRot();
+			this.xRotO = this.getXRot();
+		}
+
 		this.flyTick++;
 		Vec3 vec3d = getDeltaMovement();
 		Vec3 vec3d1 = this.position();
@@ -233,21 +242,20 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
 		onHitFluid(fluidHitResult);
 
-		float xRotation;
-		float yRotation;
-		float f = Mth.sqrt((float) (getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().z * getDeltaMovement().z));
-		yRotation = (float) (Mth.atan2(getDeltaMovement().x, getDeltaMovement().z) * 57.2957763671875D);
-		for (xRotation = (float) (Mth.atan2(getDeltaMovement().y, f) * 57.2957763671875D); xRotation - this.xRotO < -180.0F; this.xRotO -= 360.0F)
-			;
-		while (xRotation - this.xRotO >= 180.0F)
-			this.xRotO += 360.0F;
-		while (yRotation - this.yRotO < -180.0F)
-			this.yRotO -= 360.0F;
-		while (yRotation - this.yRotO >= 180.0F)
-			this.yRotO += 360.0F;
-		xRotation = this.xRotO + (this.getXRot() - this.xRotO) * 0.2F;
-		yRotation = this.yRotO + (this.getYRot() - this.yRotO) * 0.2F;
-		this.setRot(xRotation, yRotation);
+		double d5 = vec3d.x;
+		double d6 = vec3d.y;
+		double d1 = vec3d.z;
+
+		double d7 = this.getX() + d5;
+		double d2 = this.getY() + d6;
+		double d3 = this.getZ() + d1;
+		double d4 = vec3d.horizontalDistance();
+		this.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
+
+
+		this.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
+		this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+		this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		Entity entity = getOwner();
 		if (loyaltyLevel > 0 && !isReturning() && this.flyTick >= 100 &&
@@ -292,6 +300,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 
 	@Override
 	protected void defineSynchedData() {
+		super.defineSynchedData();
 		this.entityData.define(LOYALTY_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(PIERCING_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(BOUNCE_LEVEL, Byte.valueOf((byte) 0));
