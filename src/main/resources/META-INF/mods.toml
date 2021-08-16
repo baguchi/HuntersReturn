@@ -29,9 +29,9 @@ displayURL = "https://www.curseforge.com/minecraft/mc-mods/hunterillager"
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="hunterillager.png" #optional
 # A text field displayed in the mod UI
-credits="" #optional
+credits = "MCVinnyq and Fuffles for contributing texture" #optional
 # A text field displayed in the mod UI
-authors="bagu_chan" #optional
+authors = "bagu_chan, Evo" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Add evil HunterIllager! They attack the animals while making a cheeky laugh...
