@@ -1,5 +1,6 @@
 package baguchan.hunterillager.entity.projectile;
 
+import baguchan.hunterillager.init.HunterDamageSource;
 import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -96,7 +96,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			if (!isReturning() || loyaltyLevel <= 0) {
 				Entity shooter = getOwner();
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
-				result.getEntity().hurt(DamageSource.thrown(this, shooter), (float) (3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
+				result.getEntity().hurt(HunterDamageSource.boomerangAttack(this, shooter), (float) (3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 				if (shooter instanceof LivingEntity)
 					getBoomerang().hurtAndBreak(1, (LivingEntity) shooter, p_222182_1_ -> {
 
