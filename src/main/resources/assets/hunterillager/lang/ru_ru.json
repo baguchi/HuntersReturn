@@ -5,8 +5,7 @@
   "item.hunterillager.quiver.desc": "Можно поместить в колчан стрелы с помощью правой кнопки мыши, держа колчан и стрелы.",
   "entity.hunterillager.hunterillager": "Егерь",
   "subtitles.hunterillager.laugh": "Егерь смеётся",
-  "death.attack.hunterillager.boomerang": "%1$s был прибит бумерангом",
-  "death.attack.hunterillager.boomerang.player": "%1$s был прибит бумерангом %2$s",
+  "death.attack.hunterillager.boomerang": "%1$s был прибит бумерангом %2$s",
   "hunterillager.config.generateHunterHouse": "generate HunterHouse In OverLevel",
   "hunterillager.config.spawnHunterIllagerOnPatrol": "Spawn HunterIllager On Patrol",
   "enchantment.hunterillager.bounce": "Отскок"
