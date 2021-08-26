@@ -96,11 +96,16 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			if (!isReturning() || loyaltyLevel <= 0) {
 				Entity shooter = getOwner();
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
-				result.getEntity().hurt(HunterDamageSource.boomerangAttack(this, shooter), (float) (3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
-				if (shooter instanceof LivingEntity)
-					getBoomerang().hurtAndBreak(1, (LivingEntity) shooter, p_222182_1_ -> {
+				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
+				if (damage != 0) {
+					result.getEntity().hurt(HunterDamageSource.boomerangAttack(this, shooter), damage);
+				}
+				if (shooter instanceof LivingEntity) {
+					getBoomerang().hurtAndBreak(1, (LivingEntity) shooter, p_222182_1_ -> {
 					});
+				}
+
 				double speed = getSpeed();
 				if (piercingLevel < 1 && this.totalHits >= this.getBounceLevel() || this.totalHits >= piercingLevel + this.getBounceLevel() && speed > 0.4000000059604645D) {
 					returnToOwner = true;
@@ -246,9 +251,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		double d6 = vec3d.y;
 		double d1 = vec3d.z;
 
-		double d7 = this.getX() + d5;
-		double d2 = this.getY() + d6;
-		double d3 = this.getZ() + d1;
 		double d4 = vec3d.horizontalDistance();
 		this.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
 
@@ -258,7 +260,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		Entity entity = getOwner();
-		if (loyaltyLevel > 0 && !isReturning() && this.flyTick >= 100 &&
+		if (loyaltyLevel > 0 && !isReturning() && this.flyTick >= 60 &&
 				entity != null) {
 			this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 			setReturning(true);
@@ -275,11 +277,12 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			double d0 = 0.05D * loyaltyLevel;
 			setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
 		}
+		this.checkInsideBlocks();
 		collideWithNearbyEntities();
 	}
 
 	protected float getGravity() {
-		return isReturning() ? 0.0F : 0.03F;
+		return getLoyaltyLevel() > 0 && !this.isInWater() ? 0.0F : 0.03F;
 	}
 
 	@Override
@@ -339,6 +342,10 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 						drop(entity.getX(), entity.getY(), entity.getZ());
 				}
 		}
+	}
+
+	private int getLoyaltyLevel() {
+		return (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 	}
 
 	private int getBounceLevel() {

@@ -35,7 +35,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 		stackIn.mulPose(Vector3f.XP.rotationDegrees(90.0F));
 		stackIn.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 
-		stackIn.mulPose(Vector3f.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * ((float) entityIn.getSpeed() * 80.0F)));
+		stackIn.mulPose(Vector3f.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F) + 1F)));
 		stackIn.translate(0.0F, 0.0F, -entityIn.getBbHeight() / 2);
 
 		BakedModel bakedmodel = this.itemRenderer.getModel(entityIn.getBoomerang(), entityIn.level, (LivingEntity) null, entityIn.getId());
