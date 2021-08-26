@@ -1,6 +1,8 @@
-package baguchan.hunterillager.structure;
+package baguchan.hunterillager.init;
 
 import baguchan.hunterillager.HunterIllager;
+import baguchan.hunterillager.structure.HunterHousePieces;
+import baguchan.hunterillager.structure.HunterHouseStructure;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
@@ -17,7 +19,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import java.util.Locale;
 
 @EventBusSubscriber(modid = HunterIllager.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class StructureRegister {
+public class HunterStructureRegister {
 	public static final StructureFeature<NoneFeatureConfiguration> HUNTER_HOUSE = new HunterHouseStructure(NoneFeatureConfiguration.CODEC);
 	public static final ConfiguredStructureFeature<NoneFeatureConfiguration, ? extends StructureFeature<NoneFeatureConfiguration>> HUNTER_HOUSE_FEATURE = configFeatureRegister(prefix("hunter_house"), HUNTER_HOUSE.configured(NoneFeatureConfiguration.INSTANCE));
 
@@ -31,6 +33,7 @@ public class StructureRegister {
 	@SubscribeEvent
 	public static void registerfeature(RegistryEvent.Register<StructureFeature<?>> registry) {
 		NoiseGeneratorSettings.bootstrap().structureSettings().structureConfig().put(HUNTER_HOUSE, new StructureFeatureConfiguration(28, 6, 15437620));
+		StructureFeature.STRUCTURES_REGISTRY.put("hunterillager:hunter_house", HUNTER_HOUSE);
 		registry.getRegistry().register(HUNTER_HOUSE.setRegistryName("hunter_house"));
 	}
 

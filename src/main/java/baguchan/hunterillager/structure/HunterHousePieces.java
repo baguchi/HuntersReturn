@@ -3,6 +3,7 @@ package baguchan.hunterillager.structure;
 import baguchan.hunterillager.HunterIllager;
 import baguchan.hunterillager.entity.HunterIllagerEntity;
 import baguchan.hunterillager.init.HunterEntityRegistry;
+import baguchan.hunterillager.init.HunterStructureRegister;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +43,7 @@ public class HunterHousePieces {
 
 	public static class Piece extends TemplateStructurePiece {
 		public Piece(StructureManager p_71244_, ResourceLocation p_71245_, BlockPos p_71246_, Rotation p_71247_, int p_71248_) {
-			super(StructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_, p_71245_), makePosition(p_71245_, p_71246_, p_71248_));
+			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_, p_71245_), makePosition(p_71245_, p_71246_, p_71248_));
 		}
 
 		public Piece(ServerLevel p_162441_, CompoundTag p_162442_) {

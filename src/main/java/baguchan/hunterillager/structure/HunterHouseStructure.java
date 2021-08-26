@@ -23,11 +23,6 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 		super(p_i51440_1_);
 	}
 
-	@Override
-	public String getFeatureName() {
-		return "hunterillager:hunter_house";
-	}
-
 	protected boolean isFeatureChunk(ChunkGenerator p_160197_, BiomeSource p_160198_, long p_160199_, WorldgenRandom p_160200_, ChunkPos p_160201_, Biome p_160202_, ChunkPos p_160203_, NoneFeatureConfiguration p_160204_, LevelHeightAccessor p_160205_) {
 		int i = p_160201_.x >> 4;
 		int j = p_160201_.z >> 4;

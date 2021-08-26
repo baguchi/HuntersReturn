@@ -1,7 +1,7 @@
 package baguchan.hunterillager.event;
 
 import baguchan.hunterillager.HunterIllager;
-import baguchan.hunterillager.structure.StructureRegister;
+import baguchan.hunterillager.init.HunterStructureRegister;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -22,7 +22,7 @@ public class BiomeEventHandler {
 
 			if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OVERWORLD) && (
 					BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) || BiomeDictionary.hasType(biome, BiomeDictionary.Type.PLAINS)) {
-				generation.addStructureStart(StructureRegister.HUNTER_HOUSE_FEATURE);
+				generation.addStructureStart(HunterStructureRegister.HUNTER_HOUSE_FEATURE);
 			}
 		}
 	}

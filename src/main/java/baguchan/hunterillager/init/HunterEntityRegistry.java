@@ -1,5 +1,6 @@
 package baguchan.hunterillager.init;
 
+import baguchan.hunterillager.HunterIllager;
 import baguchan.hunterillager.entity.HunterIllagerEntity;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import net.minecraft.world.entity.EntityType;
@@ -10,7 +11,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber(modid = "hunterillager", bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = HunterIllager.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class HunterEntityRegistry {
 	public static final EntityType<HunterIllagerEntity> HUNTERILLAGER = EntityType.Builder.of(HunterIllagerEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F).build(prefix("hunterillager"));
 
