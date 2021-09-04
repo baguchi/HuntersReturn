@@ -96,7 +96,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 0.85F, 6));
+		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 0.85F, 8));
 		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.0D));
 		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
@@ -418,7 +418,6 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		}
 
 		public void stop() {
-			this.hunter.setHomeTarget((BlockPos) null);
 			HunterIllagerEntity.this.navigation.stop();
 		}
 

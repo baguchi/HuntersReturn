@@ -6,8 +6,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -15,8 +18,11 @@ import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+
+import java.util.Random;
 
 public class HunterHouseStructure extends StructureFeature<NoneFeatureConfiguration> {
 	public HunterHouseStructure(Codec<NoneFeatureConfiguration> p_i51440_1_) {
@@ -71,6 +77,29 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 			BlockPos blockpos = new BlockPos(p_159904_.getMinBlockX(), 90, p_159904_.getMinBlockZ());
 			Rotation rotation = Rotation.getRandom(this.random);
 			HunterHousePieces.addStructure(p_159903_, blockpos, rotation, this, this.random);
+		}
+
+		public void placeInChunk(WorldGenLevel p_67458_, StructureFeatureManager p_67459_, ChunkGenerator p_67460_, Random p_67461_, BoundingBox p_67462_, ChunkPos p_67463_) {
+			super.placeInChunk(p_67458_, p_67459_, p_67460_, p_67461_, p_67462_, p_67463_);
+			BoundingBox var7 = this.getBoundingBox();
+			int var8 = var7.minY();
+
+			for (int var9 = p_67462_.minX(); var9 <= p_67462_.maxX(); ++var9) {
+				for (int var10 = p_67462_.minZ(); var10 <= p_67462_.maxZ(); ++var10) {
+					BlockPos var11 = new BlockPos(var9, var8, var10);
+					if (!p_67458_.isEmptyBlock(var11) && var7.isInside(var11) && this.isInsidePiece(var11)) {
+						for (int var12 = var8 - 1; var12 > 1; --var12) {
+							BlockPos var13 = new BlockPos(var9, var12, var10);
+							if (!p_67458_.isEmptyBlock(var13) && !p_67458_.getBlockState(var13).getMaterial().isLiquid()) {
+								break;
+							}
+
+							p_67458_.setBlock(var13, Blocks.DIRT.defaultBlockState(), 2);
+						}
+					}
+				}
+			}
+
 		}
 	}
 }
