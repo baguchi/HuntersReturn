@@ -105,13 +105,13 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, TARGET_FOOD_SELECTOR) {
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, TARGET_FOOD_SELECTOR) {
 			@Override
 			public boolean canUse() {
 				return cooldown <= 0 && super.canUse();
 			}
 		});
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
 		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(9, new InteractGoal(this, Player.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
