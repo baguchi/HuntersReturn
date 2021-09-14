@@ -63,7 +63,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		return !p_213616_0_.isBaby() && p_213616_0_.getType() != EntityType.CAT && p_213616_0_.getType() != EntityType.PARROT && p_213616_0_.getType() != EntityType.WOLF && p_213616_0_.getType() != EntityType.PANDA;
 	};
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
-		return p_213616_0_.getItem().getItem().getFoodProperties() != null && p_213616_0_.getItem().getItem().getFoodProperties().isMeat();
+		return p_213616_0_.getItem().getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(p_213616_0_.getItem().getItem());
 	};
 
 	private final SimpleContainer inventory = new SimpleContainer(5);
