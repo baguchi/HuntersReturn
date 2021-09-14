@@ -220,7 +220,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
 		}
 
-		inventory.addItem(new ItemStack(Items.PORKCHOP, 6));
+		inventory.addItem(new ItemStack(Items.PORKCHOP, 4));
 
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
@@ -305,7 +305,11 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_) {
 		if (this.getCurrentRaid() == null) {
-			inventory.addItem(new ItemStack(Items.PORKCHOP, 4));
+			if (this.random.nextFloat() < 0.5F) {
+				inventory.addItem(new ItemStack(Items.PORKCHOP, 2 + this.random.nextInt(2)));
+			} else {
+				inventory.addItem(new ItemStack(Items.BEEF, 2 + this.random.nextInt(2)));
+			}
 			if (this.random.nextFloat() < 0.5F) {
 				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
 			} else {
