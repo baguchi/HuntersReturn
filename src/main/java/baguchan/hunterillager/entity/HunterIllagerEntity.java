@@ -130,7 +130,9 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 	public void aiStep() {
 		if (!this.level.isClientSide && this.isAlive()) {
-			if (!this.isUsingItem() && this.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
+			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
+
+			if (!this.isUsingItem() && this.getItemInHand(InteractionHand.OFF_HAND).isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
 				ItemStack food = ItemStack.EMPTY;
 
 				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.0025F) {
