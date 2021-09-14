@@ -84,9 +84,9 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
-		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.0F, 50, 16.0F));
+		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.1F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
-		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 0.95F, true) {
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.15F, true) {
 			@Override
 			public boolean canUse() {
 				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canUse();
@@ -97,8 +97,8 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 0.85F, 8));
-		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.0D));
+		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 8));
+		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.2D));
 		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -110,7 +110,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 				return cooldown <= 0 && super.canUse();
 			}
 		});
-		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6D));
+		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(9, new InteractGoal(this, Player.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 	}
@@ -161,7 +161,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.35F).add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.MAX_HEALTH, 26.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
+		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.MAX_HEALTH, 26.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
 	}
 
 	public void addAdditionalSaveData(CompoundTag p_213281_1_) {
