@@ -1,5 +1,6 @@
 package baguchan.hunterillager.entity;
 
+import baguchan.hunterillager.HunterConfig;
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
 import baguchan.hunterillager.entity.ai.DoSleepingGoal;
 import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
@@ -277,7 +278,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	}
 
 	private boolean wantsFood(ItemStack p_213672_1_) {
-		return p_213672_1_.getItem().getFoodProperties() != null && p_213672_1_.getItem().getFoodProperties().isMeat();
+		return p_213672_1_.getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(p_213672_1_.getItem());
 	}
 
 	@Nullable
