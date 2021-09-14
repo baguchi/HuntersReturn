@@ -155,7 +155,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	private ItemStack findFood() {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 			ItemStack itemstack = this.inventory.getItem(i);
-			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && itemstack.getItem().getFoodProperties().isMeat()) {
+			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(itemstack.getItem())) {
 				return itemstack.split(1);
 			}
 		}
