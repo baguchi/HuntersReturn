@@ -12,9 +12,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -29,23 +31,12 @@ import java.util.Map;
 import java.util.Random;
 
 public class HunterHousePieces {
-	private static final ResourceLocation watch_tower = new ResourceLocation(HunterIllager.MODID, "common/watch_tower");
-	private static final ResourceLocation campfire = new ResourceLocation(HunterIllager.MODID, "common/campfire");
-
-
 	private static final ResourceLocation hunterbase_Template = new ResourceLocation(HunterIllager.MODID, "illager_woodhut");
 
-	private static final Map<ResourceLocation, BlockPos> structurePos = (Map<ResourceLocation, BlockPos>) ImmutableMap.of(watch_tower, new BlockPos(18, 0, -8), campfire, new BlockPos(-8, 0, -12), hunterbase_Template, BlockPos.ZERO);
+	private static final Map<ResourceLocation, BlockPos> structurePos = ImmutableMap.of(hunterbase_Template, BlockPos.ZERO);
 
 	public static void addStructure(StructureManager p_162435_, BlockPos p_162436_, Rotation p_162437_, StructurePieceAccessor p_162438_, Random p_162439_) {
 		p_162438_.addPiece(new Piece(p_162435_, hunterbase_Template, p_162436_, p_162437_, 0));
-
-		if (p_162439_.nextInt(5) == 0) {
-			p_162438_.addPiece(new Piece(p_162435_, watch_tower, p_162436_, p_162437_, 0));
-		}
-		if (p_162439_.nextInt(2) == 0) {
-			p_162438_.addPiece(new Piece(p_162435_, campfire, p_162436_, p_162437_, 0));
-		}
 	}
 
 	public static class Piece extends TemplateStructurePiece {
@@ -98,16 +89,16 @@ public class HunterHousePieces {
 		protected void handleDataMarker(String function, BlockPos pos, ServerLevelAccessor worldIn, Random p_71263_, BoundingBox p_71264_) {
 			if ("hunter".equals(function)) {
 				worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.create((Level) worldIn.getLevel());
+				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.create(worldIn.getLevel());
 				hunterIllager.setPersistenceRequired();
 				hunterIllager.setPos(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 				hunterIllager.setHomeTarget(pos);
-				hunterIllager.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(hunterIllager.blockPosition()), MobSpawnType.STRUCTURE, (SpawnGroupData) null, (CompoundTag) null);
+				hunterIllager.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(hunterIllager.blockPosition()), MobSpawnType.STRUCTURE, null, null);
 				worldIn.addFreshEntity(hunterIllager);
 			}
 			if ("sniper".equals(function)) {
 				worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.create((Level) worldIn.getLevel());
+				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.create(worldIn.getLevel());
 				hunterIllager.setPersistenceRequired();
 				hunterIllager.setPos(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 				hunterIllager.setHomeTarget(pos);

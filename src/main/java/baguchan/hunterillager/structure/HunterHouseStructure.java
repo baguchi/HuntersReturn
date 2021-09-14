@@ -81,20 +81,20 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 
 		public void placeInChunk(WorldGenLevel p_67458_, StructureFeatureManager p_67459_, ChunkGenerator p_67460_, Random p_67461_, BoundingBox p_67462_, ChunkPos p_67463_) {
 			super.placeInChunk(p_67458_, p_67459_, p_67460_, p_67461_, p_67462_, p_67463_);
-			BoundingBox var7 = this.getBoundingBox();
-			int var8 = var7.minY();
+			BoundingBox boundingbox = this.getBoundingBox();
+			int i = boundingbox.minY();
 
-			for (int var9 = p_67462_.minX(); var9 <= p_67462_.maxX(); ++var9) {
-				for (int var10 = p_67462_.minZ(); var10 <= p_67462_.maxZ(); ++var10) {
-					BlockPos var11 = new BlockPos(var9, var8, var10);
-					if (!p_67458_.isEmptyBlock(var11) && var7.isInside(var11) && this.isInsidePiece(var11)) {
-						for (int var12 = var8 - 1; var12 > 1; --var12) {
-							BlockPos var13 = new BlockPos(var9, var12, var10);
-							if (!p_67458_.isEmptyBlock(var13) && !p_67458_.getBlockState(var13).getMaterial().isLiquid()) {
+			for (int j = p_67462_.minX(); j <= p_67462_.maxX(); ++j) {
+				for (int k = p_67462_.minZ(); k <= p_67462_.maxZ(); ++k) {
+					BlockPos blockpos = new BlockPos(j, i, k);
+					if (!p_67458_.isEmptyBlock(blockpos) && boundingbox.isInside(blockpos) && this.isInsidePiece(blockpos)) {
+						for (int l = i - 1; l > 1; --l) {
+							BlockPos blockpos1 = new BlockPos(j, l, k);
+							if (!p_67458_.isEmptyBlock(blockpos1) && !p_67458_.getBlockState(blockpos1).getMaterial().isLiquid()) {
 								break;
 							}
 
-							p_67458_.setBlock(var13, Blocks.DIRT.defaultBlockState(), 2);
+							p_67458_.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
 						}
 					}
 				}
