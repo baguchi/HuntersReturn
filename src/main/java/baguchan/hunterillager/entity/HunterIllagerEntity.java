@@ -31,6 +31,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.Monster;
@@ -110,6 +111,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 				return cooldown <= 0 && super.canUse();
 			}
 		});
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
 		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(9, new InteractGoal(this, Player.class, 3.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
