@@ -10,9 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureFeatureManager;
@@ -80,7 +78,7 @@ public class HunterHousePieces {
 			BlockPos blockpos1 = this.templatePosition;
 			int i = worldIn.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
 			BlockPos blockpos2 = this.templatePosition;
-			this.templatePosition = this.templatePosition.offset(0, i - 90 - 2, 0);
+			this.templatePosition = this.templatePosition.offset(0, i - 90 - 1, 0);
 			boolean flag = super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
 			this.templatePosition = blockpos2;
 			return flag;
@@ -94,15 +92,6 @@ public class HunterHousePieces {
 				hunterIllager.setPos(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
 				hunterIllager.setHomeTarget(pos);
 				hunterIllager.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(hunterIllager.blockPosition()), MobSpawnType.STRUCTURE, null, null);
-				worldIn.addFreshEntity(hunterIllager);
-			}
-			if ("sniper".equals(function)) {
-				worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.create(worldIn.getLevel());
-				hunterIllager.setPersistenceRequired();
-				hunterIllager.setPos(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-				hunterIllager.setHomeTarget(pos);
-				hunterIllager.setItemInHand(InteractionHand.MAIN_HAND, Items.BOW.getDefaultInstance());
 				worldIn.addFreshEntity(hunterIllager);
 			}
 		}

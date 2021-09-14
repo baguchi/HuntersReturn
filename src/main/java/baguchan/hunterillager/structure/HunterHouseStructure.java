@@ -88,10 +88,10 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 				for (int k = p_67462_.minZ(); k <= p_67462_.maxZ(); ++k) {
 					BlockPos blockpos = new BlockPos(j, i, k);
 					if (!p_67458_.isEmptyBlock(blockpos) && boundingbox.isInside(blockpos) && this.isInsidePiece(blockpos)) {
-						for (int l = i - 1; l > 1; --l) {
+						for (int l = i - 2; l > 1; --l) {
 							BlockPos blockpos1 = new BlockPos(j, l, k);
 							if (!p_67458_.isEmptyBlock(blockpos1) && !p_67458_.getBlockState(blockpos1).getMaterial().isLiquid()) {
-								break;
+								continue;
 							}
 
 							p_67458_.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
