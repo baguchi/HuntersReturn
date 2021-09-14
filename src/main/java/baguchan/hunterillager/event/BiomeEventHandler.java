@@ -5,7 +5,6 @@ import baguchan.hunterillager.init.HunterStructureRegister;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -20,8 +19,7 @@ public class BiomeEventHandler {
 		if (event.getName() != null) {
 			ResourceKey<Biome> biome = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
 
-			if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OVERWORLD) && (
-					BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)) || BiomeDictionary.hasType(biome, BiomeDictionary.Type.PLAINS)) {
+			if (event.getName().toString().contains("minecraft:giant_spruce_taiga") || event.getName().toString().contains("minecraft:giant_tree_taiga") || event.getName().toString().contains("minecraft:taiga") || event.getName().toString().contains("minecraft:dark_forest")) {
 				generation.addStructureStart(HunterStructureRegister.HUNTER_HOUSE_FEATURE);
 			}
 		}
