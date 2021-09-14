@@ -17,7 +17,7 @@ public class HunterConfig {
 	public static final Common COMMON;
 	public static final ForgeConfigSpec COMMON_SPEC;
 
-	public static List<Item> foodWhitelist;
+	public static List<Item> foodWhitelist = Lists.newArrayList();
 
 	static {
 		Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
@@ -26,6 +26,7 @@ public class HunterConfig {
 	}
 
 	public static void bakeConfig() {
+		foodWhitelist.clear();
 		COMMON.foodWhitelist.get().forEach(item -> {
 			Item type = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item));
 
