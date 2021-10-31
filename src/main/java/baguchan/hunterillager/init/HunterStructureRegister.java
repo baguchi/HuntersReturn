@@ -32,7 +32,7 @@ public class HunterStructureRegister {
 
 	@SubscribeEvent
 	public static void registerfeature(RegistryEvent.Register<StructureFeature<?>> registry) {
-		NoiseGeneratorSettings.bootstrap().structureSettings().structureConfig().put(HUNTER_HOUSE, new StructureFeatureConfiguration(28, 6, 15437620));
+		NoiseGeneratorSettings.bootstrap().structureSettings().structureConfig().put(HUNTER_HOUSE, new StructureFeatureConfiguration(24, 6, 15437620));
 		StructureFeature.STRUCTURES_REGISTRY.put("hunterillager:hunter_house", HUNTER_HOUSE);
 		registry.getRegistry().register(HUNTER_HOUSE.setRegistryName("hunter_house"));
 	}
