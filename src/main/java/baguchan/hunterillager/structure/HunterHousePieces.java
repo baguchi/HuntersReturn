@@ -75,7 +75,8 @@ public class HunterHousePieces {
 		public boolean postProcess(WorldGenLevel worldIn, StructureFeatureManager p_230383_2_, ChunkGenerator p_230383_3_, Random p_230383_4_, BoundingBox p_230383_5_, ChunkPos p_230383_6_, BlockPos p_230383_7_) {
 			//ResourceLocation var8 = new ResourceLocation(this.templateName);
 			//BlockPos blockPos = (BlockPos) structurePos.get(var8);
-			BlockPos blockpos1 = this.templatePosition;
+
+			BlockPos blockpos1 = this.templatePosition.offset(this.placeSettings.getRotationPivot());
 			int i = worldIn.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
 			BlockPos blockpos2 = this.templatePosition;
 			this.templatePosition = this.templatePosition.offset(0, i - 90 - 1, 0);
