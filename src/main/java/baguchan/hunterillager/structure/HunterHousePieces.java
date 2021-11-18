@@ -23,7 +23,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
-import net.minecraft.world.level.levelgen.structure.templatesystem.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.ProtectedBlockProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 
 import java.util.Map;
 import java.util.Random;
@@ -33,31 +36,27 @@ public class HunterHousePieces {
 
 	private static final Map<ResourceLocation, BlockPos> structurePos = ImmutableMap.of(hunterbase_Template, BlockPos.ZERO);
 
+	static final BlockPos PIVOT = new BlockPos(9, 0, 9);
+
 	public static void addStructure(StructureManager p_162435_, BlockPos p_162436_, Rotation p_162437_, StructurePieceAccessor p_162438_, Random p_162439_) {
 		p_162438_.addPiece(new Piece(p_162435_, hunterbase_Template, p_162436_, p_162437_, 0));
 	}
 
 	public static class Piece extends TemplateStructurePiece {
 		public Piece(StructureManager p_71244_, ResourceLocation p_71245_, BlockPos p_71246_, Rotation p_71247_, int p_71248_) {
-			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_, p_71246_), makePosition(p_71245_, p_71246_, p_71248_));
+			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_), makePosition(p_71245_, p_71246_, p_71248_));
 		}
 
 		public Piece(ServerLevel p_162441_, CompoundTag p_162442_) {
 			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, p_162442_, p_162441_, (p_162451_) -> {
-				return makeSettings(p_162441_, Rotation.valueOf(p_162442_.getString("Rot")), p_162451_);
+				return makeSettings(Rotation.valueOf(p_162442_.getString("Rot")));
 			});
 		}
 
-		private static StructurePlaceSettings makeSettings(ServerLevel serverLevel, Rotation p_162447_, ResourceLocation resourceLocation) {
-			StructureTemplate structuretemplate = serverLevel.getStructureManager().getOrCreate(resourceLocation);
-			BlockPos blockpos = new BlockPos(structuretemplate.getSize().getX() / 2, 0, structuretemplate.getSize().getZ() / 2);
-			return (new StructurePlaceSettings()).setRotation(p_162447_).setMirror(Mirror.NONE).setRotationPivot(blockpos).addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE.getName()));
-		}
-
-		private static StructurePlaceSettings makeSettings(Rotation p_163156_, BlockPos p_163158_) {
+		private static StructurePlaceSettings makeSettings(Rotation p_163156_) {
 			BlockIgnoreProcessor blockignoreprocessor = BlockIgnoreProcessor.STRUCTURE_BLOCK;
 
-			StructurePlaceSettings structureplacesettings = (new StructurePlaceSettings()).setRotation(p_163156_).setMirror(Mirror.NONE).setRotationPivot(p_163158_).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE.getName()));
+			StructurePlaceSettings structureplacesettings = (new StructurePlaceSettings()).setRotation(p_163156_).setMirror(Mirror.NONE).setRotationPivot(PIVOT).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE.getName()));
 
 
 			return structureplacesettings;
@@ -79,7 +78,7 @@ public class HunterHousePieces {
 			BlockPos blockpos1 = this.templatePosition.offset(this.placeSettings.getRotationPivot());
 			int i = worldIn.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
 			BlockPos blockpos2 = this.templatePosition;
-			this.templatePosition = this.templatePosition.offset(0, i - 90 - 1, 0);
+			this.templatePosition = this.templatePosition.offset(0, i - 90 - 2, 0);
 			boolean flag = super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
 			this.templatePosition = blockpos2;
 			return flag;
