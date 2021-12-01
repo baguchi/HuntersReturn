@@ -20,7 +20,7 @@ public class BiomeEventHandler {
 			ResourceKey<Biome> biome = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
 
 			if (event.getName().toString().contains("minecraft:giant_spruce_taiga") || event.getName().toString().contains("minecraft:giant_tree_taiga") || event.getName().toString().contains("minecraft:taiga") || event.getName().toString().contains("minecraft:dark_forest")) {
-				generation.addStructureStart(HunterStructureRegister.HUNTER_HOUSE_FEATURE);
+				biome.addFeature(HunterStructureRegister.HUNTER_HOUSE_FEATURE);
 			}
 		}
 	}

@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.ProtectedBlockProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
@@ -47,7 +47,7 @@ public class HunterHousePieces {
 			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_), makePosition(p_71245_, p_71246_, p_71248_));
 		}
 
-		public Piece(ServerLevel p_162441_, CompoundTag p_162442_) {
+		public Piece(StructureManager p_162441_, CompoundTag p_162442_) {
 			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, p_162442_, p_162441_, (p_162451_) -> {
 				return makeSettings(Rotation.valueOf(p_162442_.getString("Rot")));
 			});
@@ -66,12 +66,12 @@ public class HunterHousePieces {
 			return p_162454_.offset(structurePos.get(p_162453_)).below(p_162455_);
 		}
 
-		protected void addAdditionalSaveData(ServerLevel p_162444_, CompoundTag p_162445_) {
+		protected void addAdditionalSaveData(StructurePieceSerializationContext p_162444_, CompoundTag p_162445_) {
 			super.addAdditionalSaveData(p_162444_, p_162445_);
 			p_162445_.putString("Rot", this.placeSettings.getRotation().name());
 		}
 
-		public boolean postProcess(WorldGenLevel worldIn, StructureFeatureManager p_230383_2_, ChunkGenerator p_230383_3_, Random p_230383_4_, BoundingBox p_230383_5_, ChunkPos p_230383_6_, BlockPos p_230383_7_) {
+		public void postProcess(WorldGenLevel worldIn, StructureFeatureManager p_230383_2_, ChunkGenerator p_230383_3_, Random p_230383_4_, BoundingBox p_230383_5_, ChunkPos p_230383_6_, BlockPos p_230383_7_) {
 			//ResourceLocation var8 = new ResourceLocation(this.templateName);
 			//BlockPos blockPos = (BlockPos) structurePos.get(var8);
 
@@ -79,9 +79,8 @@ public class HunterHousePieces {
 			int i = worldIn.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
 			BlockPos blockpos2 = this.templatePosition;
 			this.templatePosition = this.templatePosition.offset(0, i - 90 - 2, 0);
-			boolean flag = super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
+			super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
 			this.templatePosition = blockpos2;
-			return flag;
 		}
 
 		protected void handleDataMarker(String function, BlockPos pos, ServerLevelAccessor worldIn, Random p_71263_, BoundingBox p_71264_) {

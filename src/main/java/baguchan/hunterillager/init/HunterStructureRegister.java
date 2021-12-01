@@ -26,7 +26,7 @@ public class HunterStructureRegister {
 
 	public static final StructurePieceType HUNTER_HOUSE_STRUCTURE_PIECE = setPieceId(HunterHousePieces.Piece::new, "HHSP");
 
-	static StructurePieceType setPieceId(StructurePieceType p_67164_, String p_67165_) {
+	static StructurePieceType setPieceId(StructurePieceType.StructureTemplateType p_67164_, String p_67165_) {
 		return Registry.register(Registry.STRUCTURE_PIECE, p_67165_.toLowerCase(Locale.ROOT), p_67164_);
 	}
 

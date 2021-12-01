@@ -35,7 +35,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
 
 import java.util.List;
 
@@ -63,10 +62,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, boomerang));
 		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE, boomerang));
 		this.totalHits = 0;
-	}
-
-	public BoomerangEntity(FMLPlayMessages.SpawnEntity spawnEntity, Level world) {
-		this(HunterEntityRegistry.BOOMERANG, world);
 	}
 
 	public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
