@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -37,7 +36,6 @@ public class HunterStructureRegister {
 
 	@SubscribeEvent
 	public static void registerfeature(RegistryEvent.Register<StructureFeature<?>> registry) {
-		NoiseGeneratorSettings.bootstrap().structureSettings().structureConfig().put(HUNTER_HOUSE, new StructureFeatureConfiguration(24, 6, 15437620));
 		StructureFeature.STRUCTURES_REGISTRY.put("hunterillager:hunter_house", HUNTER_HOUSE);
 
 		setupMapSpacingAndLand(HUNTER_HOUSE, new StructureFeatureConfiguration(24, 6, 15437620), false);
