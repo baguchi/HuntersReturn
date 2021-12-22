@@ -75,6 +75,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	public HunterIllagerEntity(EntityType<? extends HunterIllagerEntity> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
+		this.setCanPickUpLoot(true);
 	}
 
 	protected void registerGoals() {
@@ -288,6 +289,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, MobSpawnType p_37858_, @Nullable SpawnGroupData p_37859_, @Nullable CompoundTag p_37860_) {
 		SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_, p_37860_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
+		this.setCanPickUpLoot(true);
 		this.populateDefaultEquipmentSlots(p_37857_);
 		this.populateDefaultEquipmentEnchantments(p_37857_);
 		return ilivingentitydata;

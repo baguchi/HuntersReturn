@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class HunterEntityRegistry {
 	public static final EntityType<HunterIllagerEntity> HUNTERILLAGER = EntityType.Builder.of(HunterIllagerEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F).build(prefix("hunterillager"));
 
-	public static final EntityType<BoomerangEntity> BOOMERANG = EntityType.Builder.<BoomerangEntity>of(BoomerangEntity::new, MobCategory.MISC).setCustomClientFactory(BoomerangEntity::new).sized(0.3F, 0.3F).build(prefix("boomerang"));
+	public static final EntityType<BoomerangEntity> BOOMERANG = EntityType.Builder.<BoomerangEntity>of(BoomerangEntity::new, MobCategory.MISC).sized(0.3F, 0.3F).build(prefix("boomerang"));
 
 	@SubscribeEvent
 	public static void registerEntity(RegistryEvent.Register<EntityType<?>> event) {
