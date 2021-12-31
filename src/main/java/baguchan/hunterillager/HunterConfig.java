@@ -61,7 +61,7 @@ public class HunterConfig {
 							, Lists.newArrayList("minecraft:apple"
 									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minectaft:cooked_mutton", "minecraft:cooked_porkchop"
 									, "minecraft:beef", "minecraft:chicken", "minectaft:mutton", "minecraft:porkchop")
-							, s -> s instanceof String);
+							, (s) -> s instanceof String);
 		}
 	}
 

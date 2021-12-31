@@ -58,7 +58,7 @@ public class WorldLoadEvent {
 				// This space is add structure in biome
 				// You can do checks for other traits that the biome has.
 				Biome.BiomeCategory biomeCategory = biomeEntry.getValue().getBiomeCategory();
-				if (BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OVERWORLD) && BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.FOREST) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.MOUNTAIN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.HILLS) && biomeCategory != Biome.BiomeCategory.THEEND && biomeCategory != Biome.BiomeCategory.NETHER && biomeCategory != Biome.BiomeCategory.NONE) {
+				if (BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OVERWORLD) && BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.FOREST) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OCEAN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.RIVER) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.MOUNTAIN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.HILLS) && biomeCategory != Biome.BiomeCategory.THEEND && biomeCategory != Biome.BiomeCategory.NETHER && biomeCategory != Biome.BiomeCategory.NONE) {
 					associateBiomeToConfiguredStructure(structureToMultiMap, HunterStructureRegister.HUNTER_HOUSE_FEATURE, biomeEntry.getKey());
 				}
 			}
