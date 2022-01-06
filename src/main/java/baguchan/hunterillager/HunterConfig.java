@@ -11,6 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(modid = HunterIllager.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class HunterConfig {
@@ -55,13 +56,15 @@ public class HunterConfig {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodWhitelist;
 
 		public Common(ForgeConfigSpec.Builder builder) {
+			Predicate<Object> validator = o -> o instanceof String && ((String) o).contains(":");
+
 			foodWhitelist = builder
 					.translation(HunterIllager.MODID + ".config.foodWhitelist")
 					.define("HunterIllager's Food Whitelist"
 							, Lists.newArrayList("minecraft:apple"
 									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minectaft:cooked_mutton", "minecraft:cooked_porkchop"
 									, "minecraft:beef", "minecraft:chicken", "minectaft:mutton", "minecraft:porkchop")
-							, (s) -> s instanceof String);
+							, validator);
 		}
 	}
 
