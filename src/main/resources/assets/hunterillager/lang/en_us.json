@@ -6,7 +6,7 @@
   "entity.hunterillager.hunterillager": "HunterIllager",
   "subtitles.hunterillager.laugh": "Hunter Illager laughs",
   "death.attack.hunterillager.boomerang": "%1$s was hit by %2$s 's boomerang",
-  "hunterillager.config.generateHunterHouse": "generate HunterHouse In OverLevel",
-  "hunterillager.config.spawnHunterIllagerOnPatrol": "Spawn HunterIllager On Patrol",
+  "hunterillager.config.foodWhitelist": "HunterIllager Eat Food Whitelist",
+  "hunterillager.config.structureSpacing": "Hunter House Generate Spacing",
   "enchantment.hunterillager.bounce": "Bounce"
 }

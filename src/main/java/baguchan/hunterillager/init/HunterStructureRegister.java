@@ -1,5 +1,6 @@
 package baguchan.hunterillager.init;
 
+import baguchan.hunterillager.HunterConfig;
 import baguchan.hunterillager.HunterIllager;
 import baguchan.hunterillager.structure.HunterHousePieces;
 import baguchan.hunterillager.structure.HunterHouseStructure;
@@ -38,7 +39,7 @@ public class HunterStructureRegister {
 	public static void registerfeature(RegistryEvent.Register<StructureFeature<?>> registry) {
 		StructureFeature.STRUCTURES_REGISTRY.put("hunterillager:hunter_house", HUNTER_HOUSE);
 
-		setupMapSpacingAndLand(HUNTER_HOUSE, new StructureFeatureConfiguration(24, 6, 15437620), false);
+		setupMapSpacingAndLand(HUNTER_HOUSE, new StructureFeatureConfiguration(HunterConfig.COMMON.structureSpacing.get(), 6, 15437620), false);
 
 		registry.getRegistry().register(HUNTER_HOUSE.setRegistryName("hunter_house"));
 	}

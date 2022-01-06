@@ -6,7 +6,7 @@
   "entity.hunterillager.hunterillager": "邪悪なハンター",
   "hsubtitles.hunterillager.laugh": "邪悪なハンターが笑う",
   "death.attack.hunterillager.boomerang": "%1$sは、%2$s のブーメランにあたった",
-  "hunterillager.config.generateHunterHouse": "オーバーワールド内にHunterHouseを生成する",
-  "hunterillager.config.spawnHunterIllagerOnPatrol": "Patrolの中にHunterIllagerもスポーンさせる",
+  "hunterillager.config.foodWhitelist": "ハンターイリジャーが食べる食べ物のホワイトリスト",
+  "hunterillager.config.structureSpacing": "ハンターイリジャーの家の生成の間隔",
   "enchantment.hunterillager.bounce": "弾力"
 }

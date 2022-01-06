@@ -1,6 +1,5 @@
 package baguchan.hunterillager.entity;
 
-import baguchan.hunterillager.HunterConfig;
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
 import baguchan.hunterillager.entity.ai.DoSleepingGoal;
 import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
@@ -8,6 +7,7 @@ import baguchan.hunterillager.entity.ai.WakeUpGoal;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import baguchan.hunterillager.init.HunterItems;
 import baguchan.hunterillager.init.HunterSounds;
+import baguchan.hunterillager.utils.HunterConfigUtils;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -63,7 +63,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		return !p_213616_0_.isBaby() && p_213616_0_.getType() != EntityType.CAT && p_213616_0_.getType() != EntityType.PARROT && p_213616_0_.getType() != EntityType.WOLF && p_213616_0_.getType() != EntityType.PANDA;
 	};
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
-		return p_213616_0_.getItem().getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(p_213616_0_.getItem().getItem());
+		return p_213616_0_.getItem().getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(p_213616_0_.getItem().getItem());
 	};
 
 	private final SimpleContainer inventory = new SimpleContainer(5);
@@ -156,7 +156,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	private ItemStack findFood() {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 			ItemStack itemstack = this.inventory.getItem(i);
-			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(itemstack.getItem())) {
+			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(itemstack.getItem())) {
 				return itemstack.split(1);
 			}
 		}
@@ -281,7 +281,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	}
 
 	private boolean wantsFood(ItemStack p_213672_1_) {
-		return p_213672_1_.getItem().getFoodProperties() != null && HunterConfig.foodWhitelist.contains(p_213672_1_.getItem());
+		return p_213672_1_.getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(p_213672_1_.getItem());
 	}
 
 	@Nullable
