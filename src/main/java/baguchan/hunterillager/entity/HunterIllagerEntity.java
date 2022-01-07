@@ -59,8 +59,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class HunterIllagerEntity extends AbstractIllager implements RangedAttackMob {
-	public static final Predicate<LivingEntity> TARGET_FOOD_SELECTOR = (p_213616_0_) -> {
-		return !p_213616_0_.isBaby() && p_213616_0_.getType() != EntityType.CAT && p_213616_0_.getType() != EntityType.PARROT && p_213616_0_.getType() != EntityType.WOLF && p_213616_0_.getType() != EntityType.PANDA;
+	public static final Predicate<LivingEntity> TARGET_ENTITY_SELECTOR = (p_213616_0_) -> {
+		return !p_213616_0_.isBaby() && HunterConfigUtils.isWhitelistedEntity(p_213616_0_.getType());
 	};
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
 		return p_213616_0_.getItem().getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(p_213616_0_.getItem().getItem());
@@ -107,7 +107,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, TARGET_FOOD_SELECTOR) {
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, TARGET_ENTITY_SELECTOR) {
 			@Override
 			public boolean canUse() {
 				return cooldown <= 0 && super.canUse();

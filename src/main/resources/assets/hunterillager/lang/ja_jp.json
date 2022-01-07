@@ -4,9 +4,10 @@
   "item.hunterillager.boomerang": "ブーメラン",
   "item.hunterillager.quiver.desc": "矢筒と矢を持った状態で右クリックすると矢を収納することができます",
   "entity.hunterillager.hunterillager": "邪悪なハンター",
-  "hsubtitles.hunterillager.laugh": "邪悪なハンターが笑う",
+  "subtitles.hunterillager.laugh": "邪悪なハンターが笑う",
   "death.attack.hunterillager.boomerang": "%1$sは、%2$s のブーメランにあたった",
-  "hunterillager.config.foodWhitelist": "ハンターイリジャーが食べる食べ物のホワイトリスト",
   "hunterillager.config.structureSpacing": "ハンターイリジャーの家の生成の間隔",
+  "hunterillager.config.foodWhitelist": "ハンターイリジャーが食べる食べ物のホワイトリスト",
+  "hunterillager.config.attackableWhitelist": "ハンターイリジャーが狩るエンティティのホワイトリスト",
   "enchantment.hunterillager.bounce": "弾力"
 }

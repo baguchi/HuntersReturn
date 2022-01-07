@@ -34,6 +34,7 @@ public class HunterIllager {
 	}
 
 	private void setup(FMLCommonSetupEvent event) {
+		HunterConfig.init();
 	}
 
 	private void doClientStuff(FMLClientSetupEvent event) {

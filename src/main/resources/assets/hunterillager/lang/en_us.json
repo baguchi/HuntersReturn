@@ -6,7 +6,8 @@
   "entity.hunterillager.hunterillager": "HunterIllager",
   "subtitles.hunterillager.laugh": "Hunter Illager laughs",
   "death.attack.hunterillager.boomerang": "%1$s was hit by %2$s 's boomerang",
-  "hunterillager.config.foodWhitelist": "HunterIllager Eat Food Whitelist",
   "hunterillager.config.structureSpacing": "Hunter House Generate Spacing",
+  "hunterillager.config.foodWhitelist": "HunterIllager Eat Food Whitelist",
+  "hunterillager.config.attackableWhitelist": "HunterIllager Attackable Whitelist",
   "enchantment.hunterillager.bounce": "Bounce"
 }
