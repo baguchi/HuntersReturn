@@ -58,13 +58,13 @@ public class WorldLoadEvent {
 				// This space is add structure in biome
 				// You can do checks for other traits that the biome has.
 				Biome.BiomeCategory biomeCategory = biomeEntry.getValue().getBiomeCategory();
-				if (BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OVERWORLD) && BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.FOREST) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OCEAN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.RIVER) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.MOUNTAIN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.HILLS) && biomeCategory != Biome.BiomeCategory.THEEND && biomeCategory != Biome.BiomeCategory.NETHER && biomeCategory != Biome.BiomeCategory.NONE) {
+				if (BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OVERWORLD) && BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.FOREST) && BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.PLAINS) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.UNDERGROUND) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.OCEAN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.RIVER) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.MOUNTAIN) && !BiomeDictionary.hasType(biomeEntry.getKey(), BiomeDictionary.Type.HILLS) && biomeCategory != Biome.BiomeCategory.THEEND && biomeCategory != Biome.BiomeCategory.NETHER && biomeCategory != Biome.BiomeCategory.NONE) {
 					associateBiomeToConfiguredStructure(structureToMultiMap, HunterStructureRegister.HUNTER_HOUSE_FEATURE, biomeEntry.getKey());
 				}
 			}
 			// Requires AccessTransformer  (see resources/META-INF/accesstransformer.cfg)
 			ImmutableMap.Builder<StructureFeature<?>, ImmutableMultimap<ConfiguredStructureFeature<?, ?>, ResourceKey<Biome>>> tempStructureToMultiMap = ImmutableMap.builder();
-			worldStructureConfig.configuredStructures.entrySet().stream().filter(entry -> !structureToMultiMap.containsKey(entry.getKey())).forEach(tempStructureToMultiMap::put);
+			worldStructureConfig.configuredStructures.entrySet().stream().filter(entry -> structureToMultiMap.containsKey(entry.getKey())).forEach(tempStructureToMultiMap::put);
 
 			// Add our structures to the structure map/multimap and set the world to use this combined map/multimap.
 			structureToMultiMap.forEach((key, value) -> tempStructureToMultiMap.put(key, ImmutableMultimap.copyOf(value)));
