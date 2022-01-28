@@ -64,7 +64,7 @@ public class WorldLoadEvent {
 			}
 			// Requires AccessTransformer  (see resources/META-INF/accesstransformer.cfg)
 			ImmutableMap.Builder<StructureFeature<?>, ImmutableMultimap<ConfiguredStructureFeature<?, ?>, ResourceKey<Biome>>> tempStructureToMultiMap = ImmutableMap.builder();
-			worldStructureConfig.configuredStructures.entrySet().stream().filter(entry -> structureToMultiMap.containsKey(entry.getKey())).forEach(tempStructureToMultiMap::put);
+			worldStructureConfig.configuredStructures.entrySet().stream().filter(entry -> !structureToMultiMap.containsKey(entry.getKey())).forEach(tempStructureToMultiMap::put);
 
 			// Add our structures to the structure map/multimap and set the world to use this combined map/multimap.
 			structureToMultiMap.forEach((key, value) -> tempStructureToMultiMap.put(key, ImmutableMultimap.copyOf(value)));
