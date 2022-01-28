@@ -56,6 +56,6 @@ public class BoomerangItem extends Item {
 	}
 
 	public int getItemEnchantability(ItemStack stack) {
-		return 1;
+		return 2;
 	}
 }
