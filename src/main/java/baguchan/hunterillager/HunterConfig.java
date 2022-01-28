@@ -31,8 +31,8 @@ public class HunterConfig {
 
 			structureSpacing = builder
 					.translation(HunterIllager.MODID + ".config.structureSpacing")
-					.comment("Changed HunterHouse Generate Spacing. [24 ~ 36]")
-					.defineInRange("HunterHouse Generate Spacing", 26, 24, 36);
+					.comment("Changed HunterHouse Generate Spacing. [24 ~ 100]")
+					.defineInRange("HunterHouse Generate Spacing", 26, 24, 100);
 
 			foodWhitelist = builder
 					.translation(HunterIllager.MODID + ".config.foodWhitelist")
