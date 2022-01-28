@@ -81,6 +81,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			}
 	}
 
+	@Override
 	protected void onHitEntity(EntityHitResult result) {
 		super.onHitEntity(result);
 		boolean returnToOwner = false;
@@ -191,6 +192,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		checkInsideBlocks();
 	}
 
+	@Override
 	protected void onHit(HitResult result) {
 		super.onHit(result);
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
@@ -199,6 +201,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			drop(getX(), getY(), getZ());
 	}
 
+
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
@@ -206,12 +209,14 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		return false;
 	}
 
+	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
 		if (!this.level.isClientSide && this.flyTick >= 6 && entityIn == getOwner())
 			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
 	}
 
+	@Override
 	public void push(Entity entityIn) {
 		super.push(entityIn);
 		if (!this.level.isClientSide && this.flyTick >= 6 && entityIn == getOwner())
@@ -224,8 +229,10 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		discard();
 	}
 
+	@Override
 	public void tick() {
 		super.tick();
+
 		Vec3 vec3 = this.getDeltaMovement();
 		if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
 			double d0 = vec3.horizontalDistance();
@@ -236,34 +243,37 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		}
 
 		this.flyTick++;
-		Vec3 vec3d = getDeltaMovement();
 		Vec3 vec3d1 = this.position();
 		Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 		BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
 		onHitFluid(fluidHitResult);
 
-		double d5 = vec3d.x;
-		double d6 = vec3d.y;
-		double d1 = vec3d.z;
+		double moveX = vec3.x;
+		double moveY = vec3.y;
+		double moveZ = vec3.z;
 
-		double d4 = vec3d.horizontalDistance();
-		this.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
+		double d4 = vec3.horizontalDistance();
+		this.setYRot((float) (Mth.atan2(moveX, moveZ) * (double) (180F / (float) Math.PI)));
 
 
-		this.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
+		this.setXRot((float) (Mth.atan2(moveY, d4) * (double) (180F / (float) Math.PI)));
 		this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
 		this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		Entity entity = getOwner();
-		if (loyaltyLevel > 0 && !isReturning() && this.flyTick >= 60 &&
-				entity != null) {
-			this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-			setReturning(true);
+		if (loyaltyLevel > 0 && !isReturning()) {
+			if (this.flyTick >= 80 && entity != null) {
+				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+				setReturning(true);
+			}
+			if (this.flyTick < 80) {
+				//recover movement if loyalty enchant has
+				this.setDeltaMovement(vec3.scale(1.01F));
+			}
 		}
 		if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
 			if (!this.level.isClientSide)
 				drop(getX(), getY(), getZ());
-			discard();
 		} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
 			this.noPhysics = true;
 			Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
@@ -276,8 +286,17 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		collideWithNearbyEntities();
 	}
 
+	@Override
 	protected float getGravity() {
-		return getLoyaltyLevel() > 0 && !this.isInWater() ? 0.0F : 0.03F;
+		if (getLoyaltyLevel() > 0 && !this.isReturning()) {
+			if (this.isInWater()) {
+				return 0.03F;
+			}
+
+			return 0.0F;
+		}
+
+		return getLoyaltyLevel() > 0 && this.isReturning() ? 0.0F : 0.03F;
 	}
 
 	@Override
