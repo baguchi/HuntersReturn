@@ -1,0 +1,13 @@
+{
+  "item.hunterillager.spawnegg_hunterillager": "Fremkallingsegg for jeger",
+  "item.hunterillager.quivers": "Kogger",
+  "item.hunterillager.boomerang": "Bumerang",
+  "item.hunterillager.quiver.desc": "Du kan lagre pilen ved å høyreklikke menst du holder koggeret og pilen",
+  "entity.hunterillager.hunterillager": "Jeger",
+  "subtitles.hunterillager.laugh": "Jeger ler",
+  "death.attack.hunterillager.boomerang": "%1$s ble truffet av bumerangen til %2$s",
+  "hunterillager.config.structureSpacing": "Jegerhus genereringsmellomrom",
+  "hunterillager.config.foodWhitelist": "Jeger hviteliste for mat",
+  "hunterillager.config.attackableWhitelist": "Jeger hviteliste for angrep",
+  "enchantment.hunterillager.bounce": "Sprett"
+}
