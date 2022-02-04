@@ -7,6 +7,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -34,7 +35,7 @@ public class HunterHouseStructure extends StructureFeature<NoneFeatureConfigurat
 		worldgenrandom.setSeed((long) (i ^ j << 4) ^ p_197134_.seed());
 		worldgenrandom.nextInt();
 
-		return !isNearVillage(p_197134_.chunkGenerator(), p_197134_.seed(), p_197134_.chunkPos());
+		return !isNearVillage(p_197134_.chunkGenerator(), p_197134_.seed(), p_197134_.chunkPos()) && p_197134_.validBiomeOnTop(Heightmap.Types.OCEAN_FLOOR_WG);
 	}
 
 	private static boolean isNearVillage(ChunkGenerator p_191049_, long p_191050_, ChunkPos p_191051_) {
