@@ -5,7 +5,10 @@ import baguchan.hunterillager.entity.HunterIllagerEntity;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +25,7 @@ public class HunterEntityRegistry {
 		event.getRegistry().register(HUNTERILLAGER.setRegistryName("hunterillager"));
 		event.getRegistry().register(BOOMERANG.setRegistryName("boomerang"));
 		Raid.RaiderType.create("hunterillager", HUNTERILLAGER, new int[]{0, 0, 1, 2, 2, 1, 2, 3});
+		SpawnPlacements.register(HUNTERILLAGER, SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 	}
 
 	@SubscribeEvent
