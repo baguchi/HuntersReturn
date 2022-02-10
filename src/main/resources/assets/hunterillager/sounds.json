@@ -4,6 +4,6 @@
     "sounds": [
       "hunterillager:mob/hunterillager/hunter_laugh"
     ],
-    "subtitle": "hunterillager:subtitles.hunterillager.laugh"
+    "subtitle": "subtitles.hunterillager.laugh"
   }
 }
