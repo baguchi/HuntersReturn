@@ -344,19 +344,19 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 	@Override
 	public SoundEvent getCelebrateSound() {
-		return HunterSounds.HUNTER_ILLAGER_LAUGH;
+		return HunterSounds.HUNTER_ILLAGER_CHEER;
 	}
 
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.VINDICATOR_AMBIENT;
+		return HunterSounds.HUNTER_ILLAGER_IDLE;
 	}
 
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.VINDICATOR_DEATH;
+		return HunterSounds.HUNTER_ILLAGER_DEATH;
 	}
 
 	protected SoundEvent getHurtSound(DamageSource p_184601_1_) {
-		return SoundEvents.VINDICATOR_HURT;
+		return HunterSounds.HUNTER_ILLAGER_HURT;
 	}
 
 

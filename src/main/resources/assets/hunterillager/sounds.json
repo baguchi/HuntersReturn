@@ -1,13 +1,37 @@
 {
-  "mob.hunterillager.laugh": {
-    "category": "hostile",
+  "mob.hunterillager.idle": {
     "sounds": [
-      "hunterillager:mob/hunterillager/hunter_laugh"
+      "hunterillager:mob/hunterillager/hunter_idle1",
+      "hunterillager:mob/hunterillager/hunter_idle2",
+      "hunterillager:mob/hunterillager/hunter_idle3",
+      "hunterillager:mob/hunterillager/hunter_idle4",
+      "hunterillager:mob/hunterillager/hunter_idle5"
     ],
-    "subtitle": "subtitles.hunterillager.laugh"
+    "subtitle": "subtitles.hunterillager.idle"
+  },
+  "mob.hunterillager.hurt": {
+    "sounds": [
+      "hunterillager:mob/hunterillager/hunter_hurt1",
+      "hunterillager:mob/hunterillager/hunter_hurt2",
+      "hunterillager:mob/hunterillager/hunter_hurt3"
+    ],
+    "subtitle": "subtitles.hunterillager.hurt"
+  },
+  "mob.hunterillager.death": {
+    "sounds": [
+      "hunterillager:mob/hunterillager/hunter_death1",
+      "hunterillager:mob/hunterillager/hunter_death2"
+    ],
+    "subtitle": "subtitles.hunterillager.death"
+  },
+  "mob.hunterillager.cheer": {
+    "sounds": [
+      "hunterillager:mob/hunterillager/hunter_cheer1",
+      "hunterillager:mob/hunterillager/hunter_cheer2"
+    ],
+    "subtitle": "subtitles.hunterillager.cheer"
   },
   "mob.hunterillager.laugh": {
-    "category": "hostile",
     "sounds": [
       "hunterillager:mob/hunterillager/hunter_laugh"
     ],
