@@ -17,22 +17,12 @@ public class HunterConfig {
 		COMMON = specPair.getLeft();
 	}
 
-	public static void init() {
-	}
-
 	public static class Common {
-		public final ForgeConfigSpec.IntValue structureSpacing;
-
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodWhitelist;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> attackableWhitelist;
 
 		public Common(ForgeConfigSpec.Builder builder) {
 			Predicate<Object> validator = o -> o instanceof String;
-
-			structureSpacing = builder
-					.translation(HunterIllager.MODID + ".config.structureSpacing")
-					.comment("Changed HunterHouse Generate Spacing. [24 ~ 100]")
-					.defineInRange("HunterHouse Generate Spacing", 26, 24, 100);
 
 			foodWhitelist = builder
 					.translation(HunterIllager.MODID + ".config.foodWhitelist")

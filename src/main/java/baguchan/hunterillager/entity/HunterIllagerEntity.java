@@ -207,7 +207,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	@Override
 	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
 		ItemStack itemstack;
-		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG);
+		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
 
 		Raid raid = this.getCurrentRaid();
@@ -271,7 +271,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 				} else {
 					itemstack.setCount(itemstack1.getCount());
 				}
-			} else if (item == HunterItems.BOOMERANG && this.getOffhandItem().isEmpty()) {
+			} else if (item == HunterItems.BOOMERANG.get() && this.getOffhandItem().isEmpty()) {
 				this.onItemPickup(p_175445_1_);
 				this.take(p_175445_1_, itemstack.getCount());
 				this.setItemInHand(InteractionHand.OFF_HAND, itemstack);
@@ -320,7 +320,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 			} else {
 				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 				if (this.random.nextBoolean()) {
-					ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG);
+					ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
 					Map<Enchantment, Integer> map3 = Maps.newHashMap();
 					map3.put(Enchantments.LOYALTY, 1);
@@ -363,7 +363,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	@OnlyIn(Dist.CLIENT)
 	public AbstractIllager.IllagerArmPose getArmPose() {
 		if (this.isAggressive()) {
-			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG) ? AbstractIllager.IllagerArmPose.BOW_AND_ARROW : AbstractIllager.IllagerArmPose.ATTACKING;
+			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG.get()) ? AbstractIllager.IllagerArmPose.BOW_AND_ARROW : AbstractIllager.IllagerArmPose.ATTACKING;
 		} else {
 			return this.isCelebrating() ? AbstractIllager.IllagerArmPose.CELEBRATING : AbstractIllager.IllagerArmPose.CROSSED;
 		}
@@ -455,7 +455,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		}
 
 		private boolean isTooFarAway(BlockPos p_220846_1_, double p_220846_2_) {
-			return !p_220846_1_.closerThan(this.hunter.position(), p_220846_2_);
+			return !p_220846_1_.closerThan(this.hunter.blockPosition(), p_220846_2_);
 		}
 	}
 
@@ -482,7 +482,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		}
 
 		public void tick() {
-			if (this.mob.getNavigation().getTargetPos().closerThan(this.mob.position(), 1.414D)) {
+			if (this.mob.getNavigation().getTargetPos().closerThan(this.mob.blockPosition(), 1.414D)) {
 				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), HunterIllagerEntity.ALLOWED_ITEMS);
 				if (!list.isEmpty()) {
 					this.mob.pickUpItem(list.get(0));

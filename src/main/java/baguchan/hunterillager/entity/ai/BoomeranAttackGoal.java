@@ -68,7 +68,7 @@ public class BoomeranAttackGoal extends Goal {
 					}
 				}
 			} else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-				this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, HunterItems.BOOMERANG));
+				this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, HunterItems.BOOMERANG.get()));
 			}
 
 		}

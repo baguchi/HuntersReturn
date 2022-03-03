@@ -65,7 +65,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	}
 
 	public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
-		this(HunterEntityRegistry.BOOMERANG, world, entity, boomerang);
+		this(HunterEntityRegistry.BOOMERANG.get(), world, entity, boomerang);
 	}
 
 

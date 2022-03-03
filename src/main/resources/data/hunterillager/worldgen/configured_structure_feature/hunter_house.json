@@ -1,0 +1,8 @@
+{
+  "type": "hunterillager:hunter_house",
+  "config": {
+  },
+  "biomes": "#hunterillager:has_structure/hunter_house",
+  "adapt_noise": false,
+  "spawn_overrides": {}
+}

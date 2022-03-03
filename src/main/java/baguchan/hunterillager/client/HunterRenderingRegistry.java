@@ -17,8 +17,8 @@ import net.minecraftforge.fml.common.Mod;
 public class HunterRenderingRegistry {
 	@SubscribeEvent
 	public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(HunterEntityRegistry.HUNTERILLAGER, HunterIllagerRender::new);
-		event.registerEntityRenderer(HunterEntityRegistry.BOOMERANG, BoomerangRender::new);
+		event.registerEntityRenderer(HunterEntityRegistry.HUNTERILLAGER.get(), HunterIllagerRender::new);
+		event.registerEntityRenderer(HunterEntityRegistry.BOOMERANG.get(), BoomerangRender::new);
 	}
 
 	@SubscribeEvent

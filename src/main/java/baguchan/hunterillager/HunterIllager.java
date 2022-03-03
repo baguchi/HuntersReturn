@@ -1,6 +1,14 @@
 package baguchan.hunterillager;
 
+import baguchan.hunterillager.init.HunterEntityRegistry;
+import baguchan.hunterillager.init.HunterItems;
+import baguchan.hunterillager.init.HunterStructureRegister;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -28,15 +36,22 @@ public class HunterIllager {
 		// Register the doClientStuff method for modloading
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
+		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		HunterEntityRegistry.ENTITIES_REGISTRY.register(bus);
+		HunterItems.ITEM_REGISTRY.register(bus);
+
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void setup(FMLCommonSetupEvent event) {
-		HunterConfig.init();
+		event.enqueueWork(() -> {
+			Raid.RaiderType.create("hunterillager", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 0, 1, 2, 2, 1, 2, 3});
+			SpawnPlacements.register(HunterEntityRegistry.HUNTERILLAGER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
+			HunterStructureRegister.init();
+		});
 	}
-
 	private void doClientStuff(FMLClientSetupEvent event) {
 	}
 

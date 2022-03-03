@@ -5,5 +5,12 @@
       "hunterillager:mob/hunterillager/hunter_laugh"
     ],
     "subtitle": "subtitles.hunterillager.laugh"
+  },
+  "mob.hunterillager.laugh": {
+    "category": "hostile",
+    "sounds": [
+      "hunterillager:mob/hunterillager/hunter_laugh"
+    ],
+    "subtitle": "subtitles.hunterillager.laugh"
   }
 }
