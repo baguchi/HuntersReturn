@@ -1,0 +1,7 @@
+{
+  "type": "hunterillager:hunter_house",
+  "biomes": "#hunterillager:has_structure/hunter_house",
+  "step": "surface_structures",
+  "spawn_overrides": {
+  }
+}

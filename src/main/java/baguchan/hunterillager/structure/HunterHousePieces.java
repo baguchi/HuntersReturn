@@ -8,11 +8,11 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
@@ -24,12 +24,11 @@ import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.ProtectedBlockProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 import java.util.Map;
-import java.util.Random;
 
 public class HunterHousePieces {
 	private static final ResourceLocation hunterbase_Template = new ResourceLocation(HunterIllager.MODID, "illager_woodhut");
@@ -38,52 +37,35 @@ public class HunterHousePieces {
 
 	static final BlockPos PIVOT = new BlockPos(9, 0, 9);
 
-	public static void addStructure(StructureManager p_162435_, BlockPos p_162436_, Rotation p_162437_, StructurePieceAccessor p_162438_, Random p_162439_) {
-		p_162438_.addPiece(new Piece(p_162435_, hunterbase_Template, p_162436_, p_162437_, 0));
+	public static void addPieces(StructureTemplateManager p_227549_, BlockPos p_227550_, Rotation p_227551_, StructurePieceAccessor p_227552_, RandomSource p_227553_) {
+		p_227552_.addPiece(new Piece(p_227549_, hunterbase_Template, p_227550_, p_227551_, 0));
 	}
 
 	public static class Piece extends TemplateStructurePiece {
-		public Piece(StructureManager p_71244_, ResourceLocation p_71245_, BlockPos p_71246_, Rotation p_71247_, int p_71248_) {
-			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_71244_, p_71245_, p_71245_.toString(), makeSettings(p_71247_), makePosition(p_71245_, p_71246_, p_71248_));
+		public Piece(StructureTemplateManager p_227555_, ResourceLocation p_227556_, BlockPos p_227557_, Rotation p_227558_, int p_227559_) {
+			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, 0, p_227555_, p_227556_, p_227556_.toString(), makeSettings(p_227558_, p_227556_), makePosition(p_227556_, p_227557_, p_227559_));
 		}
 
-		public Piece(StructureManager p_162441_, CompoundTag p_162442_) {
-			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, p_162442_, p_162441_, (p_162451_) -> {
-				return makeSettings(Rotation.valueOf(p_162442_.getString("Rot")));
+		public Piece(StructureTemplateManager p_227561_, CompoundTag p_227562_) {
+			super(HunterStructureRegister.HUNTER_HOUSE_STRUCTURE_PIECE, p_227562_, p_227561_, (p_227589_) -> {
+				return makeSettings(Rotation.valueOf(p_227562_.getString("Rot")), p_227589_);
 			});
 		}
 
-		private static StructurePlaceSettings makeSettings(Rotation p_163156_) {
-			BlockIgnoreProcessor blockignoreprocessor = BlockIgnoreProcessor.STRUCTURE_BLOCK;
-
-			StructurePlaceSettings structureplacesettings = (new StructurePlaceSettings()).setRotation(p_163156_).setMirror(Mirror.NONE).setRotationPivot(PIVOT).addProcessor(blockignoreprocessor).addProcessor(new ProtectedBlockProcessor(BlockTags.FEATURES_CANNOT_REPLACE));
-
-
-			return structureplacesettings;
+		private static StructurePlaceSettings makeSettings(Rotation p_227576_, ResourceLocation p_227577_) {
+			return (new StructurePlaceSettings()).setRotation(p_227576_).setMirror(Mirror.NONE).setRotationPivot(HunterHousePieces.PIVOT).addProcessor(BlockIgnoreProcessor.STRUCTURE_BLOCK);
 		}
 
-		private static BlockPos makePosition(ResourceLocation p_162453_, BlockPos p_162454_, int p_162455_) {
-			return p_162454_.offset(structurePos.get(p_162453_)).below(p_162455_);
+		private static BlockPos makePosition(ResourceLocation p_227564_, BlockPos p_227565_, int p_227566_) {
+			return p_227565_.offset(HunterHousePieces.structurePos.get(p_227564_)).below(p_227566_);
 		}
 
-		protected void addAdditionalSaveData(StructurePieceSerializationContext p_162444_, CompoundTag p_162445_) {
-			super.addAdditionalSaveData(p_162444_, p_162445_);
-			p_162445_.putString("Rot", this.placeSettings.getRotation().name());
+		protected void addAdditionalSaveData(StructurePieceSerializationContext p_227579_, CompoundTag p_227580_) {
+			super.addAdditionalSaveData(p_227579_, p_227580_);
+			p_227580_.putString("Rot", this.placeSettings.getRotation().name());
 		}
 
-		public void postProcess(WorldGenLevel worldIn, StructureFeatureManager p_230383_2_, ChunkGenerator p_230383_3_, Random p_230383_4_, BoundingBox p_230383_5_, ChunkPos p_230383_6_, BlockPos p_230383_7_) {
-			//ResourceLocation var8 = new ResourceLocation(this.templateName);
-			//BlockPos blockPos = (BlockPos) structurePos.get(var8);
-
-			BlockPos blockpos1 = this.templatePosition.offset(this.placeSettings.getRotationPivot());
-			int i = worldIn.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
-			BlockPos blockpos2 = this.templatePosition;
-			this.templatePosition = this.templatePosition.offset(0, i - 90 - 2, 0);
-			super.postProcess(worldIn, p_230383_2_, p_230383_3_, p_230383_4_, p_230383_5_, p_230383_6_, p_230383_7_);
-			this.templatePosition = blockpos2;
-		}
-
-		protected void handleDataMarker(String function, BlockPos pos, ServerLevelAccessor worldIn, Random p_71263_, BoundingBox p_71264_) {
+		protected void handleDataMarker(String function, BlockPos pos, ServerLevelAccessor worldIn, RandomSource p_227585_, BoundingBox p_227586_) {
 			if ("hunter".equals(function)) {
 				worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
 				HunterIllagerEntity hunterIllager = HunterEntityRegistry.HUNTERILLAGER.get().create(worldIn.getLevel());
@@ -93,6 +75,19 @@ public class HunterHousePieces {
 				hunterIllager.finalizeSpawn(worldIn, worldIn.getCurrentDifficultyAt(hunterIllager.blockPosition()), MobSpawnType.STRUCTURE, null, null);
 				worldIn.addFreshEntity(hunterIllager);
 			}
+		}
+
+		public void postProcess(WorldGenLevel p_227568_, StructureManager p_227569_, ChunkGenerator p_227570_, RandomSource p_227571_, BoundingBox p_227572_, ChunkPos p_227573_, BlockPos p_227574_) {
+			ResourceLocation resourcelocation = new ResourceLocation(this.templateName);
+			StructurePlaceSettings structureplacesettings = makeSettings(this.placeSettings.getRotation(), resourcelocation);
+			BlockPos blockpos = HunterHousePieces.structurePos.get(resourcelocation);
+			BlockPos blockpos1 = this.templatePosition.offset(StructureTemplate.calculateRelativePosition(structureplacesettings, new BlockPos(3 - blockpos.getX(), 0, -blockpos.getZ())));
+			int i = p_227568_.getHeight(Heightmap.Types.WORLD_SURFACE_WG, blockpos1.getX(), blockpos1.getZ());
+			BlockPos blockpos2 = this.templatePosition;
+			this.templatePosition = this.templatePosition.offset(0, i - 90 - 1, 0);
+			super.postProcess(p_227568_, p_227569_, p_227570_, p_227571_, p_227572_, p_227573_, p_227574_);
+
+			this.templatePosition = blockpos2;
 		}
 	}
 }

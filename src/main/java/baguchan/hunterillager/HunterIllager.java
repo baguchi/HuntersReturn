@@ -1,8 +1,6 @@
 package baguchan.hunterillager;
 
-import baguchan.hunterillager.init.HunterEntityRegistry;
-import baguchan.hunterillager.init.HunterItems;
-import baguchan.hunterillager.init.HunterStructureRegister;
+import baguchan.hunterillager.init.*;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.raid.Raid;
@@ -39,6 +37,9 @@ public class HunterIllager {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(bus);
 		HunterItems.ITEM_REGISTRY.register(bus);
+		HunterSounds.SOUND_EVENTS.register(bus);
+		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(bus);
+		HunterStructureRegister.DEFERRED_REGISTRY_STRUCTURE.register(bus);
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		// Register ourselves for server and other game events we are interested in

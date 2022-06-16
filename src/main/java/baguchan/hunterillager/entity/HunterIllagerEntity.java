@@ -102,7 +102,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 8));
 		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.2D));
 		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
-		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
+		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers(AbstractIllager.class));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
@@ -291,7 +291,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 		this.populateDefaultEquipmentSlots(p_37857_);
-		this.populateDefaultEquipmentEnchantments(p_37857_);
+		this.populateDefaultEquipmentEnchantments(this.random, p_37857_);
 		return ilivingentitydata;
 	}
 
@@ -344,19 +344,19 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 	@Override
 	public SoundEvent getCelebrateSound() {
-		return HunterSounds.HUNTER_ILLAGER_CHEER;
+		return HunterSounds.HUNTER_ILLAGER_CHEER.get();
 	}
 
 	protected SoundEvent getAmbientSound() {
-		return HunterSounds.HUNTER_ILLAGER_IDLE;
+		return HunterSounds.HUNTER_ILLAGER_IDLE.get();
 	}
 
 	protected SoundEvent getDeathSound() {
-		return HunterSounds.HUNTER_ILLAGER_DEATH;
+		return HunterSounds.HUNTER_ILLAGER_DEATH.get();
 	}
 
 	protected SoundEvent getHurtSound(DamageSource p_184601_1_) {
-		return HunterSounds.HUNTER_ILLAGER_HURT;
+		return HunterSounds.HUNTER_ILLAGER_HURT.get();
 	}
 
 
@@ -370,10 +370,10 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	}
 
 	@Override
-	public void killed(ServerLevel p_241847_1_, LivingEntity p_241847_2_) {
-		super.killed(p_241847_1_, p_241847_2_);
-		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH, this.getSoundVolume(), this.getVoicePitch());
+	public boolean wasKilled(ServerLevel p_216988_, LivingEntity p_216989_) {
+		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH.get(), this.getSoundVolume(), this.getVoicePitch());
 		this.cooldown = 300;
+		return super.wasKilled(p_216988_, p_216989_);
 	}
 
 	public void setHomeTarget(@Nullable BlockPos p_213726_1_) {
