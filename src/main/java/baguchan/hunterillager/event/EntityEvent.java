@@ -6,7 +6,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.WanderingTrader;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 public class EntityEvent {
 
 	@SubscribeEvent()
-	public static void addSpawn(EntityJoinWorldEvent event) {
+	public static void addSpawn(EntityJoinLevelEvent event) {
 		if (event.getEntity() instanceof Villager) {
 			Villager abstractVillager = (Villager) event.getEntity();
 

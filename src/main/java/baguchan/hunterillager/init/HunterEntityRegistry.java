@@ -14,7 +14,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 @EventBusSubscriber(modid = HunterIllager.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class HunterEntityRegistry {
-	public static final DeferredRegister<EntityType<?>> ENTITIES_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, HunterIllager.MODID);
+	public static final DeferredRegister<EntityType<?>> ENTITIES_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, HunterIllager.MODID);
 
 
 	public static final RegistryObject<EntityType<HunterIllagerEntity>> HUNTERILLAGER = ENTITIES_REGISTRY.register("hunterillager", () -> EntityType.Builder.of(HunterIllagerEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(8).build(prefix("hunterillager")));

@@ -11,6 +11,6 @@ public class HunterConfigUtils {
 	}
 
 	public static boolean isWhitelistedEntity(EntityType<?> entityType) {
-		return HunterConfig.COMMON.attackableWhitelist.get().contains(ForgeRegistries.ENTITIES.getKey(entityType).toString());
+		return HunterConfig.COMMON.attackableWhitelist.get().contains(ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString());
 	}
 }
