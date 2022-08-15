@@ -10,8 +10,8 @@
   "subtitles.hunterillager.cheer": "邪悪なハンターが喜ぶ",
   "subtitles.hunterillager.laugh": "邪悪なハンターが笑う",
   "death.attack.hunterillager.boomerang": "%1$sは、%2$s のブーメランにあたった",
-  "hunterillager.config.structureSpacing": "ハンターイリジャーの家の生成の間隔",
-  "hunterillager.config.foodWhitelist": "ハンターイリジャーが食べる食べ物のホワイトリスト",
-  "hunterillager.config.attackableWhitelist": "ハンターイリジャーが狩るエンティティのホワイトリスト",
+  "hunterillager.config.structureSpacing": "邪悪なハンターの家の生成の間隔",
+  "hunterillager.config.foodWhitelist": "邪悪なハンターが食べる食べ物のホワイトリスト",
+  "hunterillager.config.attackableWhitelist": "邪悪なハンターが狩るエンティティのホワイトリスト",
   "enchantment.hunterillager.bounce": "弾力"
 }
