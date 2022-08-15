@@ -1,5 +1,5 @@
 {
-  "item.hunterillager.spawnegg_hunterillager": "HunterSpawn Egg",
+  "item.hunterillager.spawnegg_hunterillager": "Hunter Spawn Egg",
   "item.hunterillager.quivers": "Quivers",
   "item.hunterillager.boomerang": "Boomerang",
   "item.hunterillager.quiver.desc": "You can store the arrow by right-clicking while holding the quiver and the arrow.",
@@ -11,7 +11,7 @@
   "subtitles.hunterillager.laugh": "Hunter laughs",
   "death.attack.hunterillager.boomerang": "%1$s was hit by %2$s 's boomerang",
   "hunterillager.config.structureSpacing": "Hunter House Generate Spacing",
-  "hunterillager.config.foodWhitelist": "HunterIllager Eat Food Whitelist",
-  "hunterillager.config.attackableWhitelist": "HunterIllager Attackable Whitelist",
+  "hunterillager.config.foodWhitelist": "Hunter Eat Food Whitelist",
+  "hunterillager.config.attackableWhitelist": "Hunter Attackable Whitelist",
   "enchantment.hunterillager.bounce": "Bounce"
 }
