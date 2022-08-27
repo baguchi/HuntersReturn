@@ -1,0 +1,15 @@
+{
+  "name": "hunterillager:hunter_house/hunter_illager_house",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 3,
+      "element": {
+        "location": "hunterillager:hunter_house/illager_woodhut",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

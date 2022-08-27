@@ -1,6 +1,9 @@
 package baguchan.hunterillager;
 
-import baguchan.hunterillager.init.*;
+import baguchan.hunterillager.init.HunterEnchantments;
+import baguchan.hunterillager.init.HunterEntityRegistry;
+import baguchan.hunterillager.init.HunterItems;
+import baguchan.hunterillager.init.HunterSounds;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.raid.Raid;
@@ -39,8 +42,6 @@ public class HunterIllager {
 		HunterItems.ITEM_REGISTRY.register(bus);
 		HunterSounds.SOUND_EVENTS.register(bus);
 		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(bus);
-		HunterStructureRegister.DEFERRED_REGISTRY_STRUCTURE.register(bus);
-
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
@@ -50,7 +51,6 @@ public class HunterIllager {
 		event.enqueueWork(() -> {
 			Raid.RaiderType.create("hunterillager", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 0, 1, 2, 2, 1, 2, 3});
 			SpawnPlacements.register(HunterEntityRegistry.HUNTERILLAGER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
-			HunterStructureRegister.init();
 		});
 	}
 	private void doClientStuff(FMLClientSetupEvent event) {

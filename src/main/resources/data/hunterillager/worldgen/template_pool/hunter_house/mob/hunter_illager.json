@@ -1,0 +1,15 @@
+{
+  "name": "hunterillager:hunter_house/mob/hunter_illager",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 3,
+      "element": {
+        "location": "hunterillager:hunter_house/mob/hunter_illager",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}
