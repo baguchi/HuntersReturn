@@ -55,7 +55,8 @@ public class BoomerangItem extends Item {
 		return UseAnim.BOW;
 	}
 
-	public int getItemEnchantability(ItemStack stack) {
+	@Override
+	public int getEnchantmentValue(ItemStack stack) {
 		return 2;
 	}
 }
