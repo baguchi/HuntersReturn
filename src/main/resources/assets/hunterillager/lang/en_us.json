@@ -13,5 +13,7 @@
   "hunterillager.config.structureSpacing": "Hunter House Generate Spacing",
   "hunterillager.config.foodWhitelist": "Hunter Eat Food Whitelist",
   "hunterillager.config.attackableWhitelist": "Hunter Attackable Whitelist",
-  "enchantment.hunterillager.bounce": "Bounce"
+  "enchantment.hunterillager.bounce": "Bounce",
+  "hunterillager.config.spacing": "Spacing",
+  "hunterillager.config.separation": "Separation"
 }

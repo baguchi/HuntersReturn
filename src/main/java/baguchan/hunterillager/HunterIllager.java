@@ -4,6 +4,9 @@ import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
 import baguchan.hunterillager.init.HunterItems;
 import baguchan.hunterillager.init.HunterSounds;
+import baguchan.hunterillager.init.ModStructureSets;
+import baguchan.hunterillager.init.ModStructures;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.raid.Raid;
@@ -49,10 +52,13 @@ public class HunterIllager {
 
 	private void setup(FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
+			ModStructures.register();
+			ModStructureSets.register();
 			Raid.RaiderType.create("hunterillager", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 0, 1, 2, 2, 1, 2, 3});
 			SpawnPlacements.register(HunterEntityRegistry.HUNTERILLAGER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 		});
 	}
+
 	private void doClientStuff(FMLClientSetupEvent event) {
 	}
 
@@ -61,4 +67,9 @@ public class HunterIllager {
 
 	private void processIMC(final InterModProcessEvent event) {
 	}
+
+	public static ResourceLocation locate(String path) {
+		return new ResourceLocation(HunterIllager.MODID, path);
+	}
+
 }

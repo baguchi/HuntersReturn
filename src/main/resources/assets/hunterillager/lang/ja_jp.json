@@ -13,5 +13,7 @@
   "hunterillager.config.structureSpacing": "邪悪なハンターの家の生成の間隔",
   "hunterillager.config.foodWhitelist": "邪悪なハンターが食べる食べ物のホワイトリスト",
   "hunterillager.config.attackableWhitelist": "邪悪なハンターが狩るエンティティのホワイトリスト",
-  "enchantment.hunterillager.bounce": "弾力"
+  "enchantment.hunterillager.bounce": "弾力",
+  "hunterillager.config.spacing": "Spacing",
+  "hunterillager.config.separation": "Separation"
 }
