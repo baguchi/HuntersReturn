@@ -1,5 +1,6 @@
 package baguchan.hunterillager.entity.projectile;
 
+import baguchan.hunterillager.entity.Hunter;
 import baguchan.hunterillager.init.HunterDamageSource;
 import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
@@ -17,7 +18,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -35,8 +35,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
 
 public class BoomerangEntity extends ThrowableItemProjectile {
 	private static final EntityDataAccessor<Byte> LOYALTY_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
@@ -182,7 +180,9 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			} else if (face == Direction.DOWN) {
 				motionY = -motionY;
 			}
-			setDeltaMovement(motionX, motionY, motionZ);
+			if (!this.level.isClientSide) {
+				setDeltaMovement(motionX, motionY, motionZ);
+			}
 			if (loyaltyLevel > 0 && !isReturning() && this.totalHits >= getBounceLevel() &&
 					entity != null) {
 				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -197,36 +197,36 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		super.onHit(result);
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		if (loyaltyLevel < 1 && this.totalHits >= getBounceLevel() &&
-				!this.level.isClientSide())
+				!this.level.isClientSide()) {
 			drop(getX(), getY(), getZ());
+		}
 	}
 
+
+	public int getFlyTick() {
+		return flyTick;
+	}
 
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
-			return (!(entity instanceof ServerPlayer) || !entity.isSpectator());
+			return (!(entity instanceof ServerPlayer) || !entity.isSpectator() || entity instanceof Hunter);
 		return false;
 	}
 
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-		if (!this.level.isClientSide && this.flyTick >= 6 && entityIn == getOwner())
+		if (this.flyTick >= 6 && entityIn == getOwner()) {
 			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
-	}
-
-	@Override
-	public void push(Entity entityIn) {
-		super.push(entityIn);
-		if (!this.level.isClientSide && this.flyTick >= 6 && entityIn == getOwner())
-			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
+		}
 	}
 
 	public void drop(double x, double y, double z) {
-		if (!(getOwner() instanceof Player) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative()))
-			this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().copy()));
-		discard();
+		if ((getOwner() instanceof Hunter) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative())) {
+			this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().split(1)));
+			this.discard();
+		}
 	}
 
 	@Override
@@ -267,23 +267,23 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				setReturning(true);
 			}
 			if (this.flyTick < 80) {
-				//recover movement if loyalty enchant has
-				this.setDeltaMovement(vec3.scale(1.01F));
+				if (!this.level.isClientSide) {
+					//recover movement if loyalty enchant has
+					this.setDeltaMovement(vec3.scale(1.01F));
+				}
 			}
 		}
 		if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
-			if (!this.level.isClientSide)
-				drop(getX(), getY(), getZ());
+			drop(getX(), getY(), getZ());
 		} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
-			this.noPhysics = true;
-			Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-			if (this.level.isClientSide)
-				this.yOld = getY();
-			double d0 = 0.05D * loyaltyLevel;
-			setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
+			if (!this.level.isClientSide) {
+				this.noPhysics = true;
+				Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
+				double d0 = 0.05D * loyaltyLevel;
+				this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
+			}
 		}
 		this.checkInsideBlocks();
-		collideWithNearbyEntities();
 	}
 
 	@Override
@@ -343,19 +343,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(getBoomerang()));
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, getBoomerang()));
 		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE.get(), getBoomerang()));
-	}
-
-
-	protected void collideWithNearbyEntities() {
-		if (isReturning()) {
-			List<Entity> list = this.level.getEntities(this, getBoundingBox(), EntitySelector.pushableBy(this));
-			if (!list.isEmpty())
-				for (int l = 0; l < list.size(); l++) {
-					Entity entity = list.get(l);
-					if (entity == getOwner())
-						drop(entity.getX(), entity.getY(), entity.getZ());
-				}
-		}
 	}
 
 	private int getLoyaltyLevel() {

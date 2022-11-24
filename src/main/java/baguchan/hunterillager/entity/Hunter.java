@@ -3,6 +3,7 @@ package baguchan.hunterillager.entity;
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
 import baguchan.hunterillager.entity.ai.DoSleepingGoal;
 import baguchan.hunterillager.entity.ai.DodgeGoal;
+import baguchan.hunterillager.entity.ai.DodgeMoveControl;
 import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
 import baguchan.hunterillager.entity.ai.WakeUpGoal;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
@@ -24,6 +25,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -95,6 +97,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	public Hunter(EntityType<? extends Hunter> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
+		this.moveControl = new DodgeMoveControl(this);
 		this.setCanPickUpLoot(true);
 	}
 
@@ -112,12 +115,12 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.15F, true) {
 			@Override
 			public boolean canUse() {
-				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canUse();
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				return !(mob.getMainHandItem().getItem() instanceof BowItem) && super.canContinueToUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
 		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 8));
@@ -139,34 +142,32 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 	}
 
-	protected void completeUsingItem() {
-		InteractionHand hand = this.getUsedItemHand();
-		if (this.useItem.equals(this.getItemInHand(hand))) {
-			if (!this.useItem.isEmpty() && this.isUsingItem()) {
-				ItemStack copy = this.useItem.copy();
-
-				if (copy.getItem().getFoodProperties() != null) {
-					this.heal(copy.getItem().getFoodProperties().getNutrition());
-				}
-			}
+	@Override
+	public ItemStack eat(Level p_21067_, ItemStack p_21068_) {
+		if (p_21068_.isEdible()) {
+			this.heal(p_21068_.getItem().getFoodProperties().getNutrition());
 		}
-		super.completeUsingItem();
+		return super.eat(p_21067_, p_21068_);
 	}
 
 	public void aiStep() {
 		if (!this.level.isClientSide && this.isAlive()) {
 			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
 
-			if (!this.isUsingItem() && this.getItemInHand(InteractionHand.OFF_HAND).isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
-				ItemStack food = ItemStack.EMPTY;
+			if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
+				ItemStack stack = ItemStack.EMPTY;
 
-				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.0025F) {
-					food = this.findFood();
+				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.005F) {
+					stack = this.findFood();
+				} else if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.001F) {
+					stack = this.findBoomerang();
 				}
 
-				if (!food.isEmpty()) {
-					this.setItemSlot(EquipmentSlot.OFFHAND, food);
-					this.startUsingItem(InteractionHand.OFF_HAND);
+				if (!stack.isEmpty()) {
+					this.setItemSlot(EquipmentSlot.OFFHAND, stack);
+					if (stack.isEdible()) {
+						this.startUsingItem(InteractionHand.OFF_HAND);
+					}
 				}
 			}
 		}
@@ -178,6 +179,16 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 			ItemStack itemstack = this.inventory.getItem(i);
 			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(itemstack.getItem())) {
+				return itemstack.split(1);
+			}
+		}
+		return ItemStack.EMPTY;
+	}
+
+	private ItemStack findBoomerang() {
+		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
+			ItemStack itemstack = this.inventory.getItem(i);
+			if (!itemstack.isEmpty() && itemstack.is(HunterItems.BOOMERANG.get())) {
 				return itemstack.split(1);
 			}
 		}
@@ -230,9 +241,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		ItemStack itemstack;
 		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
-
 		Raid raid = this.getCurrentRaid();
-
 
 		int i = 1;
 		if (p_213660_1_ > raid.getNumGroups(Difficulty.NORMAL)) {
@@ -245,7 +254,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
 		}
 
-		inventory.addItem(new ItemStack(Items.PORKCHOP, 4));
+		inventory.addItem(new ItemStack(Items.PORKCHOP, 5));
 
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
@@ -267,7 +276,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			EnchantmentHelper.setEnchantments(map2, offHandStack);
 		}
 
-		if (this.random.nextFloat() < 0.25F) {
+		if (this.random.nextFloat() < 0.25F && !itemstack.is(Items.BOW)) {
 			Map<Enchantment, Integer> map3 = Maps.newHashMap();
 			map3.put(Enchantments.LOYALTY, i);
 			EnchantmentHelper.setEnchantments(map3, offHandStack);
@@ -277,6 +286,25 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
 	}
 
+	@Override
+	protected void pushEntities() {
+		if (!this.level.isClientSide()) {
+			List<Entity> list = this.level.getEntities(this, this.getBoundingBox(), EntitySelector.ENTITY_STILL_ALIVE);
+			if (!list.isEmpty()) {
+				for (int l = 0; l < list.size(); ++l) {
+					Entity entity = list.get(l);
+					if (entity instanceof BoomerangEntity boomerang) {
+						if (boomerang.getFlyTick() > 4 && this == boomerang.getOwner()) {
+							boomerang.drop(this.getX(), this.getY(), this.getZ());
+						}
+					}
+				}
+			}
+		}
+		super.pushEntities();
+	}
+
+	@Override
 	protected void pickUpItem(ItemEntity p_175445_1_) {
 		ItemStack itemstack = p_175445_1_.getItem();
 		if (itemstack.getItem() instanceof BannerItem) {
@@ -292,10 +320,16 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				} else {
 					itemstack.setCount(itemstack1.getCount());
 				}
-			} else if (item == HunterItems.BOOMERANG.get() && this.getOffhandItem().isEmpty()) {
+			} else if (item == HunterItems.BOOMERANG.get()) {
 				this.onItemPickup(p_175445_1_);
 				this.take(p_175445_1_, itemstack.getCount());
-				this.setItemInHand(InteractionHand.OFF_HAND, itemstack);
+
+				ItemStack itemstack1 = this.inventory.addItem(itemstack);
+				if (itemstack1.isEmpty()) {
+					p_175445_1_.discard();
+				} else {
+					itemstack.setCount(itemstack1.getCount());
+				}
 			}
 		}
 
@@ -426,7 +460,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	public void performBoomeranAttack(LivingEntity p_82196_1_, float p_82196_2_) {
-		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem());
+		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
@@ -434,7 +468,6 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level.addFreshEntity(boomerang);
-		this.getOffhandItem().shrink(1);
 	}
 
 	class MoveToGoal extends Goal {

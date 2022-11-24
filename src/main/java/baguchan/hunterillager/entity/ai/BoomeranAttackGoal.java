@@ -24,7 +24,7 @@ public class BoomeranAttackGoal extends Goal {
 	@Override
 	public boolean canUse() {
 		LivingEntity entity = mob.getTarget();
-		return (mob.getOffhandItem().getItem() instanceof BoomerangItem) && !(mob.getMainHandItem().getItem() instanceof BowItem) && entity != null && entity.isAlive() && entity.distanceToSqr(mob) > 16D;
+		return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && mob.isHolding((item) -> item.getItem() instanceof BoomerangItem) && entity != null && entity.isAlive() && entity.distanceToSqr(mob) > 16D;
 	}
 
 	@Override
