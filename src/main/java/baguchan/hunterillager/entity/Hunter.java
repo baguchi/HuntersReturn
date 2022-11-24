@@ -2,6 +2,7 @@ package baguchan.hunterillager.entity;
 
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
 import baguchan.hunterillager.entity.ai.DoSleepingGoal;
+import baguchan.hunterillager.entity.ai.DodgeGoal;
 import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
 import baguchan.hunterillager.entity.ai.WakeUpGoal;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
@@ -22,10 +23,24 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.InteractGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -39,10 +54,15 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -58,7 +78,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class HunterIllagerEntity extends AbstractIllager implements RangedAttackMob {
+public class Hunter extends AbstractIllager implements RangedAttackMob {
 	public static final Predicate<LivingEntity> TARGET_ENTITY_SELECTOR = (p_213616_0_) -> {
 		return !p_213616_0_.isBaby() && HunterConfigUtils.isWhitelistedEntity(p_213616_0_.getType());
 	};
@@ -72,7 +92,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	private BlockPos homeTarget;
 	private int cooldown;
 
-	public HunterIllagerEntity(EntityType<? extends HunterIllagerEntity> p_i48556_1_, Level p_i48556_2_) {
+	public Hunter(EntityType<? extends Hunter> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
@@ -83,6 +103,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		this.goalSelector.addGoal(0, new WakeUpGoal(this));
 		this.goalSelector.addGoal(0, new DoSleepingGoal(this));
 		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(0, new DodgeGoal(this, Projectile.class));
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
@@ -417,11 +438,11 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 	}
 
 	class MoveToGoal extends Goal {
-		final HunterIllagerEntity hunter;
+		final Hunter hunter;
 		final double stopDistance;
 		final double speedModifier;
 
-		MoveToGoal(HunterIllagerEntity p_i50459_2_, double p_i50459_3_, double p_i50459_5_) {
+		MoveToGoal(Hunter p_i50459_2_, double p_i50459_3_, double p_i50459_5_) {
 			this.hunter = p_i50459_2_;
 			this.stopDistance = p_i50459_3_;
 			this.speedModifier = p_i50459_5_;
@@ -429,7 +450,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		}
 
 		public void stop() {
-			HunterIllagerEntity.this.navigation.stop();
+			Hunter.this.navigation.stop();
 		}
 
 		public boolean canUse() {
@@ -442,13 +463,13 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 		public void tick() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
-			if (blockpos != null && HunterIllagerEntity.this.navigation.isDone()) {
+			if (blockpos != null && Hunter.this.navigation.isDone()) {
 				if (this.isTooFarAway(blockpos, 10.0D)) {
 					Vec3 vector3d = (new Vec3((double) blockpos.getX() - this.hunter.getX(), (double) blockpos.getY() - this.hunter.getY(), (double) blockpos.getZ() - this.hunter.getZ())).normalize();
 					Vec3 vector3d1 = vector3d.scale(10.0D).add(this.hunter.getX(), this.hunter.getY(), this.hunter.getZ());
-					HunterIllagerEntity.this.navigation.moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speedModifier);
+					Hunter.this.navigation.moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speedModifier);
 				} else {
-					HunterIllagerEntity.this.navigation.moveTo((double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), this.speedModifier);
+					Hunter.this.navigation.moveTo((double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), this.speedModifier);
 				}
 			}
 
@@ -459,7 +480,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		}
 	}
 
-	public class GetFoodGoal<T extends HunterIllagerEntity> extends Goal {
+	public class GetFoodGoal<T extends Hunter> extends Goal {
 		private final T mob;
 
 		public GetFoodGoal(T p_i50572_2_) {
@@ -470,7 +491,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 		public boolean canUse() {
 			if (!this.mob.hasActiveRaid()) {
 
-				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), HunterIllagerEntity.ALLOWED_ITEMS);
+				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), Hunter.ALLOWED_ITEMS);
 				if (!list.isEmpty() && this.mob.hasLineOfSight(list.get(0))) {
 					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.1F);
 				}
@@ -483,7 +504,7 @@ public class HunterIllagerEntity extends AbstractIllager implements RangedAttack
 
 		public void tick() {
 			if (this.mob.getNavigation().getTargetPos().closerThan(this.mob.blockPosition(), 1.414D)) {
-				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), HunterIllagerEntity.ALLOWED_ITEMS);
+				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), Hunter.ALLOWED_ITEMS);
 				if (!list.isEmpty()) {
 					this.mob.pickUpItem(list.get(0));
 				}
