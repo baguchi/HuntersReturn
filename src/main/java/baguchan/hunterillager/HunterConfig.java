@@ -20,10 +20,6 @@ public class HunterConfig {
 	public static class Common {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodWhitelist;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> attackableWhitelist;
-
-		public final ForgeConfigSpec.IntValue SPACING;
-		public final ForgeConfigSpec.IntValue SEPARATION;
-
 		public Common(ForgeConfigSpec.Builder builder) {
 			Predicate<Object> validator = o -> o instanceof String;
 
@@ -43,19 +39,6 @@ public class HunterConfig {
 									, "minecraft:rabbit", "minecraft:pig", "minecraft:cow", "minecraft:sheep"
 									, "earthmobsmod:wooly_cow", "earthmobsmod:horned_sheep")
 							, validator);
-
-			SPACING = builder
-					.translation(HunterIllager.MODID + ".config.spacing")
-					.worldRestart()
-					.comment("Changed HunterIllager Spacing")
-					.defineInRange("Spacing"
-							, 26, 1, 40);
-			SEPARATION = builder
-					.translation(HunterIllager.MODID + ".config.separation")
-					.worldRestart()
-					.comment("Changed HunterIllager Separation")
-					.defineInRange("Separation"
-							, 6, 1, 8);
 		}
 	}
 

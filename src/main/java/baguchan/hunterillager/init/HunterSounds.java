@@ -18,6 +18,6 @@ public final class HunterSounds {
 
 	private static RegistryObject<SoundEvent> createEvent(String sound) {
 		ResourceLocation name = new ResourceLocation(HunterIllager.MODID, sound);
-		return SOUND_EVENTS.register(sound, () -> new SoundEvent(name));
+		return SOUND_EVENTS.register(sound, () -> SoundEvent.createVariableRangeEvent(name));
 	}
 }

@@ -7,12 +7,9 @@ import baguchan.hunterillager.init.HunterEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -70,8 +67,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	private void onHitFluid(BlockHitResult result) {
 		double velocity = getVelocity();
 		double horizontal = getDeltaMovement().y * getDeltaMovement().y;
-		if (!this.level.isClientSide &&
-				result.getType() == HitResult.Type.BLOCK && result.isInside() &&
+		if (result.getType() == HitResult.Type.BLOCK && result.isInside() &&
 				velocity >= 0.6499999761581421D && horizontal < 0.17499999701976776D)
 			if (!this.level.getBlockState(result.getBlockPos()).isAir() && this.level.getFluidState(result.getBlockPos()).is(FluidTags.WATER)) {
 				setDeltaMovement(getDeltaMovement().x, Mth.clamp(getDeltaMovement().y + 0.10000000149011612D, -0.10000000149011612D, 0.30000001192092896D), getDeltaMovement().z);
@@ -180,9 +176,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			} else if (face == Direction.DOWN) {
 				motionY = -motionY;
 			}
-			if (!this.level.isClientSide) {
-				setDeltaMovement(motionX, motionY, motionZ);
-			}
+			setDeltaMovement(motionX, motionY, motionZ);
 			if (loyaltyLevel > 0 && !isReturning() && this.totalHits >= getBounceLevel() &&
 					entity != null) {
 				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -196,8 +190,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	protected void onHit(HitResult result) {
 		super.onHit(result);
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
-		if (loyaltyLevel < 1 && this.totalHits >= getBounceLevel() &&
-				!this.level.isClientSide()) {
+		if (loyaltyLevel < 1 && this.totalHits >= getBounceLevel()) {
 			drop(getX(), getY(), getZ());
 		}
 	}
@@ -210,7 +203,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
-			return (!(entity instanceof ServerPlayer) || !entity.isSpectator() || entity instanceof Hunter);
+			return (!(entity instanceof Player) || !entity.isSpectator() || entity instanceof Hunter);
 		return false;
 	}
 
@@ -225,6 +218,8 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	public void drop(double x, double y, double z) {
 		if ((getOwner() instanceof Hunter) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative())) {
 			this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().split(1)));
+			this.discard();
+		} else {
 			this.discard();
 		}
 	}
@@ -267,21 +262,17 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				setReturning(true);
 			}
 			if (this.flyTick < 80) {
-				if (!this.level.isClientSide) {
-					//recover movement if loyalty enchant has
-					this.setDeltaMovement(vec3.scale(1.01F));
-				}
+				//recover movement if loyalty enchant has
+				this.setDeltaMovement(vec3.scale(1.01F));
 			}
 		}
 		if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
 			drop(getX(), getY(), getZ());
 		} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
-			if (!this.level.isClientSide) {
-				this.noPhysics = true;
-				Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-				double d0 = 0.05D * loyaltyLevel;
-				this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
-			}
+			this.noPhysics = true;
+			Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
+			double d0 = 0.05D * loyaltyLevel;
+			this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
 		}
 		this.checkInsideBlocks();
 	}
@@ -290,7 +281,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	protected float getGravity() {
 		if (getLoyaltyLevel() > 0 && !this.isReturning()) {
 			if (this.isInWater()) {
-				return 0.03F;
+				return 0.01F;
 			}
 
 			return 0.0F;
@@ -385,8 +376,4 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		this.entityData.set(BOOMERANG, stack);
 	}
 
-
-	public Packet<?> getAddEntityPacket() {
-		return new ClientboundAddEntityPacket(this);
-	}
 }

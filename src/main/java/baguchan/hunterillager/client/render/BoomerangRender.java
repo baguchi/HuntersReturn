@@ -2,7 +2,7 @@ package baguchan.hunterillager.client.render;
 
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -31,11 +31,11 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 	public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, PoseStack stackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		stackIn.pushPose();
 
-		stackIn.mulPose(Vector3f.YP.rotationDegrees(-Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
-		stackIn.mulPose(Vector3f.XP.rotationDegrees(90.0F));
-		stackIn.mulPose(Vector3f.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+		stackIn.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
+		stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
+		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 
-		stackIn.mulPose(Vector3f.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F) + 1F)));
+		stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F) + 1F)));
 		stackIn.translate(0.0F, 0.0F, -entityIn.getBbHeight() / 2);
 
 		BakedModel bakedmodel = this.itemRenderer.getModel(entityIn.getBoomerang(), entityIn.level, (LivingEntity) null, entityIn.getId());
