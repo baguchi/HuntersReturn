@@ -10,7 +10,11 @@ import net.minecraftforge.fml.common.Mod;
 public class ModCreativeTabEvents {
 	@SubscribeEvent
 	public static void registerCreativeTab(CreativeModeTabEvent.BuildContents event) {
-		event.registerSimple(CreativeModeTabs.COMBAT, HunterItems.BOOMERANG.get());
-		event.registerSimple(CreativeModeTabs.SPAWN_EGGS, HunterItems.SPAWNEGG_HUNTERILLAGER.get());
+		if (event.getTab() == CreativeModeTabs.COMBAT) {
+			event.accept(HunterItems.BOOMERANG.get());
+		}
+		if (event.getTab() == CreativeModeTabs.SPAWN_EGGS) {
+			event.accept(HunterItems.SPAWNEGG_HUNTERILLAGER.get());
+		}
 	}
 }
