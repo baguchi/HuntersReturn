@@ -1,0 +1,19 @@
+{
+  "item.hunterillager.spawnegg_hunterillager": "Яйце виклику мисливця",
+  "item.hunterillager.quivers": "Сагайдак",
+  "item.hunterillager.boomerang": "Бумеранг",
+  "item.hunterillager.quiver.desc": "Ви можете зберегти стрілу, клацнувши правою кнопкою миші, утримуючи сагайдак і стрілу.",
+  "entity.hunterillager.hunterillager": "Мисливець",
+  "subtitles.hunterillager.idle": "Мисливець бурмотить",
+  "subtitles.hunterillager.hurt": "Мисливця поранено",
+  "subtitles.hunterillager.death": "Мисливець гине",
+  "subtitles.hunterillager.cheer": "Мисливець святкує",
+  "subtitles.hunterillager.laugh": "Мисливець сміється",
+  "death.attack.hunterillager.boomerang": "%1$s повернувся на місце спавну за допомогою бумерангу %2$s",
+  "hunterillager.config.structureSpacing": "Інтервал генерації мисливського будиночку",
+  "hunterillager.config.foodWhitelist": "Білий список їжі мисливця",
+  "hunterillager.config.attackableWhitelist": "Білий список цілей мисливця",
+  "enchantment.hunterillager.bounce": "Відскок",
+  "hunterillager.config.spacing": "Інтервал",
+  "hunterillager.config.separation": "Поділ"
+}
