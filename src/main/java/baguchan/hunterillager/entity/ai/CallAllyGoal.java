@@ -35,7 +35,7 @@ public class CallAllyGoal extends Goal {
 
 	public CallAllyGoal(Hunter hunterEntity) {
 		this.hunter = hunterEntity;
-		this.lookAtContext = TargetingConditions.forNonCombat().range((double) 40.0F);
+		this.lookAtContext = TargetingConditions.forNonCombat().ignoreLineOfSight().range((double) 30.0F);
 		this.setFlags(EnumSet.of(Flag.MOVE));
 	}
 
@@ -47,7 +47,7 @@ public class CallAllyGoal extends Goal {
 
 		if (--this.cooldownTime < 0) {
 			if (this.hunter.getTarget() != null) {
-				this.toCall = this.hunter.level.getEntitiesOfClass(AbstractIllager.class, this.hunter.getBoundingBox().inflate((double) 40.0F, 30.0D, (double) 40.0F), (p_148124_) -> {
+				this.toCall = this.hunter.level.getEntitiesOfClass(AbstractIllager.class, this.hunter.getBoundingBox().inflate((double) 30.0F, 30.0D, (double) 30.0F), (p_148124_) -> {
 					return this.hunter != p_148124_ && this.hunter.isAlliedTo(p_148124_) && p_148124_.getTarget() == null;
 				});
 				this.cooldownTime = 600;
