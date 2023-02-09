@@ -9,6 +9,7 @@ import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -17,8 +18,11 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
@@ -31,6 +35,9 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	private final ModelPart root;
 	private final ModelPart head;
 	private final ModelPart cape;
+
+	public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
+	public HumanoidModel.ArmPose rightArmPose = HumanoidModel.ArmPose.EMPTY;
 
 	public HunterModel(ModelPart root) {
 		this.root = root;
@@ -140,8 +147,71 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			this.LeftArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.05F;
 			this.LeftArm.zRot = -2.3561945F;
 			this.LeftArm.yRot = 0.0F;
+		} else {
+			boolean flag2 = entityIn.getMainArm() == HumanoidArm.RIGHT;
+			if (entityIn.isUsingItem()) {
+				boolean flag3 = entityIn.getUsedItemHand() == InteractionHand.MAIN_HAND;
+				if (flag3 == flag2) {
+					this.poseRightArm(entityIn);
+				} else {
+					this.poseLeftArm(entityIn);
+				}
+			} else {
+				boolean flag4 = flag2 ? this.leftArmPose.isTwoHanded() : this.rightArmPose.isTwoHanded();
+				if (flag2 != flag4) {
+					this.poseLeftArm(entityIn);
+					this.poseRightArm(entityIn);
+				} else {
+					this.poseRightArm(entityIn);
+					this.poseLeftArm(entityIn);
+				}
+			}
 		}
 		this.cape.xRot = 0.17453294F * limbSwingAmount * 1.75F;
+	}
+
+	@Override
+	public void prepareMobModel(T entity, float p_103794_, float p_103795_, float p_103796_) {
+		this.rightArmPose = HumanoidModel.ArmPose.EMPTY;
+		this.leftArmPose = HumanoidModel.ArmPose.EMPTY;
+		ItemStack itemstack = entity.getItemInHand(InteractionHand.MAIN_HAND);
+		if (itemstack.is(Items.GOAT_HORN) && entity.isUsingItem()) {
+			if (entity.getMainArm() == HumanoidArm.RIGHT) {
+				this.rightArmPose = HumanoidModel.ArmPose.TOOT_HORN;
+			} else {
+				this.leftArmPose = HumanoidModel.ArmPose.TOOT_HORN;
+			}
+		}
+
+		super.prepareMobModel(entity, p_103794_, p_103795_, p_103796_);
+	}
+
+	private void poseRightArm(T p_102876_) {
+		switch (this.rightArmPose) {
+			case SPYGLASS:
+				this.RightArm.xRot = Mth.clamp(this.head.xRot - 1.9198622F - (p_102876_.isCrouching() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+				this.RightArm.yRot = this.head.yRot - 0.2617994F;
+				break;
+			case TOOT_HORN:
+				this.RightArm.xRot = Mth.clamp(this.head.xRot, -1.2F, 1.2F) - 1.4835298F;
+				this.RightArm.yRot = this.head.yRot - ((float) Math.PI / 6F);
+				break;
+		}
+
+	}
+
+	private void poseLeftArm(T p_102879_) {
+		switch (this.leftArmPose) {
+			case SPYGLASS:
+				this.LeftArm.xRot = Mth.clamp(this.head.xRot - 1.9198622F - (p_102879_.isCrouching() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+				this.LeftArm.yRot = this.head.yRot + 0.2617994F;
+				break;
+			case TOOT_HORN:
+				this.LeftArm.xRot = Mth.clamp(this.head.xRot, -1.2F, 1.2F) - 1.4835298F;
+				this.LeftArm.yRot = this.head.yRot + ((float) Math.PI / 6F);
+				break;
+		}
+
 	}
 
 	private ModelPart getArm(HumanoidArm p_102923_) {
@@ -154,6 +224,12 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 
 	public void translateToHand(HumanoidArm p_102925_, PoseStack p_102926_) {
 		this.getArm(p_102925_).translateAndRotate(p_102926_);
+	}
+
+	public void copyPropertiesTo(HunterModel<T> p_102873_) {
+		super.copyPropertiesTo(p_102873_);
+		p_102873_.leftArmPose = this.leftArmPose;
+		p_102873_.rightArmPose = this.rightArmPose;
 	}
 
 	@Override

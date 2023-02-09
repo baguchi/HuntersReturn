@@ -1,6 +1,6 @@
 {
   "type": "minecraft:jigsaw",
-  "start_pool": "hunterillager:hunter_house/hunter_illager_house",
+  "start_pool": "hunterillager:hunter_house/hunter_base",
   "size": 6,
   "max_distance_from_center": 72,
   "biomes": "#hunterillager:has_structure/hunter_house",

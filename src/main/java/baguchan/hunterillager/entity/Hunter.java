@@ -1,6 +1,7 @@
 package baguchan.hunterillager.entity;
 
 import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
+import baguchan.hunterillager.entity.ai.CallAllyGoal;
 import baguchan.hunterillager.entity.ai.DoSleepingGoal;
 import baguchan.hunterillager.entity.ai.DodgeGoal;
 import baguchan.hunterillager.entity.ai.DodgeMoveControl;
@@ -12,6 +13,8 @@ import baguchan.hunterillager.init.HunterSounds;
 import baguchan.hunterillager.utils.HunterConfigUtils;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -19,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -62,6 +66,9 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Instrument;
+import net.minecraft.world.item.InstrumentItem;
+import net.minecraft.world.item.Instruments;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -78,6 +85,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Hunter extends AbstractIllager implements RangedAttackMob {
@@ -106,6 +114,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.goalSelector.addGoal(0, new WakeUpGoal(this));
 		this.goalSelector.addGoal(0, new DoSleepingGoal(this));
 		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(0, new CallAllyGoal(this));
 		this.goalSelector.addGoal(0, new DodgeGoal(this, Projectile.class));
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
 		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
@@ -342,11 +351,19 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	@Nullable
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, MobSpawnType p_37858_, @Nullable SpawnGroupData p_37859_, @Nullable CompoundTag p_37860_) {
+		RandomSource randomsource = p_37856_.getRandom();
 		SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_, p_37860_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
-		this.populateDefaultEquipmentSlots(p_37857_);
-		this.populateDefaultEquipmentEnchantments(this.random, p_37857_);
+		if (randomsource.nextFloat() < 0.5F) {
+			inventory.addItem(new ItemStack(Items.PORKCHOP, 2 + this.random.nextInt(2)));
+		} else {
+			inventory.addItem(new ItemStack(Items.BEEF, 2 + this.random.nextInt(2)));
+		}
+		if (p_37858_ != MobSpawnType.STRUCTURE) {
+			this.populateDefaultEquipmentSlots(randomsource, p_37857_);
+		}
+		this.populateDefaultEquipmentEnchantments(randomsource, p_37857_);
 		return ilivingentitydata;
 	}
 
@@ -363,15 +380,12 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 	}
 
-	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_) {
+	@Override
+	protected void populateDefaultEquipmentSlots(RandomSource p_217055_, DifficultyInstance p_217056_) {
 		if (this.getCurrentRaid() == null) {
-			if (this.random.nextFloat() < 0.5F) {
-				inventory.addItem(new ItemStack(Items.PORKCHOP, 2 + this.random.nextInt(2)));
-			} else {
-				inventory.addItem(new ItemStack(Items.BEEF, 2 + this.random.nextInt(2)));
-			}
-			if (this.random.nextFloat() < 0.5F) {
+			if (this.random.nextFloat() < 0.1F) {
 				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+				this.setItemSlot(EquipmentSlot.OFFHAND, createHorn());
 			} else {
 				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 				if (this.random.nextBoolean()) {
@@ -385,6 +399,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				}
 			}
 		}
+	}
+
+	public ItemStack createHorn() {
+		Optional<Holder.Reference<Instrument>> holderset = BuiltInRegistries.INSTRUMENT.getHolder(Instruments.CALL_GOAT_HORN);
+		if (holderset.isPresent()) {
+			return InstrumentItem.create(Items.GOAT_HORN, holderset.get());
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public boolean isAlliedTo(Entity p_184191_1_) {
