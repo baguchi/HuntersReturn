@@ -12,7 +12,7 @@
       }
     },
     {
-      "weight": 5,
+      "weight": 3,
       "element": {
         "location": "hunterillager:hunter_house/illager_woodhut",
         "processors": "minecraft:empty",

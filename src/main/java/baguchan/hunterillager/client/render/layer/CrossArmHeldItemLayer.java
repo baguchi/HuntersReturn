@@ -1,7 +1,7 @@
 package baguchan.hunterillager.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,7 +21,7 @@ public class CrossArmHeldItemLayer<T extends AbstractIllager, M extends EntityMo
 		if (!p_116702_.isAggressive()) {
 			p_116699_.pushPose();
 			p_116699_.translate(0.0D, (double) 0.4F, (double) -0.4F);
-			p_116699_.mulPose(Axis.XP.rotationDegrees(180.0F));
+			p_116699_.mulPose(Vector3f.XP.rotationDegrees(180.0F));
 			ItemStack itemstack = p_116702_.getItemBySlot(EquipmentSlot.OFFHAND);
 			Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(p_116702_, itemstack, ItemTransforms.TransformType.GROUND, false, p_116699_, p_116700_, p_116701_);
 			p_116699_.popPose();

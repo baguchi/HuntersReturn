@@ -2,13 +2,11 @@ package baguchan.hunterillager.entity.ai;
 
 import baguchan.hunterillager.entity.Hunter;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -85,9 +83,9 @@ public class CallAllyGoal extends Goal {
 		Optional<? extends Holder<Instrument>> optional = this.getInstrument(this.hunter.getUseItem());
 		if (optional.isPresent()) {
 			Instrument instrument = optional.get().value();
-			SoundEvent soundevent = instrument.soundEvent().value();
+			SoundEvent soundevent = instrument.soundEvent();
 			float f = instrument.range() / 16.0F;
-			this.hunter.level.playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
+			this.hunter.playSound(soundevent, f, 1.0F);
 			this.hunter.gameEvent(GameEvent.INSTRUMENT_PLAY, this.hunter);
 		}
 	}
@@ -97,7 +95,7 @@ public class CallAllyGoal extends Goal {
 		if (compoundtag != null) {
 			ResourceLocation resourcelocation = ResourceLocation.tryParse(compoundtag.getString("instrument"));
 			if (resourcelocation != null) {
-				return BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, resourcelocation));
+				return Registry.INSTRUMENT.getHolder(ResourceKey.create(Registry.INSTRUMENT_REGISTRY, resourcelocation));
 			}
 		}
 		return Optional.empty();

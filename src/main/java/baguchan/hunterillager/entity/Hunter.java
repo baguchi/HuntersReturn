@@ -14,7 +14,7 @@ import baguchan.hunterillager.utils.HunterConfigUtils;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -402,7 +402,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	public ItemStack createHorn() {
-		Optional<Holder.Reference<Instrument>> holderset = BuiltInRegistries.INSTRUMENT.getHolder(Instruments.CALL_GOAT_HORN);
+		Optional<Holder<Instrument>> holderset = Registry.INSTRUMENT.getHolder(Instruments.CALL_GOAT_HORN);
 		if (holderset.isPresent()) {
 			return InstrumentItem.create(Items.GOAT_HORN, holderset.get());
 		}
