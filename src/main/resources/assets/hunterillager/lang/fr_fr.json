@@ -1,0 +1,19 @@
+{
+  "item.hunterillager.spawnegg_hunterillager": "Oeuf d'apparition du Chasseur",
+  "item.hunterillager.quivers": "Carquois",
+  "item.hunterillager.boomerang": "Boomerang",
+  "item.hunterillager.quiver.desc": "Vous pouvez stocker la flèche en faisant un clic droit tout en maintenant le carquois et la flèche.",
+  "entity.hunterillager.hunterillager": "Chasseur",
+  "subtitles.hunterillager.idle": "Un chasseur murmure",
+  "subtitles.hunterillager.hurt": "Un chasseur est blessé",
+  "subtitles.hunterillager.death": "Un chasseur est mort",
+  "subtitles.hunterillager.cheer": "Acclamations d'un chasseur",
+  "subtitles.hunterillager.laugh": "Rires d'un chasseur",
+  "death.attack.hunterillager.boomerang": "%1$s a été frappé par le boomerang de %2$s",
+  "hunterillager.config.structureSpacing": "Espacement de génération des maisons des chasseurs",
+  "hunterillager.config.foodWhitelist": "Liste blanche des aliments consommés par les chasseurs",
+  "hunterillager.config.attackableWhitelist": "Liste blanche des entités chassées par les chasseurs",
+  "enchantment.hunterillager.bounce": "Rebond",
+  "hunterillager.config.spacing": "Espacement",
+  "hunterillager.config.separation": "Séparation"
+}
