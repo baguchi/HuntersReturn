@@ -5,7 +5,7 @@ import baguchan.hunterillager.init.HunterDamageSource;
 import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -151,32 +151,23 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		BlockState state = this.level.getBlockState(pos);
 		SoundType soundType = state.getSoundType(this.level, pos, this);
 		if (!isReturning())
-			this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume() * 0.45F, soundType.getPitch());
+			this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
 		this.totalHits++;
 		BlockState blockstate = this.level.getBlockState(result.getBlockPos());
 		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
 		int piercingLevel = this.entityData.get(PIERCING_LEVEL).byteValue();
 		Entity entity = getOwner();
 		if (!isReturning() && !blockstate.getCollisionShape(this.level, result.getBlockPos()).isEmpty()) {
-			Direction face = result.getDirection();
-			Vec3 motion = getDeltaMovement();
-			double motionX = motion.x;
-			double motionY = motion.y;
-			double motionZ = motion.z;
-			if (face == Direction.EAST) {
-				motionX = -motionX;
-			} else if (face == Direction.SOUTH) {
-				motionZ = -motionZ;
-			} else if (face == Direction.WEST) {
-				motionX = -motionX;
-			} else if (face == Direction.NORTH) {
-				motionZ = -motionZ;
-			} else if (face == Direction.UP) {
-				motionY = -motionY;
-			} else if (face == Direction.DOWN) {
-				motionY = -motionY;
+			Vec3i direction = result.getDirection().getNormal();
+			switch (result.getDirection()) {
+				case UP, SOUTH, EAST -> direction = direction.multiply(-1);
+				default -> {
+				}
 			}
-			setDeltaMovement(motionX, motionY, motionZ);
+			direction = new Vec3i(direction.getX() == 0 ? 1 : direction.getX(), direction.getY() == 0 ? 1 : direction.getY(), direction.getZ() == 0 ? 1 : direction.getZ());
+			this.setDeltaMovement(this.getDeltaMovement().multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())));
+			this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
+
 			if (loyaltyLevel > 0 && !isReturning() && this.totalHits >= getBounceLevel() &&
 					entity != null) {
 				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -210,7 +201,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-		if (this.flyTick >= 6 && entityIn == getOwner()) {
+		if (this.flyTick >= 10 && entityIn == getOwner()) {
 			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
 		}
 	}
