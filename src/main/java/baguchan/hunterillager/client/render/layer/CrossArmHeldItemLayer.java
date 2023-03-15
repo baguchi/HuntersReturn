@@ -5,11 +5,11 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class CrossArmHeldItemLayer<T extends AbstractIllager, M extends EntityModel<T>> extends RenderLayer<T, M> {
@@ -23,7 +23,7 @@ public class CrossArmHeldItemLayer<T extends AbstractIllager, M extends EntityMo
 			p_116699_.translate(0.0D, (double) 0.4F, (double) -0.4F);
 			p_116699_.mulPose(Axis.XP.rotationDegrees(180.0F));
 			ItemStack itemstack = p_116702_.getItemBySlot(EquipmentSlot.OFFHAND);
-			Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(p_116702_, itemstack, ItemTransforms.TransformType.GROUND, false, p_116699_, p_116700_, p_116701_);
+			Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(p_116702_, itemstack, ItemDisplayContext.GROUND, false, p_116699_, p_116700_, p_116701_);
 			p_116699_.popPose();
 		}
 	}

@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,6 +33,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 public class BoomerangEntity extends ThrowableItemProjectile {
 	private static final EntityDataAccessor<Byte> LOYALTY_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
@@ -75,6 +78,10 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			}
 	}
 
+	public DamageSource boomerangAttack(@Nullable Entity p_270857_) {
+		return this.damageSources().source(HunterDamageSource.BOOMERANG, this, p_270857_);
+	}
+
 	@Override
 	protected void onHitEntity(EntityHitResult result) {
 		super.onHitEntity(result);
@@ -89,7 +96,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
 				if (damage != 0) {
-					result.getEntity().hurt(HunterDamageSource.boomerangAttack(this, shooter), damage);
+					result.getEntity().hurt(this.boomerangAttack(shooter), damage);
 				}
 				if (shooter instanceof LivingEntity) {
 					getBoomerang().hurtAndBreak(1, (LivingEntity) shooter, p_222182_1_ -> {
