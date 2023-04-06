@@ -88,10 +88,10 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		boolean returnToOwner = false;
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		int piercingLevel = (this.entityData.get(PIERCING_LEVEL)).byteValue();
-		Entity entity = getOwner();
+		Entity shooter = getOwner();
 		if (result.getEntity() != getOwner())
 			if (!isReturning() || loyaltyLevel <= 0) {
-				Entity shooter = getOwner();
+
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
 				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
@@ -120,7 +120,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 			}
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
-				Entity shooter = getOwner();
 				this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 				Vec3 motion = getDeltaMovement();
 				double motionX = motion.x;
@@ -131,8 +130,8 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				setDeltaMovement(motionX, motionY, motionZ);
 				//func_70018_K();
 				if (loyaltyLevel > 0 && !isReturning() &&
-						entity != null) {
-					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+						shooter != null) {
+					this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			} else {
@@ -144,8 +143,8 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				motionZ = -motionZ;
 				setDeltaMovement(motionX, motionY, motionZ);
 				if (loyaltyLevel > 0 && !isReturning() &&
-						entity != null) {
-					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+						shooter != null) {
+					this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
@@ -241,17 +240,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
 		onHitFluid(fluidHitResult);
 
-		double moveX = vec3.x;
-		double moveY = vec3.y;
-		double moveZ = vec3.z;
-
-		double d4 = vec3.horizontalDistance();
-		this.setYRot((float) (Mth.atan2(moveX, moveZ) * (double) (180F / (float) Math.PI)));
-
-
-		this.setXRot((float) (Mth.atan2(moveY, d4) * (double) (180F / (float) Math.PI)));
-		this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
-		this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		Entity entity = getOwner();
 		if (loyaltyLevel > 0 && !isReturning()) {

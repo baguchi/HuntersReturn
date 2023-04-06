@@ -31,12 +31,12 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 	public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, PoseStack stackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		stackIn.pushPose();
 
-		stackIn.mulPose(Axis.YP.rotationDegrees(-Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
+		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
 		stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
 		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 
 		stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F) + 1F)));
-		stackIn.translate(0.0F, 0.0F, -entityIn.getBbHeight() / 2);
+		stackIn.translate(0.0F, 0.0F, entityIn.getBbHeight() / 2);
 
 		BakedModel bakedmodel = this.itemRenderer.getModel(entityIn.getBoomerang(), entityIn.level, (LivingEntity) null, entityIn.getId());
 
