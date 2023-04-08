@@ -1,6 +1,5 @@
 package baguchan.hunterillager.entity.projectile;
 
-import baguchan.hunterillager.entity.Hunter;
 import baguchan.hunterillager.init.HunterDamageSource;
 import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
@@ -89,7 +88,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		int piercingLevel = (this.entityData.get(PIERCING_LEVEL)).byteValue();
 		Entity shooter = getOwner();
-		if (result.getEntity() != getOwner())
+		if (result.getEntity() != shooter)
 			if (!isReturning() || loyaltyLevel <= 0) {
 
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
@@ -200,7 +199,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
-			return (!(entity instanceof Player) || !entity.isSpectator() || entity instanceof Hunter);
+			return (this.distanceToSqr(entity) > 3 && !entity.isSpectator());
 		return false;
 	}
 
@@ -213,7 +212,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	}
 
 	public void drop(double x, double y, double z) {
-		if ((getOwner() instanceof Hunter) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative())) {
+		if (!(getOwner() instanceof Player) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative())) {
 			this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().split(1)));
 			this.discard();
 		} else {

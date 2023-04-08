@@ -50,7 +50,7 @@ public class HunterIllager {
 
 	private void setup(FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
-			Raid.RaiderType.create("hunterillager", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 0, 1, 2, 2, 1, 2, 3});
+			Raid.RaiderType.create("hunterillager", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 1, 2, 3, 2, 2, 2, 3});
 			SpawnPlacements.register(HunterEntityRegistry.HUNTERILLAGER.get(), SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules);
 		});
 	}

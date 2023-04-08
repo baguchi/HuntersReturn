@@ -1,12 +1,6 @@
 package baguchan.hunterillager.entity;
 
-import baguchan.hunterillager.entity.ai.BoomeranAttackGoal;
-import baguchan.hunterillager.entity.ai.CallAllyGoal;
-import baguchan.hunterillager.entity.ai.DoSleepingGoal;
-import baguchan.hunterillager.entity.ai.DodgeGoal;
-import baguchan.hunterillager.entity.ai.DodgeMoveControl;
-import baguchan.hunterillager.entity.ai.SleepOnBedGoal;
-import baguchan.hunterillager.entity.ai.WakeUpGoal;
+import baguchan.hunterillager.entity.ai.*;
 import baguchan.hunterillager.entity.projectile.BoomerangEntity;
 import baguchan.hunterillager.init.HunterItems;
 import baguchan.hunterillager.init.HunterSounds;
@@ -28,25 +22,10 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.InteractGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
-import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -64,14 +43,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
-import net.minecraft.world.item.BannerItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.Instrument;
-import net.minecraft.world.item.InstrumentItem;
-import net.minecraft.world.item.Instruments;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -168,7 +140,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 				if (this.getHealth() < this.getMaxHealth() && this.random.nextFloat() < 0.005F) {
 					stack = this.findFood();
-				} else if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.001F) {
+				} else if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.01F) {
 					stack = this.findBoomerang();
 				}
 
@@ -292,25 +264,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 			this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 		}
-		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
-	}
 
-	@Override
-	protected void pushEntities() {
-		if (!this.level.isClientSide()) {
-			List<Entity> list = this.level.getEntities(this, this.getBoundingBox(), EntitySelector.ENTITY_STILL_ALIVE);
-			if (!list.isEmpty()) {
-				for (int l = 0; l < list.size(); ++l) {
-					Entity entity = list.get(l);
-					if (entity instanceof BoomerangEntity boomerang) {
-						if (boomerang.getFlyTick() > 4 && this == boomerang.getOwner()) {
-							boomerang.drop(this.getX(), this.getY(), this.getZ());
-						}
-					}
-				}
+		if (itemstack.is(Items.BOW) && raid.getBadOmenLevel() > 2) {
+			if (this.random.nextFloat() < 0.25F) {
+				this.setItemInHand(InteractionHand.OFF_HAND, createHorn());
 			}
 		}
-		super.pushEntities();
+
+		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
 	}
 
 	@Override
@@ -482,7 +443,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	public void performBoomeranAttack(LivingEntity p_82196_1_, float p_82196_2_) {
-		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().split(1));
+		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().copy());
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
@@ -490,6 +451,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level.addFreshEntity(boomerang);
+		this.getOffhandItem().shrink(1);
 	}
 
 	class MoveToGoal extends Goal {
