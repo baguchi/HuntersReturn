@@ -28,12 +28,14 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class BoomerangEntity extends ThrowableItemProjectile {
 	private static final EntityDataAccessor<Byte> LOYALTY_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
@@ -177,6 +179,18 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 					entity != null) {
 				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 				setReturning(true);
+			}
+		}
+
+		if (!this.level.isClientSide()) {
+			if (loyaltyLevel > 0) {
+				List<ItemEntity> list = this.level.getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
+
+				if (this.getPassengers().isEmpty()) {
+					if (list != null && !list.isEmpty()) {
+						list.get(0).startRiding(this);
+					}
+				}
 			}
 		}
 		checkInsideBlocks();
