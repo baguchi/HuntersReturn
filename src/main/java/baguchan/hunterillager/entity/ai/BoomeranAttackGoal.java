@@ -57,7 +57,7 @@ public class BoomeranAttackGoal extends Goal {
 			if (mob.isHolding((item) -> item.getItem() instanceof BoomerangItem)) {
 				if (this.attackTime > 0 && this.seeTime >= -60) {
 					--this.attackTime;
-				} else {
+				} else if (this.attackTime <= 0) {
 					if (!flag && this.seeTime < -60) {
 						this.attackTime = this.attackIntervalMin;
 					} else if (flag) {
@@ -65,6 +65,8 @@ public class BoomeranAttackGoal extends Goal {
 						this.attackTime = this.attackIntervalMin;
 					}
 				}
+			} else {
+				this.attackTime = this.attackIntervalMin;
 			}
 		}
 	}
