@@ -442,8 +442,8 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_);
 	}
 
-	public void performBoomeranAttack(LivingEntity p_82196_1_, float p_82196_2_) {
-		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().copy());
+	public void performBoomeranAttack(LivingEntity p_82196_1_) {
+		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
@@ -451,7 +451,6 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level.addFreshEntity(boomerang);
-		this.getOffhandItem().shrink(1);
 	}
 
 	class MoveToGoal extends Goal {

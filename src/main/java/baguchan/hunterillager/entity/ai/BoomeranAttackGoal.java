@@ -1,11 +1,9 @@
 package baguchan.hunterillager.entity.ai;
 
 import baguchan.hunterillager.entity.Hunter;
-import baguchan.hunterillager.init.HunterItems;
 import baguchan.hunterillager.item.BoomerangItem;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.BowItem;
 
 public class BoomeranAttackGoal extends Goal {
@@ -57,19 +55,15 @@ public class BoomeranAttackGoal extends Goal {
 			}
 
 			if (mob.isHolding((item) -> item.getItem() instanceof BoomerangItem)) {
-				if (this.mob.isUsingItem()) {
+				if (this.attackTime > 0 && this.seeTime >= -60) {
+					--this.attackTime;
+				} else {
 					if (!flag && this.seeTime < -60) {
-						this.mob.stopUsingItem();
+						this.attackTime = this.attackIntervalMin;
 					} else if (flag) {
-						int i = this.mob.getTicksUsingItem();
-						if (i >= 20) {
-							this.mob.stopUsingItem();
-							this.mob.performBoomeranAttack(livingentity, BowItem.getPowerForTime(i));
-							this.attackTime = this.attackIntervalMin;
-						}
+						this.mob.performBoomeranAttack(livingentity);
+						this.attackTime = this.attackIntervalMin;
 					}
-				} else if (--this.attackTime <= 0 && this.seeTime >= -60) {
-					this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, HunterItems.BOOMERANG.get()));
 				}
 			}
 		}
