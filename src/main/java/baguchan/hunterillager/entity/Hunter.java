@@ -104,7 +104,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 10));
+		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 12));
 		this.goalSelector.addGoal(6, new GetFoodGoal<>(this));
 		this.goalSelector.addGoal(7, new MoveToGoal(this, 45.0D, 1.2D));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers(AbstractIllager.class));
