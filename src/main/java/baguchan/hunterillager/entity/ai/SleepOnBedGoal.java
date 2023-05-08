@@ -38,11 +38,12 @@ public class SleepOnBedGoal extends MoveToBlockGoal {
 
 	}
 
-	protected boolean findNearestBlock() {
-		return super.findNearestBlock();
-	}
-
 	public double acceptedDistance() {
 		return 2.0D;
+	}
+
+	@Override
+	protected int nextStartTick(PathfinderMob p_25618_) {
+		return reducedTickDelay(100 + p_25618_.getRandom().nextInt(100));
 	}
 }
