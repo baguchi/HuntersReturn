@@ -104,7 +104,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 8));
+		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 6));
 		this.goalSelector.addGoal(6, new MoveToGoal(this, 26.0D, 1.2D));
 		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers(AbstractIllager.class));
@@ -323,6 +323,8 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 		if (p_37858_ != MobSpawnType.STRUCTURE) {
 			this.populateDefaultEquipmentSlots(randomsource, p_37857_);
+		} else {
+			this.setHomeTarget(this.blockPosition());
 		}
 		this.populateDefaultEquipmentEnchantments(randomsource, p_37857_);
 		return ilivingentitydata;
@@ -472,7 +474,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		public boolean canUse() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
 
-			double distance = this.hunter.level.isDay() ? this.stopDistance : this.stopDistance / 3.0F;
+			double distance = this.hunter.level.isDay() ? this.stopDistance : this.stopDistance / 4.0F;
 
 			return blockpos != null && this.isTooFarAway(blockpos, distance);
 		}
