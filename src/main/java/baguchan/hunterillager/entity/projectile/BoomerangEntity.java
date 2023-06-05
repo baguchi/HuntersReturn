@@ -5,7 +5,10 @@ import baguchan.hunterillager.init.HunterEnchantments;
 import baguchan.hunterillager.init.HunterEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,27 +20,29 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BoomerangEntity extends ThrowableItemProjectile {
+public class BoomerangEntity extends Projectile {
 	private static final EntityDataAccessor<Byte> LOYALTY_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
 
 	private static final EntityDataAccessor<Byte> PIERCING_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
@@ -48,13 +53,19 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	private int totalHits;
 
 	private int flyTick;
+	protected int inGroundTime;
+
+	@Nullable
+	private BlockState lastState;
+	public boolean inGround;
 
 	public BoomerangEntity(EntityType<? extends BoomerangEntity> entityEntityType, Level world) {
 		super(entityEntityType, world);
 	}
 
 	public BoomerangEntity(EntityType<? extends BoomerangEntity> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
-		super(type, shootingEntity, world);
+		super(type, world);
+		this.setPos(shootingEntity.getX(), shootingEntity.getEyeY() - 0.1F, shootingEntity.getZ());
 		setOwner(shootingEntity);
 		setBoomerang(boomerang);
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(boomerang));
@@ -90,9 +101,9 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
 		int piercingLevel = (this.entityData.get(PIERCING_LEVEL)).byteValue();
 		Entity shooter = getOwner();
-		if (result.getEntity() != shooter)
-			if (!isReturning() || loyaltyLevel <= 0) {
+		if (result.getEntity() != shooter) {
 
+			if (!isReturning() || loyaltyLevel <= 0) {
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
 				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
@@ -116,9 +127,12 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 					motionX = -motionX;
 					motionZ = -motionZ;
 					setDeltaMovement(motionX, motionY, motionZ);
+					this.setDeltaMovement(this.getDeltaMovement().scale(0.9F + this.getBounceLevel() * 0.01F));
 				}
 				this.totalHits++;
 			}
+
+		}
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
 				this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -129,7 +143,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				motionX = -motionX;
 				motionZ = -motionZ;
 				setDeltaMovement(motionX, motionY, motionZ);
-				//func_70018_K();
 				if (loyaltyLevel > 0 && !isReturning() &&
 						shooter != null) {
 					this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -157,28 +170,39 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		BlockPos pos = result.getBlockPos();
 		BlockState state = this.level.getBlockState(pos);
 		SoundType soundType = state.getSoundType(this.level, pos, this);
-		if (!isReturning())
-			this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
-		this.totalHits++;
-		BlockState blockstate = this.level.getBlockState(result.getBlockPos());
-		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
-		int piercingLevel = this.entityData.get(PIERCING_LEVEL).byteValue();
-		Entity entity = getOwner();
-		if (!isReturning() && !blockstate.getCollisionShape(this.level, result.getBlockPos()).isEmpty()) {
-			Vec3i direction = result.getDirection().getNormal();
-			switch (result.getDirection()) {
-				case UP, SOUTH, EAST -> direction = direction.multiply(-1);
-				default -> {
-				}
-			}
-			direction = new Vec3i(direction.getX() == 0 ? 1 : direction.getX(), direction.getY() == 0 ? 1 : direction.getY(), direction.getZ() == 0 ? 1 : direction.getZ());
-			this.setDeltaMovement(this.getDeltaMovement().multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())));
-			this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
 
-			if (loyaltyLevel > 0 && !isReturning() && this.totalHits >= getBounceLevel() &&
-					entity != null) {
-				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-				setReturning(true);
+		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
+		Entity entity = getOwner();
+		Vec3 movement = this.getDeltaMovement();
+		if (!isReturning()) {
+			if (movement.length() < 0.2F && movement.y < 0) {
+				if (loyaltyLevel > 0) {
+					if (!isReturning() &&
+							entity != null) {
+						this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+						setReturning(true);
+					}
+				} else {
+					this.lastState = this.level.getBlockState(result.getBlockPos());
+					Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
+					this.setDeltaMovement(vec3);
+					Vec3 vec31 = vec3.normalize().scale((double) 0.05F);
+					this.setPosRaw(this.getX() - vec31.x, this.getY() - vec31.y, this.getZ() - vec31.z);
+				}
+			} else {
+				Vec3i direction = result.getDirection().getNormal();
+				switch (result.getDirection()) {
+					case UP, SOUTH, EAST -> direction = direction.multiply(-1);
+					default -> {
+					}
+				}
+				direction = new Vec3i(direction.getX() == 0 ? 1 : direction.getX(), direction.getY() == 0 ? 1 : direction.getY(), direction.getZ() == 0 ? 1 : direction.getZ());
+				this.setDeltaMovement(movement.multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())).scale(0.9F + this.getBounceLevel() * 0.01F));
+				this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
+				if (!isReturning()) {
+					this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
+				}
+				this.totalHits++;
 			}
 		}
 
@@ -193,16 +217,6 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 				}
 			}
 		}
-		checkInsideBlocks();
-	}
-
-	@Override
-	protected void onHit(HitResult result) {
-		super.onHit(result);
-		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
-		if (loyaltyLevel < 1 && this.totalHits >= getBounceLevel()) {
-			drop(getX(), getY(), getZ());
-		}
 	}
 
 
@@ -213,14 +227,14 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	private boolean shouldReturnToThrower() {
 		Entity entity = getOwner();
 		if (entity != null && entity.isAlive())
-			return (this.distanceToSqr(entity) > 3 && !entity.isSpectator());
+			return (!entity.isSpectator());
 		return false;
 	}
 
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-		if (this.flyTick >= 10 && entityIn == getOwner()) {
+		if (this.flyTick >= 14 && entityIn == getOwner()) {
 			drop(getOwner().getX(), getOwner().getY(), getOwner().getZ());
 		}
 	}
@@ -237,46 +251,128 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	@Override
 	public void tick() {
 		super.tick();
+		BlockPos blockpos2 = this.blockPosition();
+		BlockState blockstate2 = this.level.getBlockState(blockpos2);
+		if (this.getDeltaMovement().length() < 0.2F && this.getDeltaMovement().y < 0) {
 
-		Vec3 vec3 = this.getDeltaMovement();
-		if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
-			double d0 = vec3.horizontalDistance();
-			this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
-			this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
-			this.yRotO = this.getYRot();
-			this.xRotO = this.getXRot();
-		}
+			if (!blockstate2.isAir()) {
+				VoxelShape voxelshape = blockstate2.getCollisionShape(this.level, blockpos2);
+				if (!voxelshape.isEmpty()) {
+					Vec3 vec31 = this.position();
 
-		this.flyTick++;
-		Vec3 vec3d1 = this.position();
-		Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-		BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
-		onHitFluid(fluidHitResult);
-
-		int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
-		Entity entity = getOwner();
-		if (loyaltyLevel > 0 && !isReturning()) {
-			if (this.flyTick >= 80 && entity != null) {
-				this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-				setReturning(true);
-			}
-			if (this.flyTick < 80) {
-				//recover movement if loyalty enchant has
-				this.setDeltaMovement(vec3.scale(1.01F));
+					for (AABB aabb : voxelshape.toAabbs()) {
+						if (aabb.move(blockpos2).contains(vec31)) {
+							this.inGround = true;
+							break;
+						}
+					}
+				}
 			}
 		}
-		if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
-			drop(getX(), getY(), getZ());
-		} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
-			this.noPhysics = true;
-			Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-			double d0 = 0.05D * loyaltyLevel;
-			this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
+
+		if (this.isInWaterOrRain() || blockstate2.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+			this.clearFire();
 		}
-		this.checkInsideBlocks();
+
+		if (this.inGround) {
+			this.setDeltaMovement(0, 0, 0);
+			if (this.lastState != blockstate2 && this.shouldFall()) {
+				this.startFalling();
+			}
+		} else {
+			Vec3 vec3d1 = this.position();
+			Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+			BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
+			onHitFluid(fluidHitResult);
+
+			HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+			boolean flag = false;
+			if (hitresult.getType() == HitResult.Type.BLOCK) {
+				BlockPos blockpos = ((BlockHitResult) hitresult).getBlockPos();
+				BlockState blockstate = this.level.getBlockState(blockpos);
+				if (blockstate.is(Blocks.NETHER_PORTAL)) {
+					this.handleInsidePortal(blockpos);
+					flag = true;
+				} else if (blockstate.is(Blocks.END_GATEWAY)) {
+					BlockEntity blockentity = this.level.getBlockEntity(blockpos);
+					if (blockentity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this)) {
+						TheEndGatewayBlockEntity.teleportEntity(this.level, blockpos, blockstate, this, (TheEndGatewayBlockEntity) blockentity);
+					}
+
+					flag = true;
+				}
+			}
+
+			if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+				this.onHit(hitresult);
+			}
+
+			this.checkInsideBlocks();
+			this.updateRotation();
+
+			Vec3 vec3 = this.getDeltaMovement();
+			this.flyTick++;
+
+			int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
+			Entity entity = getOwner();
+			if (loyaltyLevel > 0 && !isReturning()) {
+				if (this.flyTick >= 80 && entity != null) {
+					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+					setReturning(true);
+				}
+			}
+			if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
+				drop(getX(), getY(), getZ());
+			} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
+				this.noPhysics = true;
+				Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
+				double d0 = 0.05D * loyaltyLevel;
+				this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
+			}
+
+			Vec3 vec33 = this.getDeltaMovement();
+			double d2 = this.getX() + vec33.x;
+			double d0 = this.getY() + vec33.y;
+			double d1 = this.getZ() + vec33.z;
+			float f;
+			if (this.isInWater()) {
+				for (int i = 0; i < 4; ++i) {
+					float f1 = 0.25F;
+					this.level.addParticle(ParticleTypes.BUBBLE, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D, d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
+				}
+
+				f = 0.8F;
+			} else {
+				f = 0.99F;
+			}
+			this.setDeltaMovement(vec33.scale(loyaltyLevel > 0 && this.isReturning() ? 1.0F : f).add(0, -this.getGravity(), 0));
+		}
+		if (this.inGroundTime > 1200) {
+			if (!this.level.isClientSide) {
+				this.discard();
+			}
+		} else {
+			if (this.inGround) {
+				++this.inGroundTime;
+			} else {
+				this.inGroundTime = 0;
+			}
+		}
+
+		this.move(MoverType.SELF, this.getDeltaMovement());
 	}
 
-	@Override
+	private boolean shouldFall() {
+		return this.inGround && this.level.noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+	}
+
+	private void startFalling() {
+		this.inGround = false;
+		Vec3 vec3 = this.getDeltaMovement();
+		this.setDeltaMovement(vec3.multiply((double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F), (double) (this.random.nextFloat() * 0.2F)));
+		this.inGroundTime = 0;
+	}
+
 	protected float getGravity() {
 		if (getLoyaltyLevel() > 0 && !this.isReturning()) {
 			if (this.isInWater()) {
@@ -301,13 +397,7 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	}
 
 	@Override
-	protected Item getDefaultItem() {
-		return this.getBoomerang().getItem();
-	}
-
-	@Override
 	protected void defineSynchedData() {
-		super.defineSynchedData();
 		this.entityData.define(LOYALTY_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(PIERCING_LEVEL, Byte.valueOf((byte) 0));
 		this.entityData.define(BOUNCE_LEVEL, Byte.valueOf((byte) 0));
@@ -320,7 +410,14 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		super.addAdditionalSaveData(nbt);
 		nbt.put("boomerang", getBoomerang().save(new CompoundTag()));
 		nbt.putInt("totalHits", this.totalHits);
+		nbt.putInt("InGroundTime", this.inGroundTime);
+		nbt.putInt("FlyTick", this.flyTick);
 		nbt.putBoolean("returning", isReturning());
+		if (this.lastState != null) {
+			nbt.put("inBlockState", NbtUtils.writeBlockState(this.lastState));
+		}
+
+		nbt.putBoolean("inGround", this.inGround);
 	}
 
 
@@ -329,6 +426,13 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 		super.readAdditionalSaveData(nbt);
 		setBoomerang(ItemStack.of(nbt.getCompound("boomerang")));
 		this.totalHits = nbt.getInt("totalHits");
+		this.inGroundTime = nbt.getInt("InGroundTime");
+		if (nbt.contains("inBlockState", 10)) {
+			this.lastState = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), nbt.getCompound("inBlockState"));
+		}
+
+		this.inGround = nbt.getBoolean("inGround");
+		this.flyTick = nbt.getInt("FlyTick");
 		setReturning(nbt.getBoolean("returning"));
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(getBoomerang()));
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, getBoomerang()));
@@ -337,6 +441,10 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 
 	private int getLoyaltyLevel() {
 		return (this.entityData.get(LOYALTY_LEVEL)).byteValue();
+	}
+
+	public int getInGroundTime() {
+		return inGroundTime;
 	}
 
 	private int getBounceLevel() {
@@ -374,5 +482,4 @@ public class BoomerangEntity extends ThrowableItemProjectile {
 	public void setBoomerang(ItemStack stack) {
 		this.entityData.set(BOOMERANG, stack);
 	}
-
 }
