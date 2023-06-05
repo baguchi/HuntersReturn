@@ -30,7 +30,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 	@Override
 	public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, PoseStack stackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		stackIn.pushPose();
-		stackIn.translate(0.0F, 0.0F, -entityIn.getBbHeight() / 2);
+		stackIn.translate(-entityIn.getBbHeight() / 2, 0, -entityIn.getBbHeight() / 2);
 
 		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
 		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
