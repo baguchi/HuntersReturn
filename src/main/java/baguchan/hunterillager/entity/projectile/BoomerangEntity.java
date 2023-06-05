@@ -132,6 +132,8 @@ public class BoomerangEntity extends Projectile {
 				this.totalHits++;
 			}
 
+		} else {
+			drop(this.getX(), this.getY(), this.getZ());
 		}
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
