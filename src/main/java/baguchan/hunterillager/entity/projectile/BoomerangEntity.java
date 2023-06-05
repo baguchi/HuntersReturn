@@ -204,7 +204,6 @@ public class BoomerangEntity extends Projectile {
 				if (!isReturning()) {
 					this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
 				}
-				this.totalHits++;
 			}
 		}
 
