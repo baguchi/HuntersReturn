@@ -105,9 +105,13 @@ public class BoomerangEntity extends Projectile {
 
 			if (!isReturning() || loyaltyLevel <= 0) {
 				int sharpness = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SHARPNESS, getBoomerang());
-				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y * 0.5D + getDeltaMovement().z * getDeltaMovement().z) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
+				int damage = (int) ((2.0D * Math.sqrt(getDeltaMovement().length()) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
-				if (damage != 0) {
+				if (this.isOnFire()) {
+					result.getEntity().setSecondsOnFire(5);
+				}
+
+				if (damage > 0) {
 					result.getEntity().hurt(this.boomerangAttack(shooter), damage);
 				}
 				if (shooter instanceof LivingEntity) {
@@ -127,7 +131,7 @@ public class BoomerangEntity extends Projectile {
 					motionX = -motionX;
 					motionZ = -motionZ;
 					setDeltaMovement(motionX, motionY, motionZ);
-					this.setDeltaMovement(this.getDeltaMovement().scale(0.9F + this.getBounceLevel() * 0.01F));
+					this.setDeltaMovement(this.getDeltaMovement().scale(0.91F + this.getBounceLevel() * 0.01F));
 				}
 				this.totalHits++;
 			}
@@ -199,7 +203,7 @@ public class BoomerangEntity extends Projectile {
 					}
 				}
 				direction = new Vec3i(direction.getX() == 0 ? 1 : direction.getX(), direction.getY() == 0 ? 1 : direction.getY(), direction.getZ() == 0 ? 1 : direction.getZ());
-				this.setDeltaMovement(movement.multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())).scale(0.9F + this.getBounceLevel() * 0.01F));
+				this.setDeltaMovement(movement.multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())).scale(0.91F + this.getBounceLevel() * 0.01F));
 				this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
 				if (!isReturning()) {
 					this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
@@ -307,8 +311,6 @@ public class BoomerangEntity extends Projectile {
 			if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 				this.onHit(hitresult);
 			}
-
-			this.checkInsideBlocks();
 			this.updateRotation();
 
 			Vec3 vec3 = this.getDeltaMovement();
@@ -344,6 +346,8 @@ public class BoomerangEntity extends Projectile {
 				f = 0.99F;
 			}
 			this.setDeltaMovement(vec33.scale(loyaltyLevel > 0 && this.isReturning() ? 1.0F : f).add(0, -this.getGravity(), 0));
+			this.move(MoverType.SELF, this.getDeltaMovement());
+			this.checkInsideBlocks();
 		}
 		if (this.inGroundTime > 1200) {
 			if (!this.level.isClientSide) {
@@ -357,7 +361,7 @@ public class BoomerangEntity extends Projectile {
 			}
 		}
 
-		this.move(MoverType.SELF, this.getDeltaMovement());
+
 	}
 
 	private boolean shouldFall() {
