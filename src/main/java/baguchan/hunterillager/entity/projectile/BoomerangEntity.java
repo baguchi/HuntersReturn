@@ -237,6 +237,7 @@ public class BoomerangEntity extends Projectile {
 		if (this.flyTick >= 10 && entityIn == getOwner()) {
 			if (!this.level.isClientSide) {
 				if (this.tryPickup(entityIn)) {
+					this.playSound(SoundEvents.ITEM_PICKUP);
 					entityIn.take(this, 1);
 					this.discard();
 				}
