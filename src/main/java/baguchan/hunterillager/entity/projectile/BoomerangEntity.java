@@ -86,7 +86,7 @@ public class BoomerangEntity extends Projectile {
 		double horizontal = getDeltaMovement().y * getDeltaMovement().y;
 		if (result.getType() == HitResult.Type.BLOCK && result.isInside() &&
 				velocity >= 0.6499999761581421D && horizontal < 0.17499999701976776D)
-			if (!this.level.getBlockState(result.getBlockPos()).isAir() && this.level.getFluidState(result.getBlockPos()).is(FluidTags.WATER)) {
+			if (!this.level().getBlockState(result.getBlockPos()).isAir() && this.level().getFluidState(result.getBlockPos()).is(FluidTags.WATER)) {
 				setDeltaMovement(getDeltaMovement().x, Mth.clamp(getDeltaMovement().y + 0.10000000149011612D, -0.10000000149011612D, 0.30000001192092896D), getDeltaMovement().z);
 				this.hasImpulse = true;
 			}
@@ -141,7 +141,7 @@ public class BoomerangEntity extends Projectile {
 		}
 		if (returnToOwner && !isReturning())
 			if (getOwner() != null && shouldReturnToThrower() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.LOYALTY, getBoomerang()) > 0) {
-				this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+				this.level().playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 				Vec3 motion = getDeltaMovement();
 				double motionX = motion.x;
 				double motionY = motion.y;
@@ -151,7 +151,7 @@ public class BoomerangEntity extends Projectile {
 				setDeltaMovement(motionX, motionY, motionZ);
 				if (loyaltyLevel > 0 && !isReturning() &&
 						shooter != null) {
-					this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+					this.level().playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			} else {
@@ -164,7 +164,7 @@ public class BoomerangEntity extends Projectile {
 				setDeltaMovement(motionX, motionY, motionZ);
 				if (loyaltyLevel > 0 && !isReturning() &&
 						shooter != null) {
-					this.level.playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+					this.level().playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
@@ -174,8 +174,8 @@ public class BoomerangEntity extends Projectile {
 	protected void onHitBlock(BlockHitResult result) {
 		super.onHitBlock(result);
 		BlockPos pos = result.getBlockPos();
-		BlockState state = this.level.getBlockState(pos);
-		SoundType soundType = state.getSoundType(this.level, pos, this);
+		BlockState state = this.level().getBlockState(pos);
+		SoundType soundType = state.getSoundType(this.level(), pos, this);
 
 		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
 		Entity entity = getOwner();
@@ -185,11 +185,11 @@ public class BoomerangEntity extends Projectile {
 				if (loyaltyLevel > 0) {
 					if (!isReturning() &&
 							entity != null) {
-						this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+						this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 						setReturning(true);
 					}
 				} else {
-					this.lastState = this.level.getBlockState(result.getBlockPos());
+					this.lastState = this.level().getBlockState(result.getBlockPos());
 					Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
 					this.setDeltaMovement(vec3);
 					Vec3 vec31 = vec3.normalize().scale((double) 0.05F);
@@ -206,7 +206,7 @@ public class BoomerangEntity extends Projectile {
 				this.setDeltaMovement(movement.multiply(new Vec3(direction.getX(), direction.getY(), direction.getZ())).scale(0.91F + this.getBounceLevel() * 0.01F));
 				this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
 				if (!isReturning()) {
-					this.level.playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
+					this.level().playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
 				}
 			}
 		}
@@ -235,7 +235,7 @@ public class BoomerangEntity extends Projectile {
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
 		if (this.flyTick >= 10 && entityIn == getOwner()) {
-			if (!this.level.isClientSide) {
+			if (!this.level().isClientSide) {
 				if (this.tryPickup(entityIn)) {
 					this.playSound(SoundEvents.ITEM_PICKUP);
 					entityIn.take(this, 1);
@@ -250,9 +250,9 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	public void drop(double x, double y, double z) {
-		if (!this.level.isClientSide()) {
+		if (!this.level().isClientSide()) {
 			if (!(getOwner() instanceof Player) || (getOwner() instanceof Player && !((Player) getOwner()).isCreative())) {
-				this.level.addFreshEntity(new ItemEntity(this.level, x, y, z, getBoomerang().split(1)));
+				this.level().addFreshEntity(new ItemEntity(this.level(), x, y, z, getBoomerang().split(1)));
 				this.discard();
 			} else {
 				this.discard();
@@ -264,11 +264,11 @@ public class BoomerangEntity extends Projectile {
 	public void tick() {
 		super.tick();
 		BlockPos blockpos2 = this.blockPosition();
-		BlockState blockstate2 = this.level.getBlockState(blockpos2);
+		BlockState blockstate2 = this.level().getBlockState(blockpos2);
 		if (this.getDeltaMovement().length() < 0.2F && this.getDeltaMovement().y < 0) {
 
 			if (!blockstate2.isAir()) {
-				VoxelShape voxelshape = blockstate2.getCollisionShape(this.level, blockpos2);
+				VoxelShape voxelshape = blockstate2.getCollisionShape(this.level(), blockpos2);
 				if (!voxelshape.isEmpty()) {
 					Vec3 vec31 = this.position();
 
@@ -294,21 +294,21 @@ public class BoomerangEntity extends Projectile {
 		} else {
 			Vec3 vec3d1 = this.position();
 			Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-			BlockHitResult fluidHitResult = this.level.clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
+			BlockHitResult fluidHitResult = this.level().clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
 			onHitFluid(fluidHitResult);
 
-			HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+			HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 			boolean flag = false;
 			if (hitresult.getType() == HitResult.Type.BLOCK) {
 				BlockPos blockpos = ((BlockHitResult) hitresult).getBlockPos();
-				BlockState blockstate = this.level.getBlockState(blockpos);
+				BlockState blockstate = this.level().getBlockState(blockpos);
 				if (blockstate.is(Blocks.NETHER_PORTAL)) {
 					this.handleInsidePortal(blockpos);
 					flag = true;
 				} else if (blockstate.is(Blocks.END_GATEWAY)) {
-					BlockEntity blockentity = this.level.getBlockEntity(blockpos);
+					BlockEntity blockentity = this.level().getBlockEntity(blockpos);
 					if (blockentity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this)) {
-						TheEndGatewayBlockEntity.teleportEntity(this.level, blockpos, blockstate, this, (TheEndGatewayBlockEntity) blockentity);
+						TheEndGatewayBlockEntity.teleportEntity(this.level(), blockpos, blockstate, this, (TheEndGatewayBlockEntity) blockentity);
 					}
 
 					flag = true;
@@ -327,7 +327,7 @@ public class BoomerangEntity extends Projectile {
 			Entity entity = getOwner();
 			if (loyaltyLevel > 0 && !isReturning()) {
 				if (this.flyTick >= 80 && entity != null) {
-					this.level.playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+					this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
@@ -346,7 +346,7 @@ public class BoomerangEntity extends Projectile {
 			double d1 = this.getZ() + vec33.z;
 			float f;
 			if (this.isInWater()) {
-				this.level.addParticle(ParticleTypes.BUBBLE, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D, d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
+				this.level().addParticle(ParticleTypes.BUBBLE, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D, d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
 
 				f = 0.8F;
 			} else {
@@ -356,9 +356,9 @@ public class BoomerangEntity extends Projectile {
 			this.move(MoverType.SELF, this.getDeltaMovement());
 			this.checkInsideBlocks();
 
-			if (!this.level.isClientSide()) {
+			if (!this.level().isClientSide()) {
 				if (loyaltyLevel > 0) {
-					List<ItemEntity> list = this.level.getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
+					List<ItemEntity> list = this.level().getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
 
 					if (this.getPassengers().isEmpty()) {
 						if (list != null && !list.isEmpty()) {
@@ -369,7 +369,7 @@ public class BoomerangEntity extends Projectile {
 			}
 		}
 		if (this.inGroundTime > 1200) {
-			if (!this.level.isClientSide) {
+			if (!this.level().isClientSide) {
 				this.discard();
 			}
 		} else {
@@ -386,7 +386,7 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	private boolean shouldFall() {
-		return this.isInGround() && this.level.noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+		return this.isInGround() && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
 	}
 
 	private void startFalling() {
@@ -452,7 +452,7 @@ public class BoomerangEntity extends Projectile {
 		this.totalHits = nbt.getInt("totalHits");
 		this.inGroundTime = nbt.getInt("InGroundTime");
 		if (nbt.contains("inBlockState", 10)) {
-			this.lastState = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK), nbt.getCompound("inBlockState"));
+			this.lastState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), nbt.getCompound("inBlockState"));
 		}
 
 		this.setInGround(nbt.getBoolean("inGround"));

@@ -132,7 +132,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	public void aiStep() {
-		if (!this.level.isClientSide && this.isAlive()) {
+		if (!this.level().isClientSide && this.isAlive()) {
 			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
 
 			if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
@@ -410,10 +410,10 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	@Override
-	public boolean wasKilled(ServerLevel p_216988_, LivingEntity p_216989_) {
+	public boolean killedEntity(ServerLevel p_216988_, LivingEntity p_216989_) {
 		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH.get(), this.getSoundVolume(), this.getVoicePitch());
 		this.cooldown = 300;
-		return super.wasKilled(p_216988_, p_216989_);
+		return super.killedEntity(p_216988_, p_216989_);
 	}
 
 	public void setHomeTarget(@Nullable BlockPos p_213726_1_) {
@@ -435,9 +435,9 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		double d1 = p_32141_.getY(0.3333333333333333D) - abstractarrow.getY();
 		double d2 = p_32141_.getZ() - this.getZ();
 		double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-		abstractarrow.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
+		abstractarrow.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-		this.level.addFreshEntity(abstractarrow);
+		this.level().addFreshEntity(abstractarrow);
 	}
 
 	protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_) {
@@ -445,14 +445,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	public void performBoomeranAttack(LivingEntity p_82196_1_) {
-		BoomerangEntity boomerang = new BoomerangEntity(this.level, this, this.getOffhandItem().split(1));
+		BoomerangEntity boomerang = new BoomerangEntity(this.level(), this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
 		double d3 = (double) Mth.sqrt((float) (d0 * d0 + d2 * d2));
-		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level.getDifficulty().getId() * 4));
+		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-		this.level.addFreshEntity(boomerang);
+		this.level().addFreshEntity(boomerang);
 	}
 
 	class MoveToGoal extends Goal {
@@ -474,7 +474,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		public boolean canUse() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
 
-			double distance = this.hunter.level.isDay() ? this.stopDistance : this.stopDistance / 1.5F;
+			double distance = this.hunter.level().isDay() ? this.stopDistance : this.stopDistance / 1.5F;
 
 			return blockpos != null && this.isTooFarAway(blockpos, distance);
 		}
@@ -509,7 +509,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		public boolean canUse() {
 			if (!this.mob.hasActiveRaid()) {
 
-				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), Hunter.ALLOWED_ITEMS);
+				List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), Hunter.ALLOWED_ITEMS);
 				if (!list.isEmpty() && this.mob.hasLineOfSight(list.get(0))) {
 					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.1F);
 				}
@@ -522,7 +522,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 		public void tick() {
 			if (this.mob.getNavigation().getTargetPos().closerThan(this.mob.blockPosition(), 1.414D)) {
-				List<ItemEntity> list = this.mob.level.getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), Hunter.ALLOWED_ITEMS);
+				List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(4.0D, 4.0D, 4.0D), Hunter.ALLOWED_ITEMS);
 				if (!list.isEmpty()) {
 					this.mob.pickUpItem(list.get(0));
 				}

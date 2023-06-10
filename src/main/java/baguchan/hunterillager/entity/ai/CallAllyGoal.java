@@ -47,7 +47,7 @@ public class CallAllyGoal extends Goal {
 
 		if (--this.cooldownTime < 0) {
 			if (this.hunter.getTarget() != null) {
-				this.toCall = this.hunter.level.getEntitiesOfClass(AbstractIllager.class, this.hunter.getBoundingBox().inflate((double) 30.0F, 30.0D, (double) 30.0F), (p_148124_) -> {
+				this.toCall = this.hunter.level().getEntitiesOfClass(AbstractIllager.class, this.hunter.getBoundingBox().inflate((double) 30.0F, 30.0D, (double) 30.0F), (p_148124_) -> {
 					return this.hunter != p_148124_ && this.hunter.isAlliedTo(p_148124_) && p_148124_.getTarget() == null;
 				});
 				this.cooldownTime = 600;
@@ -87,7 +87,7 @@ public class CallAllyGoal extends Goal {
 			Instrument instrument = optional.get().value();
 			SoundEvent soundevent = instrument.soundEvent().value();
 			float f = instrument.range() / 16.0F;
-			this.hunter.level.playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
+			this.hunter.level().playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
 			this.hunter.gameEvent(GameEvent.INSTRUMENT_PLAY, this.hunter);
 		}
 	}
