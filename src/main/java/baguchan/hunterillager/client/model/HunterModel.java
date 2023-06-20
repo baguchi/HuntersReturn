@@ -3,20 +3,14 @@ package baguchan.hunterillager.client.model;
 // Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
+import bagu_chan.bagus_lib.client.layer.IArmor;
 import baguchan.hunterillager.entity.Hunter;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.AnimationUtils;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -24,8 +18,9 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
+public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implements ArmedModel, HeadedModel, IArmor {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+	private final ModelPart body;
 	private final ModelPart waist;
 	private final ModelPart LeftLeg;
 	private final ModelPart RightLeg;
@@ -42,6 +37,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	public HunterModel(ModelPart root) {
 		this.root = root;
 		this.waist = root.getChild("waist");
+		this.body = this.waist.getChild("Body");
 		this.cape = this.waist.getChild("Body").getChild("cape");
 		this.LeftLeg = root.getChild("LeftLeg");
 		this.RightLeg = root.getChild("RightLeg");
@@ -235,5 +231,55 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	@Override
 	public ModelPart root() {
 		return this.root;
+	}
+
+	@Override
+	public void translateToHead(ModelPart modelPart, PoseStack poseStack) {
+		this.bone.translateAndRotate(poseStack);
+		modelPart.translateAndRotate(poseStack);
+		poseStack.translate(0, -0.1F, 0);
+	}
+
+	@Override
+	public void translateToChest(ModelPart modelPart, PoseStack poseStack) {
+		this.waist.translateAndRotate(poseStack);
+		modelPart.translateAndRotate(poseStack);
+		poseStack.translate(0, -(24F / 16F), 0);
+		poseStack.scale(1.05F, 1.05F, 1.05F);
+	}
+
+	@Override
+	public void translateToLeg(ModelPart modelPart, PoseStack poseStack) {
+		modelPart.translateAndRotate(poseStack);
+	}
+
+	@Override
+	public void translateToChestPat(ModelPart modelPart, PoseStack poseStack) {
+		modelPart.translateAndRotate(poseStack);
+		poseStack.scale(1.05F, 1.05F, 1.05F);
+	}
+
+	public Iterable<ModelPart> rightHandArmors() {
+		return ImmutableList.of(this.RightArm);
+	}
+
+	public Iterable<ModelPart> leftHandArmors() {
+		return ImmutableList.of(this.LeftArm);
+	}
+
+	public Iterable<ModelPart> rightLegPartArmors() {
+		return ImmutableList.of(this.RightLeg);
+	}
+
+	public Iterable<ModelPart> leftLegPartArmors() {
+		return ImmutableList.of(this.LeftLeg);
+	}
+
+	public Iterable<ModelPart> bodyPartArmors() {
+		return ImmutableList.of(this.body);
+	}
+
+	public Iterable<ModelPart> headPartArmors() {
+		return ImmutableList.of(this.head);
 	}
 }

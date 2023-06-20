@@ -1,5 +1,6 @@
 package baguchan.hunterillager.client.render;
 
+import bagu_chan.bagus_lib.client.layer.CustomArmorLayer;
 import baguchan.hunterillager.HunterIllager;
 import baguchan.hunterillager.client.model.HunterModel;
 import baguchan.hunterillager.entity.Hunter;
@@ -18,6 +19,7 @@ public class HunterIllagerRender<T extends Hunter> extends MobRenderer<T, Hunter
 
 	public HunterIllagerRender(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTERILLAGER)), 0.5F);
+		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
 		this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()));
 	}
 
