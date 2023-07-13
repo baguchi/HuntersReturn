@@ -1,0 +1,23 @@
+{
+  "entity_type": "hunterillager:hunterillager",
+  "weight": 70,
+  "strength": 7,
+  "ranks": [
+    "soldier",
+    "captain",
+    "general",
+    "leader"
+  ],
+  "boosts": {
+    "rarity_overrides": [
+      {
+        "boost": "faction_craft:mount/faction_ravager",
+        "rarity": "rare"
+      }
+    ]
+  },
+  "biome_whitelist": [
+    "#minecraft:is_taiga",
+    "#minecraft:is_forest"
+  ]
+}
