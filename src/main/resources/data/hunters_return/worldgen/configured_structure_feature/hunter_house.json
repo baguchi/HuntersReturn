@@ -1,0 +1,8 @@
+{
+  "type": "hunters_return:hunter_house",
+  "config": {
+  },
+  "biomes": "#hunters_return:has_structure/hunter_house",
+  "adapt_noise": false,
+  "spawn_overrides": {}
+}

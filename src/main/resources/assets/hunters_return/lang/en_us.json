@@ -1,0 +1,21 @@
+{
+  "item.hunters_return.spawnegg_hunter": "Hunter Spawn Egg",
+  "item.hunters_return.quivers": "Quivers",
+  "item.hunters_return.boomerang": "Boomerang",
+  "item.hunters_return.quiver.desc": "You can store the arrow by right-clicking while holding the quiver and the arrow.",
+  "entity.hunters_return.hunter": "Hunter",
+  "subtitles.hunters_return.hunter.idle": "Hunter murmurs",
+  "subtitles.hunters_return.hunter.hurt": "Hunter Hurt",
+  "subtitles.hunters_return.hunter.death": "Hunter Death",
+  "subtitles.hunters_return.hunter.cheer": "Hunter Cheers",
+  "subtitles.hunters_return.hunter.laugh": "Hunter laughs",
+  "death.attack.hunter.boomerang": "%1$s was hit by %2$s 's boomerang",
+  "death.attack.hunter.boomerang.player": "%1$s was hit by %2$s 's boomerang",
+  "death.attack.hunter.boomerang.item": "%1$s was hit by %2$s 's %3$s",
+  "hunters_return.config.structureSpacing": "Hunter House Generate Spacing",
+  "hunters_return.config.foodWhitelist": "Hunter Eat Food Whitelist",
+  "hunters_return.config.attackableWhitelist": "Hunter Attackable Whitelist",
+  "enchantment.hunters_return.bounce": "Bounce",
+  "hunters_return.config.spacing": "Spacing",
+  "hunters_return.config.separation": "Separation"
+}

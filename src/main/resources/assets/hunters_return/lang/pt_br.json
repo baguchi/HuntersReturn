@@ -1,0 +1,12 @@
+{
+  "item.hunters_return.spawnegg_hunter": "Ovo de Gerador de Caçador Illager",
+  "item.hunters_return.quivers": "Aljavas",
+  "item.hunters_return.boomerang": "Bumerangue",
+  "item.hunters_return.quiver.desc": "Você pode armazenar a flecha clicando com o botão direito enquanto segura a aljava e a flecha.",
+  "entity.hunters_return.hunter": "Caçador Illager",
+  "hunters_return:subtitles.hunters_return.hunter.laugh": "Risadas de Caçador Illager",
+  "death.attack.hunter.boomerang": "%1$s foi atingido pelo bumerangue de %2$s",
+  "hunters_return.config.generateHunterHouse": "gerar casa do caçador acima do Nível",
+  "hunters_return.config.spawnhunters_returnOnPatrol": "Gerar Caçador Illager na Patrulha",
+  "enchantment.hunters_return.bounce": "Ricochetear"
+}

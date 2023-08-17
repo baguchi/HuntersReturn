@@ -1,0 +1,40 @@
+{
+  "mob.hunterillager.idle": {
+    "sounds": [
+      "hunters_return:mob/hunterillager/hunter_idle1",
+      "hunters_return:mob/hunterillager/hunter_idle2",
+      "hunters_return:mob/hunterillager/hunter_idle3",
+      "hunters_return:mob/hunterillager/hunter_idle4",
+      "hunters_return:mob/hunterillager/hunter_idle5"
+    ],
+    "subtitle": "subtitles.hunters_return.hunters_return.hunter.idle"
+  },
+  "mob.hunterillager.hurt": {
+    "sounds": [
+      "hunters_return:mob/hunterillager/hunter_hurt1",
+      "hunters_return:mob/hunterillager/hunter_hurt2",
+      "hunters_return:mob/hunterillager/hunter_hurt3"
+    ],
+    "subtitle": "subtitles.hunters_return.hunters_return.hunter.hurt"
+  },
+  "mob.hunterillager.death": {
+    "sounds": [
+      "hunters_return:mob/hunterillager/hunter_death1",
+      "hunters_return:mob/hunterillager/hunter_death2"
+    ],
+    "subtitle": "subtitles.hunters_return.hunters_return.hunter.death"
+  },
+  "mob.hunterillager.cheer": {
+    "sounds": [
+      "hunters_return:mob/hunterillager/hunter_cheer1",
+      "hunters_return:mob/hunterillager/hunter_cheer2"
+    ],
+    "subtitle": "subtitles.hunters_return.hunters_return.hunter.cheer"
+  },
+  "mob.hunterillager.laugh": {
+    "sounds": [
+      "hunters_return:mob/hunterillager/hunter_laugh"
+    ],
+    "subtitle": "subtitles.hunters_return.hunters_return.hunter.laugh"
+  }
+}

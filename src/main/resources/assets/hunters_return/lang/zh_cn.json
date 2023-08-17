@@ -1,0 +1,11 @@
+{
+  "item.hunters_return.spawnegg_hunter": "邪猎者刷怪蛋",
+  "item.hunters_return.quivers": "箭袋",
+  "item.hunters_return.boomerang": "回旋镖",
+  "container.hunters_return.quivers": "箭袋",
+  "entity.hunters_return.hunter": "邪猎者",
+  "subtitles.hunters_return.hunter.laugh": "邪猎者笑声",
+  "death.attack.hunter.boomerang": "%1$s 被 %2$s 的回旋镖击中了",
+  "hunters_return.config.generateHunterHouse": "生成：主世界中的邪猎者",
+  "hunters_return.config.spawnhunters_returnOnPatrol": "生成：灾厄巡逻队中的邪猎者"
+}

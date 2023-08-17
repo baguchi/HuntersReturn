@@ -1,0 +1,21 @@
+{
+  "item.hunters_return.spawnegg_hunter": "Яйце виклику мисливця",
+  "item.hunters_return.quivers": "Сагайдак",
+  "item.hunters_return.boomerang": "Бумеранг",
+  "item.hunters_return.quiver.desc": "Ви можете зберегти стрілу, клацнувши Пкм, тримаючи сагайдак і стрілу.",
+  "entity.hunters_return.hunter": "Мисливець",
+  "subtitles.hunters_return.hunter.idle": "Мисливець бурмоче",
+  "subtitles.hunters_return.hunter.hurt": "Мисливця поранено",
+  "subtitles.hunters_return.hunter.death": "Мисливець гине",
+  "subtitles.hunters_return.hunter.cheer": "Мисливець тріумфує",
+  "subtitles.hunters_return.hunter.laugh": "Мисливець сміється",
+  "death.attack.hunter.boomerang": "%1$s поцілено",
+  "death.attack.hunter.boomerang.player": "%1$s поцілено бумерангом %2$s",
+  "death.attack.hunter.boomerang.item": "%1$s поцілено %3$s %2$s",
+  "hunters_return.config.structureSpacing": "Інтервал генерації мисливського будинку",
+  "hunters_return.config.foodWhitelist": "Білий список їстівної їжі мисливця",
+  "hunters_return.config.attackableWhitelist": "Білий список цілей мисливця",
+  "enchantment.hunters_return.bounce": "Відскок",
+  "hunters_return.config.spacing": "Інтервал",
+  "hunters_return.config.separation": "Поділ"
+}

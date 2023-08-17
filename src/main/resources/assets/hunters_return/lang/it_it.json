@@ -1,0 +1,21 @@
+{
+  "item.hunters_return.spawnegg_hunter": "Uovo generatore di cacciatore",
+  "item.hunters_return.quivers": "Faretre",
+  "item.hunters_return.boomerang": "Boomerang",
+  "item.hunters_return.quiver.desc": "È possibile rifoderare la freccia facendo click con il tasto destro del mouse mentre si tengono la faretra e la freccia in mano.",
+  "entity.hunters_return.hunter": "Cacciatore",
+  "subtitles.hunters_return.hunter.idle": "Cacciatore mormora",
+  "subtitles.hunters_return.hunter.hurt": "Cacciatore ferito",
+  "subtitles.hunters_return.hunter.death": "Cacciatore muore",
+  "subtitles.hunters_return.hunter.cheer": "Cacciatore esulta",
+  "subtitles.hunters_return.hunter.laugh": "Caciatore ride",
+  "death.attack.hunter.boomerang": "%1$s è stato colpito",
+  "death.attack.hunter.boomerang.player": "%1$s è stato colpito dal boomerang di %2$s",
+  "death.attack.hunter.boomerang.item": "%1$s è stato colpito dal %2$s di %3$s",
+  "hunters_return.config.structureSpacing": "Spazio di generazione del capanno del cacciatore",
+  "hunters_return.config.foodWhitelist": "Cibo whitelist mangiabile dal cacciatore",
+  "hunters_return.config.attackableWhitelist": "Whitelist attaccabile dal cacciatore",
+  "enchantment.hunters_return.bounce": "Rimbalzo",
+  "hunters_return.config.spacing": "Distanza",
+  "hunters_return.config.separation": "Separazione"
+}

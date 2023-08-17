@@ -1,0 +1,19 @@
+{
+  "item.hunters_return.spawnegg_hunter": "Oeuf d'apparition du Chasseur",
+  "item.hunters_return.quivers": "Carquois",
+  "item.hunters_return.boomerang": "Boomerang",
+  "item.hunters_return.quiver.desc": "Vous pouvez stocker la flèche en faisant un clic droit tout en maintenant le carquois et la flèche.",
+  "entity.hunters_return.hunter": "Chasseur",
+  "subtitles.hunters_return.hunter.idle": "Un chasseur murmure",
+  "subtitles.hunters_return.hunter.hurt": "Un chasseur est blessé",
+  "subtitles.hunters_return.hunter.death": "Un chasseur est mort",
+  "subtitles.hunters_return.hunter.cheer": "Acclamations d'un chasseur",
+  "subtitles.hunters_return.hunter.laugh": "Rires d'un chasseur",
+  "death.attack.hunter.boomerang": "%1$s a été frappé par le boomerang de %2$s",
+  "hunters_return.config.structureSpacing": "Espacement de génération des maisons des chasseurs",
+  "hunters_return.config.foodWhitelist": "Liste blanche des aliments consommés par les chasseurs",
+  "hunters_return.config.attackableWhitelist": "Liste blanche des entités chassées par les chasseurs",
+  "enchantment.hunters_return.bounce": "Rebond",
+  "hunters_return.config.spacing": "Espacement",
+  "hunters_return.config.separation": "Séparation"
+}

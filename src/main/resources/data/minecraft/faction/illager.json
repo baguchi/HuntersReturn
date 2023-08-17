@@ -65,6 +65,6 @@
     "enabled": true
   },
   "default_entities": [
-    "hunterillager:hunterillager"
+    "hunters_return:hunter"
   ]
 }
