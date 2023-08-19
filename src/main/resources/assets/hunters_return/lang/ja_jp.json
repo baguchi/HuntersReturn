@@ -1,9 +1,11 @@
 {
   "item.hunters_return.spawnegg_hunter": "邪悪なハンターのスポーンエッグ",
+  "item.hunters_return.spawnegg_rudehog": "ルードホッグのスポーンエッグ",
   "item.hunters_return.quivers": "大きめの矢筒",
   "item.hunters_return.boomerang": "ブーメラン",
-  "item.hunters_return.quiver.desc": "矢筒と矢を持った状態で右クリックすると矢を収納することができます",
+  "item.hunters_return.beast_cudgel": "ビーストのこん棒",
   "entity.hunters_return.hunter": "邪悪なハンター",
+  "entity.hunters_return.rudehog": "ルードホッグ",
   "subtitles.hunters_return.hunter.idle": "邪悪なハンターがつぶやく",
   "subtitles.hunters_return.hunter.hurt": "邪悪なハンターが傷つく",
   "subtitles.hunters_return.hunter.death": "邪悪なハンターが死ぬ",

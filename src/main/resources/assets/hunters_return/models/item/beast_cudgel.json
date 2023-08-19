@@ -5,8 +5,8 @@
     32
   ],
   "textures": {
-    "0": "hunters_return:beast_cudgel",
-    "particle": "hunters_return:beast_cudgel"
+    "0": "hunters_return:item/beast_cudgel",
+    "particle": "hunters_return:item/beast_cudgel"
   },
   "elements": [
     {

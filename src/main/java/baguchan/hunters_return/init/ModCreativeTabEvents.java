@@ -11,9 +11,11 @@ public class ModCreativeTabEvents {
 	public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.COMBAT) {
 			event.accept(HunterItems.BOOMERANG.get());
+            event.accept(HunterItems.BEAST_CUDGEL.get());
 		}
 		if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(HunterItems.SPAWNEGG_HUNTER.get());
+            event.accept(HunterItems.SPAWNEGG_RUDEHOG.get());
 		}
 	}
 }

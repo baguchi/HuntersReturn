@@ -1,9 +1,11 @@
 {
   "item.hunters_return.spawnegg_hunter": "Hunter Spawn Egg",
+  "item.hunters_return.spawnegg_rudehog": "RudeHog Spawn Egg",
   "item.hunters_return.quivers": "Quivers",
   "item.hunters_return.boomerang": "Boomerang",
-  "item.hunters_return.quiver.desc": "You can store the arrow by right-clicking while holding the quiver and the arrow.",
+  "item.hunters_return.beast_cudgel": "Beast Cudgel",
   "entity.hunters_return.hunter": "Hunter",
+  "entity.hunters_return.rudehog": "RudeHog",
   "subtitles.hunters_return.hunter.idle": "Hunter murmurs",
   "subtitles.hunters_return.hunter.hurt": "Hunter Hurt",
   "subtitles.hunters_return.hunter.death": "Hunter Death",

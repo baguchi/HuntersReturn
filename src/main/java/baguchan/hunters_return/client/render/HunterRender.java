@@ -1,9 +1,9 @@
 package baguchan.hunters_return.client.render;
 
 import bagu_chan.bagus_lib.client.layer.CustomArmorLayer;
+import baguchan.hunters_return.client.ModModelLayers;
 import baguchan.hunters_return.client.model.HunterModel;
 import baguchan.hunters_return.entity.Hunter;
-import baguchan.hunters_return.init.ModModelLayers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
