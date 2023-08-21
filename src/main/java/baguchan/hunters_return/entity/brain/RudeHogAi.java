@@ -107,7 +107,7 @@ public class RudeHogAi {
     private static void initFightActivity(RudeHog p_34904_, Brain<RudeHog> p_34905_) {
         p_34905_.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10, ImmutableList.<BehaviorControl<? super RudeHog>>of(StopAttackingIfTargetInvalid.<Piglin>create((p_34981_) -> {
             return !isNearestValidAttackTarget(p_34904_, p_34981_);
-        }), new AttackWithAnimation<>(p_34904_.attackAnimationLength - p_34904_.attackAnimationActionPoint, p_34904_.attackAnimationLength, 40, 1.0F), RememberIfHoglinWasKilled.create(), EraseMemoryIf.create(RudeHogAi::isNearZombified, MemoryModuleType.ATTACK_TARGET)), MemoryModuleType.ATTACK_TARGET);
+        }), new AttackWithAnimation<>(p_34904_.attackAnimationLength - p_34904_.attackAnimationActionPoint, p_34904_.attackAnimationLength, 40, 1.0F), RememberIfHoglinWasKilled.create()), MemoryModuleType.ATTACK_TARGET);
     }
 
     private static void initCelebrateActivity(Brain<RudeHog> p_34921_) {
@@ -143,10 +143,6 @@ public class RudeHogAi {
 
     private static BehaviorControl<Piglin> babyAvoidNemesis() {
         return CopyMemoryWithExpiry.create(Piglin::isBaby, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.AVOID_TARGET, BABY_AVOID_NEMESIS_DURATION);
-    }
-
-    private static BehaviorControl<Piglin> avoidZombified() {
-        return CopyMemoryWithExpiry.create(RudeHogAi::isNearZombified, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.AVOID_TARGET, AVOID_ZOMBIFIED_DURATION);
     }
 
     private static boolean isBabyRidingBaby(Piglin p_34993_) {
@@ -285,21 +281,8 @@ public class RudeHogAi {
         }).isPresent();
     }
 
-    private static boolean isNearZombified(Piglin p_34999_) {
-        Brain<Piglin> brain = p_34999_.getBrain();
-        if (brain.hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED)) {
-            LivingEntity livingentity = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED).get();
-            return p_34999_.closerThan(livingentity, 6.0D);
-        } else {
-            return false;
-        }
-    }
-
     private static Optional<? extends LivingEntity> findNearestValidAttackTarget(Piglin p_35001_) {
         Brain<Piglin> brain = p_35001_.getBrain();
-        if (isNearZombified(p_35001_)) {
-            return Optional.empty();
-        } else {
             Optional<LivingEntity> optional = BehaviorUtils.getLivingEntityFromUUIDMemory(p_35001_, MemoryModuleType.ANGRY_AT);
             if (optional.isPresent() && BrainUtils.isEntityAttackableIgnoringLineOfSight(p_35001_, optional.get(), 24)) {
                 return optional;
@@ -319,7 +302,6 @@ public class RudeHogAi {
                     return optional2.isPresent() && BrainUtils.isEntityAttackable(p_35001_, optional2.get(), 24) ? optional2 : Optional.empty();
                 }
             }
-        }
     }
 
     public static Optional<SoundEvent> getSoundForCurrentActivity(Piglin p_34948_) {
