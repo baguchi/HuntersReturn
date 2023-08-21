@@ -38,19 +38,8 @@ public class RudeHog extends Piglin {
 
 	public RudeHog(EntityType<? extends RudeHog> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
-		this.xpReward = 50;
-	}
-
-	@Override
-	public void setDancing(boolean p_34790_) {
-		super.setDancing(p_34790_);
-		if (this.level().isClientSide()) {
-			if (this.isDancing()) {
-				this.danceAnimationState.start(this.tickCount);
-			} else {
-				this.danceAnimationState.stop();
-			}
-		}
+		this.xpReward = 30;
+		this.setCanPickUpLoot(false);
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
@@ -93,6 +82,14 @@ public class RudeHog extends Piglin {
 
 			if (this.attackAnimationTick >= this.attackAnimationLength) {
 				this.attackAnimationState.stop();
+			}
+
+			if (this.level().isClientSide()) {
+				if (this.isDancing()) {
+					this.danceAnimationState.startIfStopped(this.tickCount);
+				} else {
+					this.danceAnimationState.stop();
+				}
 			}
 		}
 	}

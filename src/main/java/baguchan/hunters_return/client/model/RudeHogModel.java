@@ -77,6 +77,14 @@ public class RudeHogModel<T extends RudeHog> extends HierarchicalModel<T> implem
             this.animateWalk(RudeHogAnimations.WALK, limbSwing, limbSwingAmount, 2, 1.5F);
 
         }
+        if (entity.isAggressive() && !entity.attackAnimationState.isStarted()) {
+            if (entity.getMainArm() == HumanoidArm.RIGHT) {
+                this.applyStatic(RudeHogAnimations.AGGRESIVE_RIGHT);
+            } else {
+                this.applyStatic(RudeHogAnimations.AGGRESIVE_LEFT);
+            }
+        }
+
         if (entity.getMainArm() == HumanoidArm.RIGHT) {
             this.animate(entity.attackAnimationState, RudeHogAnimations.ATTACK_RIGHT, ageInTicks);
         } else {

@@ -264,4 +264,22 @@ public class RudeHogAnimations {
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(-61.01f, -17.66f, -9.54f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
+    public static final AnimationDefinition AGGRESIVE_RIGHT = AnimationDefinition.Builder.withLength(0f)
+            .addAnimation("right_arm",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(28.08f, 11.03f, 20.27f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("left_arm",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-44.97f, -1.77f, -1.77f),
+                                    AnimationChannel.Interpolations.LINEAR))).build();
+    public static final AnimationDefinition AGGRESIVE_LEFT = AnimationDefinition.Builder.withLength(0f)
+            .addAnimation("right_arm",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-21.23f, 0f, 0f),
+                                    AnimationChannel.Interpolations.LINEAR)))
+            .addAnimation("left_arm",
+                    new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(47.02f, -10.16f, -25.38f),
+                                    AnimationChannel.Interpolations.LINEAR))).build();
 }

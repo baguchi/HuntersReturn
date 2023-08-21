@@ -3,6 +3,7 @@ package baguchan.hunters_return.entity.brain;
 import bagu_chan.bagus_lib.entity.brain.behaviors.AttackWithAnimation;
 import bagu_chan.bagus_lib.util.BrainUtils;
 import baguchan.hunters_return.entity.RudeHog;
+import baguchan.hunters_return.init.HunterEntityRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
@@ -80,7 +81,6 @@ public class RudeHogAi {
     public static Brain<?> makeBrain(RudeHog p_34841_, Brain<RudeHog> p_34842_) {
         initCoreActivity(p_34842_);
         initIdleActivity(p_34842_);
-        initAdmireItemActivity(p_34842_);
         initFightActivity(p_34841_, p_34842_);
         initCelebrateActivity(p_34842_);
         initRetreatActivity(p_34842_);
@@ -113,15 +113,10 @@ public class RudeHogAi {
     private static void initCelebrateActivity(Brain<RudeHog> p_34921_) {
         p_34921_.addActivityAndRemoveMemoryWhenStopped(Activity.CELEBRATE, 10, ImmutableList.of(SetEntityLookTarget.create(RudeHogAi::isPlayerHoldingLovedItem, 14.0F), StartAttacking.<Piglin>create(AbstractPiglin::isAdult, RudeHogAi::findNearestValidAttackTarget), BehaviorBuilder.<Piglin>triggerIf((p_34804_) -> {
             return !p_34804_.isDancing();
-        }, GoToTargetLocation.create(MemoryModuleType.CELEBRATE_LOCATION, 2, 1.0F)), BehaviorBuilder.<Piglin>triggerIf(Piglin::isDancing, GoToTargetLocation.create(MemoryModuleType.CELEBRATE_LOCATION, 4, 0.6F)), new RunOne<Piglin>(ImmutableList.of(Pair.of(SetEntityLookTarget.create(EntityType.PIGLIN, 8.0F), 1), Pair.of(RandomStroll.stroll(0.6F, 2, 1), 1), Pair.of(new DoNothing(10, 20), 1)))), MemoryModuleType.CELEBRATE_LOCATION);
-    }
-
-    private static void initAdmireItemActivity(Brain<RudeHog> p_34941_) {
-        p_34941_.addActivityAndRemoveMemoryWhenStopped(Activity.ADMIRE_ITEM, 10, ImmutableList.of(GoToWantedItem.create(RudeHogAi::isNotHoldingLovedItemInOffHand, 1.0F, true, 9), StopAdmiringIfItemTooFarAway.create(9), StopAdmiringIfTiredOfTryingToReachItem.create(200, 200)), MemoryModuleType.ADMIRING_ITEM);
+        }, GoToTargetLocation.create(MemoryModuleType.CELEBRATE_LOCATION, 2, 1.0F)), BehaviorBuilder.<Piglin>triggerIf(Piglin::isDancing, GoToTargetLocation.create(MemoryModuleType.CELEBRATE_LOCATION, 4, 0.6F)), new RunOne<Piglin>(ImmutableList.of(Pair.of(SetEntityLookTarget.create(HunterEntityRegistry.RUDEHOG.get(), 8.0F), 1), Pair.of(SetEntityLookTarget.create(EntityType.PIGLIN, 8.0F), 1), Pair.of(RandomStroll.stroll(0.6F, 2, 1), 1), Pair.of(new DoNothing(10, 20), 1)))), MemoryModuleType.CELEBRATE_LOCATION);
     }
 
     private static void initRetreatActivity(Brain<RudeHog> p_34959_) {
-        p_34959_.addActivityAndRemoveMemoryWhenStopped(Activity.AVOID, 10, ImmutableList.of(SetWalkTargetAwayFrom.entity(MemoryModuleType.AVOID_TARGET, 1.0F, 12, true), createIdleLookBehaviors(), createIdleMovementBehaviors(), EraseMemoryIf.<Piglin>create(RudeHogAi::wantsToStopFleeing, MemoryModuleType.AVOID_TARGET)), MemoryModuleType.AVOID_TARGET);
     }
 
     private static void initRideHoglinActivity(Brain<RudeHog> p_34974_) {
@@ -131,7 +126,7 @@ public class RudeHogAi {
     }
 
     private static ImmutableList<Pair<OneShot<LivingEntity>, Integer>> createLookBehaviors() {
-        return ImmutableList.of(Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8.0F), 1), Pair.of(SetEntityLookTarget.create(EntityType.PIGLIN, 8.0F), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1));
+        return ImmutableList.of(Pair.of(SetEntityLookTarget.create(EntityType.PLAYER, 8.0F), 1), Pair.of(SetEntityLookTarget.create(EntityType.PIGLIN, 8.0F), 1), Pair.of(SetEntityLookTarget.create(HunterEntityRegistry.RUDEHOG.get(), 8.0F), 1), Pair.of(SetEntityLookTarget.create(8.0F), 1));
     }
 
     private static RunOne<LivingEntity> createIdleLookBehaviors() {
@@ -139,7 +134,7 @@ public class RudeHogAi {
     }
 
     private static RunOne<Piglin> createIdleMovementBehaviors() {
-        return new RunOne<>(ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(InteractWith.of(EntityType.PIGLIN, 8, MemoryModuleType.INTERACTION_TARGET, 0.6F, 2), 2), Pair.of(BehaviorBuilder.triggerIf(RudeHogAi::doesntSeeAnyPlayerHoldingLovedItem, SetWalkTargetFromLookTarget.create(0.6F, 3)), 2), Pair.of(new DoNothing(30, 60), 1)));
+        return new RunOne<>(ImmutableList.of(Pair.of(RandomStroll.stroll(0.6F), 2), Pair.of(InteractWith.of(EntityType.PIGLIN, 8, MemoryModuleType.INTERACTION_TARGET, 0.6F, 2), 2), Pair.of(InteractWith.of(HunterEntityRegistry.RUDEHOG.get(), 8, MemoryModuleType.INTERACTION_TARGET, 0.6F, 2), 2), Pair.of(BehaviorBuilder.triggerIf(RudeHogAi::doesntSeeAnyPlayerHoldingLovedItem, SetWalkTargetFromLookTarget.create(0.6F, 3)), 2), Pair.of(new DoNothing(30, 60), 1)));
     }
 
     private static BehaviorControl<PathfinderMob> avoidRepellent() {
@@ -338,8 +333,6 @@ public class RudeHogAi {
             return SoundEvents.PIGLIN_ANGRY;
         } else if (p_34855_.isConverting()) {
             return SoundEvents.PIGLIN_RETREAT;
-        } else if (p_34856_ == Activity.AVOID && isNearAvoidTarget(p_34855_)) {
-            return SoundEvents.PIGLIN_RETREAT;
         } else if (p_34856_ == Activity.ADMIRE_ITEM) {
             return SoundEvents.PIGLIN_ADMIRING_ITEM;
         } else if (p_34856_ == Activity.CELEBRATE) {
@@ -349,11 +342,6 @@ public class RudeHogAi {
         } else {
             return isNearRepellent(p_34855_) ? SoundEvents.PIGLIN_RETREAT : SoundEvents.PIGLIN_AMBIENT;
         }
-    }
-
-    private static boolean isNearAvoidTarget(Piglin p_35003_) {
-        Brain<Piglin> brain = p_35003_.getBrain();
-        return !brain.hasMemoryValue(MemoryModuleType.AVOID_TARGET) ? false : brain.getMemory(MemoryModuleType.AVOID_TARGET).get().closerThan(p_35003_, 12.0D);
     }
 
     protected static List<AbstractPiglin> getVisibleAdultPiglins(Piglin p_35005_) {
