@@ -30,7 +30,7 @@ public class SpinBladeRenderer extends EntityRenderer<SpinBlade> {
 	public void render(SpinBlade entityIn, float entityYaw, float partialTicks, PoseStack stackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		stackIn.pushPose();
 		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
-		stackIn.mulPose(Axis.XP.rotationDegrees(-Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 		stackIn.mulPose(Axis.YP.rotationDegrees(((entityIn.tickCount + partialTicks) * 60F)));
 
 		stackIn.translate(0.0F, -1.501F, 0.0F);
