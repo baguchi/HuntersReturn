@@ -298,7 +298,7 @@ public class RudeHogAi {
                 if (optional3.isPresent()) {
                     return optional3;
                 } else {
-                    Optional<Player> optional2 = brain.getMemory(MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD);
+                    Optional<Player> optional2 = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
                     return optional2.isPresent() && BrainUtils.isEntityAttackable(p_35001_, optional2.get(), 24) ? optional2 : Optional.empty();
                 }
             }
