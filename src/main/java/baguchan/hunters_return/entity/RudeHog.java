@@ -5,10 +5,14 @@ import baguchan.hunters_return.entity.brain.RudeHogAi;
 import baguchan.hunters_return.init.HunterItems;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -23,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class RudeHog extends Piglin {
 
@@ -43,7 +48,7 @@ public class RudeHog extends Piglin {
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 70.0D).add(Attributes.MOVEMENT_SPEED, (double) 0.35F).add(Attributes.ATTACK_DAMAGE, 5.0D);
+		return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, (double) 0.35F).add(Attributes.ATTACK_DAMAGE, 5.0D);
 	}
 
 	protected Brain.Provider<RudeHog> revampedBrainProvider() {
@@ -152,8 +157,23 @@ public class RudeHog extends Piglin {
 		return false;
 	}
 
-	@Override
-	public boolean canDisableShield() {
-		return true;
+	protected SoundEvent getAmbientSound() {
+		return SoundEvents.PIGLIN_BRUTE_AMBIENT;
+	}
+
+	protected SoundEvent getHurtSound(DamageSource p_35072_) {
+		return SoundEvents.PIGLIN_BRUTE_HURT;
+	}
+
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.PIGLIN_BRUTE_DEATH;
+	}
+
+	protected void playStepSound(BlockPos p_35066_, BlockState p_35067_) {
+		this.playSound(SoundEvents.PIGLIN_BRUTE_STEP, 0.15F, 1.0F);
+	}
+
+	protected void playConvertedSound() {
+		this.playSound(SoundEvents.PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED, 1.0F, this.getVoicePitch());
 	}
 }

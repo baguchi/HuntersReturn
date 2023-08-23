@@ -74,7 +74,7 @@ public class HuntersReturn {
 
 	private void serverStart(final ServerAboutToStartEvent event) {
 		JigsawHelper.registerJigsaw(event.getServer(),
-				new ResourceLocation("minecraft:bastion/mobs/piglin"),
+				new ResourceLocation("minecraft:bastion/mobs/piglin_melee"),
 				new ResourceLocation(HuntersReturn.MODID, "bastion/rude_hog"), 1);
 	}
 }
