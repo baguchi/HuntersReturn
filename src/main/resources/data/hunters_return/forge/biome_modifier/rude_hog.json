@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#hunters_return:piglin_hunter_spawnable",
+  "spawners": {
+    "type": "hunters_return:rude_hog",
+    "weight": 1,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

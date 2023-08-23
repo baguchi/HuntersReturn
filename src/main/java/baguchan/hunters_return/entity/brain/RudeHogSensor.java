@@ -10,6 +10,8 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.Sensor;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.Piglin;
@@ -62,7 +64,7 @@ public class RudeHogSensor extends Sensor<LivingEntity> {
                 if (optional5.isEmpty() && !PiglinAi.isWearingGold(player) && p_26727_.canAttack(livingentity)) {
                     optional5 = Optional.of(player);
                 }
-            } else {
+            } else if ((livingentity instanceof WitherSkeleton) || (livingentity instanceof WitherBoss)) {
                 optional = Optional.of((Mob) livingentity);
             }
         }

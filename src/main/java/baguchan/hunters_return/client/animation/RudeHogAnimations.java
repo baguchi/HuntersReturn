@@ -232,37 +232,13 @@ public class RudeHogAnimations {
                                     AnimationChannel.Interpolations.CATMULLROM))).build();
 
     public static final AnimationDefinition SIT = AnimationDefinition.Builder.withLength(0f)
-            .addAnimation("body",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
-                                    AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("head",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
-                                    AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("right_arm",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
-                                    AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("left_arm",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
-                                    AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("right_leg",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
-                                    AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("right_leg",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-61.68f, 13.27f, 7.05f),
-                                    AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("left_leg",
-                    new AnimationChannel(AnimationChannel.Targets.POSITION,
-                            new Keyframe(0f, KeyframeAnimations.posVec(0f, -7f, 0f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-79.18f, 13.27f, 7.05f),
                                     AnimationChannel.Interpolations.LINEAR)))
             .addAnimation("left_leg",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
-                            new Keyframe(0f, KeyframeAnimations.degreeVec(-61.01f, -17.66f, -9.54f),
+                            new Keyframe(0f, KeyframeAnimations.degreeVec(-78.51f, -17.66f, -9.54f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
     public static final AnimationDefinition AGGRESIVE_RIGHT = AnimationDefinition.Builder.withLength(0f)
             .addAnimation("right_arm",

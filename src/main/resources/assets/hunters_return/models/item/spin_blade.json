@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "textures": {
+    "layer0": "hunters_return:item/spin_blade_gui"
+  },
+  "base": {
+    "parent": "hunters_return:item/spin_blade_handheld"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "hunters_return:item/spin_blade_gui"
+    },
+    "fixed": {
+      "parent": "hunters_return:item/spin_blade_gui"
+    }
+  },
+  "overrides": [
+    {
+      "model": "hunters_return:item/spin_blade_thrown",
+      "predicate": {
+        "hunters_return:thrown": 1.0
+      }
+    }
+  ]
+}

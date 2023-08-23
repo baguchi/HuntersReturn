@@ -5,7 +5,7 @@
   "item.hunters_return.quiver.desc": "Du kan lagre pilen ved å høyreklikke menst du holder koggeret og pilen",
   "entity.hunters_return.hunter": "Jeger",
   "subtitles.hunters_return.hunter.laugh": "Jeger ler",
-  "death.attack.hunter.boomerang": "%1$s ble truffet av bumerangen til %2$s",
+  "death.attack.hunters_return.boomerang": "%1$s ble truffet av bumerangen til %2$s",
   "hunters_return.config.structureSpacing": "Jegerhus genereringsmellomrom",
   "hunters_return.config.foodWhitelist": "Jeger hviteliste for mat",
   "hunters_return.config.attackableWhitelist": "Jeger hviteliste for angrep",

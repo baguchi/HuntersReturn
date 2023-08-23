@@ -23,6 +23,9 @@ public class RudeHogRenderer<T extends RudeHog> extends MobRenderer<T, RudeHogMo
         this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()));
     }
 
+    protected boolean isShaking(T p_114864_) {
+        return super.isShaking(p_114864_) || p_114864_.isConverting();
+    }
     @Override
     public ResourceLocation getTextureLocation(T p_110775_1_) {
         return RUDEHOG;

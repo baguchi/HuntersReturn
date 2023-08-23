@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "hunters_return:item/spin_blade_thrown"
+  }
+}

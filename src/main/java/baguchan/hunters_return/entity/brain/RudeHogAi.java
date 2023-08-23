@@ -3,6 +3,7 @@ package baguchan.hunters_return.entity.brain;
 import bagu_chan.bagus_lib.entity.brain.behaviors.AttackWithAnimation;
 import bagu_chan.bagus_lib.util.BrainUtils;
 import baguchan.hunters_return.entity.RudeHog;
+import baguchan.hunters_return.entity.brain.behaviors.NoticedHoglin;
 import baguchan.hunters_return.init.HunterEntityRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -107,7 +108,7 @@ public class RudeHogAi {
     private static void initFightActivity(RudeHog p_34904_, Brain<RudeHog> p_34905_) {
         p_34905_.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10, ImmutableList.<BehaviorControl<? super RudeHog>>of(StopAttackingIfTargetInvalid.<Piglin>create((p_34981_) -> {
             return !isNearestValidAttackTarget(p_34904_, p_34981_);
-        }), new AttackWithAnimation<>(p_34904_.attackAnimationLength - p_34904_.attackAnimationActionPoint, p_34904_.attackAnimationLength, 40, 1.0F), RememberIfHoglinWasKilled.create()), MemoryModuleType.ATTACK_TARGET);
+        }), new AttackWithAnimation<>(p_34904_.attackAnimationLength - p_34904_.attackAnimationActionPoint, p_34904_.attackAnimationLength, 40, 1.0F), new NoticedHoglin<>(), RememberIfHoglinWasKilled.create()), MemoryModuleType.ATTACK_TARGET);
     }
 
     private static void initCelebrateActivity(Brain<RudeHog> p_34921_) {

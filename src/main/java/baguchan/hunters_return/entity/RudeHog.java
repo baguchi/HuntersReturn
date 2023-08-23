@@ -2,11 +2,13 @@ package baguchan.hunters_return.entity;
 
 import bagu_chan.bagus_lib.register.ModSensors;
 import baguchan.hunters_return.entity.brain.RudeHogAi;
+import baguchan.hunters_return.init.HunterEntityRegistry;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSensors;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -28,7 +30,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 public class RudeHog extends Piglin {
 
@@ -72,6 +76,26 @@ public class RudeHog extends Piglin {
 		this.setItemInHand(InteractionHand.MAIN_HAND, HunterItems.BEAST_CUDGEL.get().getDefaultInstance());
 		this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
 	}
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_34717_, DifficultyInstance p_34718_, MobSpawnType p_34719_, @Nullable SpawnGroupData p_34720_, @Nullable CompoundTag p_34721_) {
+        if (p_34719_ != MobSpawnType.STRUCTURE) {
+            this.spawnPartner(p_34717_, p_34718_, p_34720_);
+        }
+        return super.finalizeSpawn(p_34717_, p_34718_, p_34719_, p_34720_, p_34721_);
+    }
+
+    private void spawnPartner(ServerLevelAccessor p_33882_, DifficultyInstance p_33883_, @javax.annotation.Nullable SpawnGroupData p_33885_) {
+        Mob mob = HunterEntityRegistry.HUNTER_BOAR.get().create(p_33882_.getLevel());
+        if (mob != null) {
+
+            mob.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            mob.finalizeSpawn(p_33882_, p_33883_, MobSpawnType.JOCKEY, p_33885_, (CompoundTag) null);
+            p_33882_.addFreshEntity(mob);
+            this.startRiding(mob, true);
+        }
+    }
 
 	@Override
 	public double getMeleeAttackRangeSqr(LivingEntity p_147273_) {

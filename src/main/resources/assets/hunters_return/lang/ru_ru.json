@@ -5,7 +5,7 @@
   "item.hunters_return.quiver.desc": "Можно поместить в колчан стрелы с помощью правой кнопки мыши, держа колчан и стрелы.",
   "entity.hunters_return.hunter": "Егерь",
   "subtitles.hunters_return.hunter.laugh": "Егерь смеётся",
-  "death.attack.hunter.boomerang": "%1$s был прибит бумерангом %2$s",
+  "death.attack.hunters_return.boomerang": "%1$s был прибит бумерангом %2$s",
   "hunters_return.config.generateHunterHouse": "generate HunterHouse In OverLevel",
   "hunters_return.config.spawnhunters_returnOnPatrol": "Spawn hunters_return On Patrol",
   "enchantment.hunters_return.bounce": "Отскок"
