@@ -4,12 +4,14 @@ import baguchan.hunters_return.init.HunterEnchantments;
 import baguchan.hunters_return.init.HunterEntityRegistry;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
+import baguchan.hunters_return.utils.JigsawHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +47,7 @@ public class HuntersReturn {
 		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(bus);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		// Register ourselves for server and other game events we are interested in
+		MinecraftForge.EVENT_BUS.addListener(this::serverStart);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -68,4 +71,10 @@ public class HuntersReturn {
 		return new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, path);
 	}
 
+
+	private void serverStart(final ServerAboutToStartEvent event) {
+		JigsawHelper.registerJigsaw(event.getServer(),
+				new ResourceLocation("minecraft:bastion/mobs/piglin"),
+				new ResourceLocation(HuntersReturn.MODID, "bastion/rude_hog"), 1);
+	}
 }
