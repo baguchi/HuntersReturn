@@ -33,9 +33,9 @@ public class BeastWeaponItem extends Item implements Vanishable {
 	public BeastWeaponItem(Item.Properties p_43381_) {
 		super(p_43381_);
 		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 10.0D, AttributeModifier.Operation.ADDITION));
+		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 8.0D, AttributeModifier.Operation.ADDITION));
 		builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", (double) -2.95F, AttributeModifier.Operation.ADDITION));
-		builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(BASE_ATTACK_KNOCKBACK_UUID, "Tool modifier", (double) 1.2F, AttributeModifier.Operation.ADDITION));
+		builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(BASE_ATTACK_KNOCKBACK_UUID, "Tool modifier", (double) 1.75F, AttributeModifier.Operation.ADDITION));
 		builder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BASE_BLOCK_REACH_UUID, "Tool modifier", (double) 1.0F, AttributeModifier.Operation.ADDITION));
 		builder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BASE_ENTITY_REACH_UUID, "Tool modifier", (double) 1.0F, AttributeModifier.Operation.ADDITION));
 		this.defaultModifiers = builder.build();

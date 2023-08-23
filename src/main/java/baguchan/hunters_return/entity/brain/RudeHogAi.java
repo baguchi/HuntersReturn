@@ -298,10 +298,16 @@ public class RudeHogAi {
                 if (optional3.isPresent()) {
                     return optional3;
                 } else {
-                    Optional<Player> optional2 = brain.getMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
-                    return optional2.isPresent() && BrainUtils.isEntityAttackable(p_35001_, optional2.get(), 24) ? optional2 : Optional.empty();
+                    Optional<? extends LivingEntity> optional1 = getTargetIfWithinRange(p_35001_, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER);
+                    return optional1.isPresent() ? optional1 : Optional.empty();
                 }
             }
+    }
+
+    private static Optional<? extends LivingEntity> getTargetIfWithinRange(AbstractPiglin p_35092_, MemoryModuleType<? extends LivingEntity> p_35093_) {
+        return p_35092_.getBrain().getMemory(p_35093_).filter((p_35108_) -> {
+            return p_35108_.closerThan(p_35092_, 24.0D);
+        });
     }
 
     public static Optional<SoundEvent> getSoundForCurrentActivity(Piglin p_34948_) {
