@@ -397,7 +397,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		LootTable loottable = p_37856_.getLevel().getServer().getLootData().getLootTable(ModLootTables.HUNTER_POCKET);
 
 		if (loottable != null) {
-			List<ItemStack> list = loottable.getRandomItems((new LootParams.Builder(p_37856_.getLevel())).withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.ENTITY));
+			List<ItemStack> list = loottable.getRandomItems((new LootParams.Builder(p_37856_.getLevel())).withParameter(LootContextParams.ORIGIN, this.position()).withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.GIFT));
 			for (ItemStack stack : list) {
 				this.inventory.addItem(stack);
 			}
