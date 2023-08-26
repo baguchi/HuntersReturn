@@ -1,6 +1,6 @@
 {
   "item.hunters_return.spawnegg_hunter": "Яйце виклику мисливця",
-  "item.hunters_return.spawnegg_rudehog": "Яйце виклику рудегоґа",
+  "item.hunters_return.spawnegg_rudehog": "Яйце виклику грубого свина",
   "item.hunters_return.spawnegg_hunter_boar": "Яйце виклику мисливського вепра",
   "item.hunters_return.quivers": "Сагайдак",
   "item.hunters_return.boomerang": "Бумеранг",
@@ -9,7 +9,7 @@
   "entity.hunters_return.boomerang": "Бумеранг",
   "entity.hunters_return.spin_blade": "Обертальне лезо",
   "entity.hunters_return.hunter": "Мисливець",
-  "entity.hunters_return.rudehog": "Рудегоґ",
+  "entity.hunters_return.rudehog": "Грубий свин",
   "entity.hunters_return.hunter_boar": "Мисливський вепр",
   "subtitles.hunters_return.hunter.idle": "Мисливець бурмоче",
   "subtitles.hunters_return.hunter.hurt": "Мисливця поранено",
