@@ -21,7 +21,6 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -138,7 +137,7 @@ public class SpinBlade extends Projectile {
     @Override
     public void playerTouch(Player entityIn) {
         super.playerTouch(entityIn);
-        if (entityIn == getOwner() && this.tickCount > 40) {
+        if (entityIn == getOwner() && this.tickCount > 20) {
             if (!this.level().isClientSide) {
                 this.playSound(SoundEvents.ITEM_PICKUP, 0.6F, 1.0F);
                 entityIn.take(this, 1);
@@ -155,11 +154,6 @@ public class SpinBlade extends Projectile {
         if (this.isInWaterOrRain() || blockstate2.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
             this.clearFire();
         }
-
-        Vec3 vec3d1 = this.position();
-        Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-        BlockHitResult fluidHitResult = this.level().clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
-
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         boolean flag = false;
         if (hitresult.getType() == HitResult.Type.BLOCK) {
@@ -186,7 +180,7 @@ public class SpinBlade extends Projectile {
         Vec3 vec3 = this.getDeltaMovement();
         Entity entity = getOwner();
         if (!isReturning()) {
-            if (this.tickCount >= 40 && entity != null) {
+            if (this.tickCount >= 20 && entity != null) {
                 setReturning(true);
             }
         }
@@ -195,7 +189,7 @@ public class SpinBlade extends Projectile {
         } else if (entity != null && isReturning()) {
             this.noPhysics = true;
             Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-            double d0 = 0.05D * 3;
+            double d0 = 0.1D * 3;
             this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
         }
 

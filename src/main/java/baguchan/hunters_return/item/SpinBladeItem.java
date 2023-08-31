@@ -53,7 +53,7 @@ public class SpinBladeItem extends Item {
 
         if (!level.isClientSide()) {
             SpinBlade spinBlade = new SpinBlade(level, player, stack);
-            spinBlade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.8F, 0.0F);
+            spinBlade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 0.0F);
 
             level.addFreshEntity(spinBlade);
             this.setThrownEntity(stack, spinBlade);
