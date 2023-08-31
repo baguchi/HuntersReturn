@@ -20,6 +20,7 @@ public class HunterConfig {
 	public static class Common {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodWhitelist;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> attackableWhitelist;
+		public final ForgeConfigSpec.BooleanValue rudeHogSpawnInBastion;
 		public Common(ForgeConfigSpec.Builder builder) {
 			Predicate<Object> validator = o -> o instanceof String;
 
@@ -39,6 +40,10 @@ public class HunterConfig {
 									, "minecraft:rabbit", "minecraft:pig", "minecraft:cow", "minecraft:sheep"
 									, "earthmobsmod:wooly_cow", "earthmobsmod:horned_sheep")
 							, validator);
+			rudeHogSpawnInBastion = builder
+					.translation(HuntersReturn.MODID + ".config.rudeHogSpawnInBastion")
+					.comment("Allow the RudeHog Spawn In Bastion")
+					.define("RudeHog Spawn In Bastion", true);
 		}
 	}
 

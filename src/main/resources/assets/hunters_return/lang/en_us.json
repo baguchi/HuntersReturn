@@ -25,5 +25,6 @@
   "hunters_return.config.attackableWhitelist": "Hunter Attackable Whitelist",
   "enchantment.hunters_return.bounce": "Bounce",
   "hunters_return.config.spacing": "Spacing",
-  "hunters_return.config.separation": "Separation"
+  "hunters_return.config.separation": "Separation",
+  "hunters_return.config.rudeHogSpawnInBastion": "RudeHog Spawn In Bastion"
 }
