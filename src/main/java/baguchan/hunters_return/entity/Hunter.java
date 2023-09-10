@@ -52,18 +52,13 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class Hunter extends AbstractIllager implements RangedAttackMob {
@@ -394,14 +389,11 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_, p_37860_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
-		LootTable loottable = p_37856_.getLevel().getServer().getLootData().getLootTable(ModLootTables.HUNTER_POCKET);
 
-		if (loottable != null) {
-			List<ItemStack> list = loottable.getRandomItems((new LootParams.Builder(p_37856_.getLevel())).withParameter(LootContextParams.ORIGIN, this.position()).withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.GIFT));
-			for (ItemStack stack : list) {
-				this.inventory.addItem(stack);
-			}
-		}
+		LootParams ctx = new LootParams.Builder(p_37856_.getLevel()).create(LootContextParamSets.ENTITY);
+
+		Objects.requireNonNull(p_37856_.getServer()).getLootData().getLootTable(ModLootTables.HUNTER_POCKET).getRandomItems(ctx, this.inventory::addItem);
+
 		if (p_37858_ != MobSpawnType.STRUCTURE) {
 			this.populateDefaultEquipmentSlots(randomsource, p_37857_);
 		} else {
