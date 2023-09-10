@@ -434,6 +434,9 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 					this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 				}
 			}
+			if (this.random.nextFloat() < 0.25F) {
+				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+			}
 		}
 	}
 
