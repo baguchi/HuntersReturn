@@ -2,8 +2,6 @@ package baguchan.hunters_return.client.model;
 // Made with Blockbench 4.5.2
 // Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
 // Paste this class into your mod and generate all required imports
-
-import bagu_chan.bagus_lib.client.layer.IArmor;
 import baguchan.hunters_return.client.animation.HunterAnimations;
 import baguchan.hunters_return.entity.Hunter;
 import com.google.common.collect.ImmutableList;
