@@ -1,6 +1,10 @@
 {
-    "pack": {
-      "description": "hunters_return resources",
-      "pack_format": 15
-    }
+  "pack": {
+    "description": {
+      "text": "${mod_id} resources"
+    },
+    "pack_format": ${
+  pack_format_number
+}
+}
 }
