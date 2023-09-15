@@ -53,6 +53,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -390,7 +391,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 
-		LootParams ctx = new LootParams.Builder(p_37856_.getLevel()).create(LootContextParamSets.ENTITY);
+		LootParams ctx = new LootParams.Builder(p_37856_.getLevel()).withParameter(LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.ORIGIN, this.position()).create(LootContextParamSets.GIFT);
 
 		Objects.requireNonNull(p_37856_.getServer()).getLootData().getLootTable(ModLootTables.HUNTER_POCKET).getRandomItems(ctx, this.inventory::addItem);
 
