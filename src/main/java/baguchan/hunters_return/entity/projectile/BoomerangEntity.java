@@ -50,12 +50,11 @@ public class BoomerangEntity extends Projectile {
 	private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
 
-	private static final EntityDataAccessor<Boolean> IN_GROUND = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
-
 
 	private int totalHits;
 
 	private int flyTick;
+	public boolean inGround;
 	protected int inGroundTime;
 
 	@Nullable
@@ -181,7 +180,7 @@ public class BoomerangEntity extends Projectile {
 		Entity entity = getOwner();
 		Vec3 movement = this.getDeltaMovement();
 		if (!isReturning()) {
-			if (movement.length() < 0.2F && movement.y < 0) {
+			if (movement.length() < 0.2F && movement.y <= 0) {
 				if (loyaltyLevel > 0) {
 					if (!isReturning() &&
 							entity != null) {
@@ -189,6 +188,7 @@ public class BoomerangEntity extends Projectile {
 						setReturning(true);
 					}
 				} else {
+					this.inGround = true;
 					this.lastState = this.level().getBlockState(result.getBlockPos());
 					Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
 					this.setDeltaMovement(vec3);
@@ -236,7 +236,7 @@ public class BoomerangEntity extends Projectile {
 		super.playerTouch(entityIn);
 		if (this.flyTick >= 10 && entityIn == getOwner()) {
 			if (!this.level().isClientSide) {
-				if (this.tryPickup(entityIn)) {
+				if (!entityIn.isCreative() && this.tryPickup(entityIn) || entityIn.isCreative()) {
 					this.playSound(SoundEvents.ITEM_PICKUP);
 					entityIn.take(this, 1);
 					this.discard();
@@ -260,17 +260,49 @@ public class BoomerangEntity extends Projectile {
 		}
 	}
 
+	public void move(MoverType p_36749_, Vec3 p_36750_) {
+		super.move(p_36749_, p_36750_);
+		if (p_36749_ != MoverType.SELF && this.shouldFall()) {
+			this.startFalling();
+		}
+
+	}
+
+	public void shoot(double p_36775_, double p_36776_, double p_36777_, float p_36778_, float p_36779_) {
+		super.shoot(p_36775_, p_36776_, p_36777_, p_36778_, p_36779_);
+		this.inGroundTime = 0;
+	}
+
+	public void lerpTo(double p_36728_, double p_36729_, double p_36730_, float p_36731_, float p_36732_, int p_36733_, boolean p_36734_) {
+		this.setPos(p_36728_, p_36729_, p_36730_);
+		this.setRot(p_36731_, p_36732_);
+	}
+
+	public void lerpMotion(double p_36786_, double p_36787_, double p_36788_) {
+		super.lerpMotion(p_36786_, p_36787_, p_36788_);
+		this.inGroundTime = 0;
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
+		Vec3 vec3 = this.getDeltaMovement();
+		if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+			double d0 = vec3.horizontalDistance();
+			this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
+			this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
+			this.yRotO = this.getYRot();
+			this.xRotO = this.getXRot();
+		}
+
 		BlockPos blockpos2 = this.blockPosition();
 		BlockState blockstate2 = this.level().getBlockState(blockpos2);
-		if (this.getDeltaMovement().length() < 0.2F && this.getDeltaMovement().y < 0) {
+		if (this.getDeltaMovement().length() < 0.2F && this.getDeltaMovement().y <= 0) {
 
 			if (!blockstate2.isAir()) {
 				VoxelShape voxelshape = blockstate2.getCollisionShape(this.level(), blockpos2);
 				if (!voxelshape.isEmpty()) {
-					Vec3 vec31 = this.position();
+					Vec3 vec31 = this.position().add(this.getDeltaMovement());
 
 					for (AABB aabb : voxelshape.toAabbs()) {
 						if (aabb.move(blockpos2).contains(vec31)) {
@@ -287,11 +319,14 @@ public class BoomerangEntity extends Projectile {
 		}
 
 		if (this.isInGround()) {
-			this.setDeltaMovement(0, 0, 0);
 			if (this.lastState != blockstate2 && this.shouldFall()) {
 				this.startFalling();
+			} else if (!this.level().isClientSide) {
+				this.tickDespawn();
 			}
+			++this.inGroundTime;
 		} else {
+			this.inGroundTime = 0;
 			Vec3 vec3d1 = this.position();
 			Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 			BlockHitResult fluidHitResult = this.level().clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
@@ -317,10 +352,11 @@ public class BoomerangEntity extends Projectile {
 
 			if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 				this.onHit(hitresult);
+				this.hasImpulse = true;
 			}
 			this.updateRotation();
 
-			Vec3 vec3 = this.getDeltaMovement();
+			Vec3 vec32 = this.getDeltaMovement();
 			this.flyTick++;
 
 			int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
@@ -346,7 +382,7 @@ public class BoomerangEntity extends Projectile {
 			double d1 = this.getZ() + vec33.z;
 			float f;
 			if (this.isInWater()) {
-				this.level().addParticle(ParticleTypes.BUBBLE, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D, d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
+				this.level().addParticle(ParticleTypes.BUBBLE, d2 - vec32.x * 0.25D, d0 - vec32.y * 0.25D, d1 - vec32.z * 0.25D, vec32.x, vec32.y, vec32.z);
 
 				f = 0.8F;
 			} else {
@@ -368,21 +404,18 @@ public class BoomerangEntity extends Projectile {
 				}
 			}
 		}
-		if (this.inGroundTime > 1200) {
-			if (!this.level().isClientSide) {
-				this.discard();
-			}
-		} else {
-			if (this.isInGround()) {
-				++this.inGroundTime;
-			} else {
-				this.inGroundTime = 0;
-			}
-		}
 
 		if (this.shouldDropToThrower()) {
 			this.drop(this.getX(), this.getY(), this.getZ());
 		}
+	}
+
+	protected void tickDespawn() {
+		++this.inGroundTime;
+		if (this.inGroundTime >= 1200) {
+			this.discard();
+		}
+
 	}
 
 	private boolean shouldFall() {
@@ -421,12 +454,11 @@ public class BoomerangEntity extends Projectile {
 
 	@Override
 	protected void defineSynchedData() {
-		this.entityData.define(LOYALTY_LEVEL, Byte.valueOf((byte) 0));
-		this.entityData.define(PIERCING_LEVEL, Byte.valueOf((byte) 0));
-		this.entityData.define(BOUNCE_LEVEL, Byte.valueOf((byte) 0));
-		this.entityData.define(RETURNING, Boolean.valueOf(false));
+		this.entityData.define(LOYALTY_LEVEL, (byte) 0);
+		this.entityData.define(PIERCING_LEVEL, (byte) 0);
+		this.entityData.define(BOUNCE_LEVEL, (byte) 0);
+		this.entityData.define(RETURNING, false);
 		this.entityData.define(BOOMERANG, ItemStack.EMPTY);
-		this.entityData.define(IN_GROUND, Boolean.valueOf(false));
 	}
 
 	@Override
@@ -504,11 +536,11 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	public void setInGround(boolean flag) {
-		this.entityData.set(IN_GROUND, flag);
+		this.inGround = flag;
 	}
 
 	public boolean isInGround() {
-		return this.entityData.get(IN_GROUND);
+		return this.inGround;
 	}
 
 	public void setBoomerang(ItemStack stack) {
