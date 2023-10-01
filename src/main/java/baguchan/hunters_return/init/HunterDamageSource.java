@@ -7,6 +7,4 @@ import net.minecraft.world.damagesource.DamageType;
 
 public interface HunterDamageSource {
     ResourceKey<DamageType> BOOMERANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "boomerang"));
-    ResourceKey<DamageType> SPIN_BLADE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "spin_blade"));
-
 }

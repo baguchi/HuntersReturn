@@ -1,7 +1,9 @@
 package baguchan.hunters_return;
 
-import baguchan.hunters_return.init.*;
-import baguchan.hunters_return.utils.JigsawHelper;
+import baguchan.hunters_return.init.HunterEnchantments;
+import baguchan.hunters_return.init.HunterEntityRegistry;
+import baguchan.hunters_return.init.HunterItems;
+import baguchan.hunters_return.init.HunterSounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
@@ -38,7 +40,6 @@ public class HuntersReturn {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        HunterSensors.SENSOR_TYPES.register(bus);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(bus);
 		HunterItems.ITEM_REGISTRY.register(bus);
 		HunterSounds.SOUND_EVENTS.register(bus);
@@ -71,10 +72,5 @@ public class HuntersReturn {
 
 
 	private void serverStart(final ServerAboutToStartEvent event) {
-		if (HunterConfig.COMMON.rudeHogSpawnInBastion.get()) {
-			JigsawHelper.registerJigsaw(event.getServer(),
-					new ResourceLocation("minecraft:bastion/mobs/piglin_melee"),
-					new ResourceLocation(HuntersReturn.MODID, "bastion/rude_hog"), 1);
-		}
 	}
 }
