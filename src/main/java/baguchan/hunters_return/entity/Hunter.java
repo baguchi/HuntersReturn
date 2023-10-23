@@ -1,11 +1,11 @@
 package baguchan.hunters_return.entity;
 
 import bagu_chan.bagus_lib.entity.goal.AnimatedAttackGoal;
+import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.entity.ai.*;
 import baguchan.hunters_return.entity.projectile.BoomerangEntity;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
-import baguchan.hunters_return.init.ModLootTables;
 import baguchan.hunters_return.utils.HunterConfigUtils;
 import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
@@ -14,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -51,15 +52,16 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Hunter extends AbstractIllager implements RangedAttackMob {
@@ -391,9 +393,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 
-		LootParams ctx = new LootParams.Builder(p_37856_.getLevel()).withParameter(LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.ORIGIN, this.position()).create(LootContextParamSets.GIFT);
-
-		Objects.requireNonNull(p_37856_.getServer()).getLootData().getLootTable(ModLootTables.HUNTER_POCKET).getRandomItems(ctx, this.inventory::addItem);
+		for (int i = 0; i < 2; ++i) {
+			if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
+				Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
+				if (item != null) {
+					this.inventory.addItem(new ItemStack(item, 2 + this.random.nextInt(3)));
+				}
+			}
+		}
 
 		if (p_37858_ != MobSpawnType.STRUCTURE) {
 			this.populateDefaultEquipmentSlots(randomsource, p_37857_);

@@ -19,6 +19,7 @@ public class HunterConfig {
 
 	public static class Common {
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodWhitelist;
+		public final ForgeConfigSpec.ConfigValue<List<? extends String>> foodInInventoryWhitelist;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> attackableWhitelist;
 		public Common(ForgeConfigSpec.Builder builder) {
 			Predicate<Object> validator = o -> o instanceof String;
@@ -27,6 +28,13 @@ public class HunterConfig {
 					.translation(HuntersReturn.MODID + ".config.foodWhitelist")
 					.comment("Add Item for What Hunter Illager can eatable [example: minecraft:apple]")
 					.defineList("Hunter's Food Whitelist"
+							, Lists.newArrayList("minecraft:apple"
+									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minecraft:cooked_mutton", "minecraft:cooked_porkchop"
+									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop")
+							, validator);
+			foodInInventoryWhitelist = builder
+					.comment("Add Item for What Hunter Illager has in own Inventory [example: minecraft:apple]")
+					.defineList("Hunter's Food In Inventory Whitelist"
 							, Lists.newArrayList("minecraft:apple"
 									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minecraft:cooked_mutton", "minecraft:cooked_porkchop"
 									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop")
