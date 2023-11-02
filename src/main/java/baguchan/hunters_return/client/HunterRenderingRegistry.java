@@ -4,12 +4,11 @@ import baguchan.hunters_return.client.model.HunterModel;
 import baguchan.hunters_return.client.render.BoomerangRender;
 import baguchan.hunters_return.client.render.HunterRender;
 import baguchan.hunters_return.init.HunterEntityRegistry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = baguchan.hunters_return.HuntersReturn.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -24,9 +23,5 @@ public class HunterRenderingRegistry {
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.HUNTER, HunterModel::createBodyLayer);
 
-    }
-
-    @SubscribeEvent
-    public static void modelBake(ModelEvent.ModifyBakingResult event) {
     }
 }

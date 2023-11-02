@@ -3,7 +3,7 @@ package baguchan.hunters_return.utils;
 import baguchan.hunters_return.HunterConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class HunterConfigUtils {
 	public static boolean isWhitelistedItem(Item item) {
