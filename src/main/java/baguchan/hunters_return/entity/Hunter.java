@@ -430,15 +430,15 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			}
 		}
 
-		if (p_37858_ != MobSpawnType.STRUCTURE) {
-		} else {
+		if (p_37856_.getBiome(this.blockPosition()).value().coldEnoughToSnow(this.blockPosition())) {
+			this.setHunterType(HunterType.COLD);
+		}
+		if (p_37858_ == MobSpawnType.STRUCTURE) {
 			this.setHomeTarget(this.blockPosition());
 		}
 		this.populateDefaultEquipmentSlots(randomsource, p_37857_);
 
-		if (p_37856_.getBiome(this.blockPosition()).value().coldEnoughToSnow(this.blockPosition())) {
-			this.setHunterType(HunterType.COLD);
-		}
+
 
 		this.populateDefaultEquipmentEnchantments(randomsource, p_37857_);
 		return ilivingentitydata;
@@ -481,7 +481,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 			}
 			if (this.random.nextFloat() < 0.25F) {
-				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_CHESTPLATE));
+				this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
 			}
 		}
 	}
