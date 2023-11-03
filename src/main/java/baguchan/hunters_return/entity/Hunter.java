@@ -14,6 +14,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -55,6 +58,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.IExtensibleEnum;
 import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -65,6 +69,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class Hunter extends AbstractIllager implements RangedAttackMob {
+	private static final EntityDataAccessor<String> HUNTER_TYPE = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.STRING);
 	public static final Predicate<LivingEntity> TARGET_ENTITY_SELECTOR = (p_213616_0_) -> {
 		return !p_213616_0_.isBaby() && HunterConfigUtils.isWhitelistedEntity(p_213616_0_.getType());
 	};
@@ -94,6 +99,27 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.moveControl = new DodgeMoveControl(this);
 		this.setCanPickUpLoot(true);
+	}
+
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define(HUNTER_TYPE, HunterType.NORMAL.name());
+	}
+
+	public void setHunterType(HunterType type) {
+		this.entityData.set(HUNTER_TYPE, type.name());
+	}
+
+	public HunterType getHunterType() {
+		return HunterType.get(this.entityData.get(HUNTER_TYPE));
+	}
+
+	@Override
+	public boolean canFreeze() {
+		if (this.getHunterType() == HunterType.COLD) {
+			return false;
+		}
+		return super.canFreeze();
 	}
 
 	protected void registerGoals() {
@@ -269,6 +295,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		p_213281_1_.put("Inventory", listnbt);
 
 		p_213281_1_.putInt("HuntingCooldown", this.cooldown);
+		p_213281_1_.putString("HunterType", getHunterType().name());
 	}
 
 	public void readAdditionalSaveData(CompoundTag p_70037_1_) {
@@ -286,6 +313,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 
 		this.cooldown = p_70037_1_.getInt("HuntingCooldown");
+		this.setHunterType(HunterType.get(p_70037_1_.getString("HunterType")));
 		this.setCanPickUpLoot(true);
 	}
 
@@ -403,10 +431,15 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 
 		if (p_37858_ != MobSpawnType.STRUCTURE) {
-			this.populateDefaultEquipmentSlots(randomsource, p_37857_);
 		} else {
 			this.setHomeTarget(this.blockPosition());
 		}
+		this.populateDefaultEquipmentSlots(randomsource, p_37857_);
+
+		if (p_37856_.getBiome(this.blockPosition()).value().coldEnoughToSnow(this.blockPosition())) {
+			this.setHunterType(HunterType.COLD);
+		}
+
 		this.populateDefaultEquipmentEnchantments(randomsource, p_37857_);
 		return ilivingentitydata;
 	}
@@ -427,23 +460,28 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	@Override
 	protected void populateDefaultEquipmentSlots(RandomSource p_217055_, DifficultyInstance p_217056_) {
 		if (this.getCurrentRaid() == null) {
-			if (this.random.nextFloat() < 0.1F) {
-				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-				this.setItemSlot(EquipmentSlot.OFFHAND, createHorn());
-			} else {
-				this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
-				if (this.random.nextBoolean()) {
-					ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
+			if (this.getMainHandItem().isEmpty()) {
+				if (this.random.nextFloat() < 0.1F) {
+					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+					this.setItemSlot(EquipmentSlot.OFFHAND, createHorn());
+				} else {
+					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
+					if (this.random.nextBoolean()) {
+						ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
-					Map<Enchantment, Integer> map3 = Maps.newHashMap();
-					map3.put(Enchantments.LOYALTY, 1);
-					EnchantmentHelper.setEnchantments(map3, offHandStack);
+						Map<Enchantment, Integer> map3 = Maps.newHashMap();
+						map3.put(Enchantments.LOYALTY, 1);
+						EnchantmentHelper.setEnchantments(map3, offHandStack);
 
-					this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
+						this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
+					}
 				}
 			}
 			if (this.random.nextFloat() < 0.25F) {
 				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+			}
+			if (this.random.nextFloat() < 0.25F) {
+				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_CHESTPLATE));
 			}
 		}
 	}
@@ -614,6 +652,27 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				}
 			}
 
+		}
+	}
+
+	public enum HunterType implements IExtensibleEnum {
+		NORMAL,
+		COLD;
+
+		private HunterType() {
+
+		}
+
+		public static HunterType get(String nameIn) {
+			for (HunterType role : values()) {
+				if (role.name().equals(nameIn))
+					return role;
+			}
+			return NORMAL;
+		}
+
+		public static HunterType create(String name) {
+			throw new IllegalStateException("Enum not extended");
 		}
 	}
 }

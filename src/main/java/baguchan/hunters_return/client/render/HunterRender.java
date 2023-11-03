@@ -16,6 +16,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T>> {
 	private static final ResourceLocation ILLAGER = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
 	private static final ResourceLocation ILLAGER_SLEEP = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");
+	private static final ResourceLocation ILLAGER_COLD = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold.png");
+	private static final ResourceLocation ILLAGER_COLD_SLEEP = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_sleep.png");
 
 	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
 		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
@@ -25,6 +27,12 @@ public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T
 
 	@Override
 	public ResourceLocation getTextureLocation(T p_110775_1_) {
+		if (p_110775_1_.getHunterType() == Hunter.HunterType.COLD) {
+			if (p_110775_1_.isSleeping()) {
+				return ILLAGER_COLD_SLEEP;
+			}
+			return ILLAGER_COLD;
+		}
 		if (p_110775_1_.isSleeping()) {
 			return ILLAGER_SLEEP;
 		}
