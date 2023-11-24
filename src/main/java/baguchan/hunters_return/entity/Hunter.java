@@ -59,7 +59,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.IExtensibleEnum;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -423,8 +422,8 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 		for (int i = 0; i < 2; ++i) {
 			if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
-				Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
-				if (item != null) {
+				Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
+				if (item != Items.AIR) {
 					this.inventory.addItem(new ItemStack(item, 2 + this.random.nextInt(3)));
 				}
 			}

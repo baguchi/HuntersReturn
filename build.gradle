@@ -84,7 +84,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     implementation "net.neoforged:neoforge:${neo_version}"
-    implementation "maven.modrinth:bagus-lib:1.20.2-6.1.0"
+    implementation "maven.modrinth:bagus-lib:1.20.2-6.2.0"
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
