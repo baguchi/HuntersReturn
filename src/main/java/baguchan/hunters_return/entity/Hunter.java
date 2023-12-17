@@ -550,8 +550,6 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	public void performRangedAttack(LivingEntity p_32141_, float p_32142_) {
 		ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
 		AbstractArrow abstractarrow = this.getArrow(itemstack, p_32142_);
-		if (this.getMainHandItem().getItem() instanceof net.minecraft.world.item.BowItem)
-			abstractarrow = ((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem()).customArrow(abstractarrow);
 		double d0 = p_32141_.getX() - this.getX();
 		double d1 = p_32141_.getY(0.3333333333333333D) - abstractarrow.getY();
 		double d2 = p_32141_.getZ() - this.getZ();
