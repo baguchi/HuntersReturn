@@ -194,7 +194,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			}
 
 
-			if (this.isHolding(Items.BOW) && this.isAggressive() && this.shootAnimationTick >= this.shootAnimationLength) {
+			if (this.isHolding(is -> is.getItem() instanceof BowItem) && this.isAggressive() && this.shootAnimationTick >= this.shootAnimationLength) {
 				if (!this.chargeAnimationState.isStarted()) {
 					this.chargeAnimationState.start(this.tickCount);
 				}
