@@ -10,11 +10,17 @@ import java.util.function.Predicate;
 public class HunterConfig {
 	public static final Common COMMON;
     public static final ModConfigSpec COMMON_SPEC;
+	public static final Client CLIENT;
+	public static final ModConfigSpec CLIENT_SPEC;
 
 	static {
         Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
+		Pair<Client, ModConfigSpec> specPair2 = new ModConfigSpec.Builder().configure(Client::new);
+
+		CLIENT_SPEC = specPair2.getRight();
+		CLIENT = specPair2.getLeft();
 	}
 
 	public static class Common {
@@ -48,7 +54,16 @@ public class HunterConfig {
 									, "minecraft:rabbit", "minecraft:pig", "minecraft:cow", "minecraft:sheep"
 									, "earthmobsmod:wooly_cow", "earthmobsmod:horned_sheep")
 							, validator);
+
 		}
 	}
 
+	public static class Client {
+		public final ModConfigSpec.BooleanValue oldAnimation;
+
+		public Client(ModConfigSpec.Builder builder) {
+			oldAnimation = builder.comment("Enable The Old animations")
+					.define("Enable Old Animations", false);
+		}
+	}
 }

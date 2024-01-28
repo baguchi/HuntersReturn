@@ -4,20 +4,19 @@ package baguchan.hunters_return.client.model;
 // Paste this class into your mod and generate all required imports
 
 import bagu_chan.bagus_lib.client.layer.IArmor;
+import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.client.animation.HunterAnimations;
 import baguchan.hunters_return.entity.Hunter;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -116,31 +115,89 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			this.LeftLeg.yRot = (-(float) Math.PI / 10F);
 			this.LeftLeg.zRot = -0.07853982F;
 		} else {
-			if (entityIn.chargeAnimationState.isStarted()) {
-				if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-					this.animateWalk(HunterAnimations.HUNTER_RIGHT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+			if (!HunterConfig.CLIENT.oldAnimation.get()) {
+				if (entityIn.chargeAnimationState.isStarted()) {
+					if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+						this.animateWalk(HunterAnimations.HUNTER_RIGHT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
 
-				} else {
-					this.animateWalk(HunterAnimations.HUNTER_LEFT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+					} else {
+						this.animateWalk(HunterAnimations.HUNTER_LEFT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+					}
+				} else if (!entityIn.isSleeping()) {
+					this.animateWalk(HunterAnimations.HUNTER_WALK, limbSwing, limbSwingAmount, 1, 1.5F);
 				}
-			} else if (!entityIn.isSleeping()) {
-				this.animateWalk(HunterAnimations.HUNTER_WALK, limbSwing, limbSwingAmount, 1, 1.5F);
+			} else {
+				this.RightArm.xRot = Mth.cos(limbSwing * 0.6662F + 3.1415927F) * 2.0F * limbSwingAmount * 0.5F;
+				this.RightArm.yRot = 0.0F;
+				this.RightArm.zRot = 0.0F;
+				this.LeftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
+				this.LeftArm.yRot = 0.0F;
+				this.LeftArm.zRot = 0.0F;
+				this.RightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount * 0.5F;
+				this.RightLeg.yRot = 0.0F;
+				this.RightLeg.zRot = 0.0F;
+				this.LeftLeg.xRot = Mth.cos(limbSwing * 0.6662F + 3.1415927F) * 1.4F * limbSwingAmount * 0.5F;
+				this.LeftLeg.yRot = 0.0F;
+				this.LeftLeg.zRot = 0.0F;
 			}
 		}
 
-		if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-			this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
-			this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
-			this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
-			this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
+		if (!HunterConfig.CLIENT.oldAnimation.get()) {
+			if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
+				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
+				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
 
 			} else {
-			this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
-			this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
-			this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
-			this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
+				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
+				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
+				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
 
 			}
+		} else {
+			AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
+			if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
+				if (entityIn.getMainHandItem().isEmpty()) {
+					AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, this.attackTime, ageInTicks);
+				} else {
+					AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn, this.attackTime, ageInTicks);
+				}
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.SPELLCASTING) {
+				this.RightArm.z = 0.0F;
+				this.RightArm.x = -5.0F;
+				this.LeftArm.z = 0.0F;
+				this.LeftArm.x = 5.0F;
+				this.RightArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.25F;
+				this.LeftArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.25F;
+				this.RightArm.zRot = 2.3561945F;
+				this.LeftArm.zRot = -2.3561945F;
+				this.RightArm.yRot = 0.0F;
+				this.LeftArm.yRot = 0.0F;
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.BOW_AND_ARROW) {
+				this.RightArm.yRot = -0.1F + this.head.yRot;
+				this.RightArm.xRot = -1.5707964F + this.head.xRot;
+				this.LeftArm.xRot = -0.9424779F + this.head.xRot;
+				this.LeftArm.yRot = this.head.yRot - 0.4F;
+				this.LeftArm.zRot = 1.5707964F;
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
+				AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
+				AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
+			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CELEBRATING) {
+				this.RightArm.z = 0.0F;
+				this.RightArm.x = -5.0F;
+				this.RightArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.05F;
+				this.RightArm.zRot = 2.670354F;
+				this.RightArm.yRot = 0.0F;
+				this.LeftArm.z = 0.0F;
+				this.LeftArm.x = 5.0F;
+				this.LeftArm.xRot = Mth.cos(ageInTicks * 0.6662F) * 0.05F;
+				this.LeftArm.zRot = -2.3561945F;
+				this.LeftArm.yRot = 0.0F;
+			}
+		}
 	}
 
 	@Override

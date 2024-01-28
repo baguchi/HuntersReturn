@@ -33,6 +33,8 @@ public class HuntersReturn {
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
 		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(modEventBus);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
+
 		// Register ourselves for server and other game events we are interested in
 		NeoForge.EVENT_BUS.addListener(this::serverStart);
 	}
