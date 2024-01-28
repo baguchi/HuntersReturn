@@ -10,11 +10,18 @@ import java.util.function.Predicate;
 public class HunterConfig {
 	public static final Common COMMON;
 	public static final ForgeConfigSpec COMMON_SPEC;
+	public static final Client CLIENT;
+	public static final ForgeConfigSpec CLIENT_SPEC;
+
 
 	static {
 		Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
+		Pair<Client, ForgeConfigSpec> specPair2 = new ForgeConfigSpec.Builder().configure(Client::new);
+
+		CLIENT_SPEC = specPair2.getRight();
+		CLIENT = specPair2.getLeft();
 	}
 
 	public static class Common {
@@ -50,4 +57,12 @@ public class HunterConfig {
 		}
 	}
 
+	public static class Client {
+		public final ForgeConfigSpec.BooleanValue oldAnimation;
+
+		public Client(ForgeConfigSpec.Builder builder) {
+			oldAnimation = builder.comment("Enable The Old animations")
+					.define("Enable Old Animations", false);
+		}
+	}
 }

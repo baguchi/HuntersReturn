@@ -45,6 +45,8 @@ public class HuntersReturn {
 		HunterSounds.SOUND_EVENTS.register(bus);
 		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(bus);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
+
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.addListener(this::serverStart);
 		MinecraftForge.EVENT_BUS.register(this);
