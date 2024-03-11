@@ -146,13 +146,13 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
 				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
 				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
 				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
 
 			} else {
 				this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
 				this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
-				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
+				this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
 				this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
 
 			}

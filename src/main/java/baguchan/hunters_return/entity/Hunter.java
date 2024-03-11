@@ -1,6 +1,6 @@
 package baguchan.hunters_return.entity;
 
-import bagu_chan.bagus_lib.entity.goal.AnimatedAttackGoal;
+import bagu_chan.bagus_lib.entity.goal.AnimateAttackGoal;
 import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.entity.ai.*;
 import baguchan.hunters_return.entity.projectile.BoomerangEntity;
@@ -82,9 +82,9 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	private BlockPos homeTarget;
 	private int cooldown;
 
-	private final int attackAnimationLength = (int) (1.04F * 20);
+	private final int attackAnimationLength = (int) (18);
 	private final int shootAnimationLength = 20;
-	private final int attackAnimationActionPoint = (int) (0.4 * 20);
+	private final int attackAnimationActionPoint = (int) (0.4 * 20 * 0.75F);
 	private int attackAnimationTick;
 	private int shootAnimationTick;
 	private int thrownAnimationTick;
@@ -133,7 +133,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
 		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.1F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
-		this.goalSelector.addGoal(4, new AnimatedAttackGoal(this, 1.15F, attackAnimationLength - attackAnimationActionPoint, attackAnimationLength) {
+		this.goalSelector.addGoal(4, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
 			@Override
 			public boolean canUse() {
 				return !mob.isHolding((item) -> item.getItem() instanceof BowItem) && super.canUse();
