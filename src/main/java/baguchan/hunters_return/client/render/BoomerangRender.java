@@ -34,7 +34,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 
 		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
 		if (!entityIn.inGround) {
-		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, -entityIn.xRotO, -entityIn.getXRot())));
+			stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, -entityIn.xRotO, -entityIn.getXRot())));
 		}
 		stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
 		if (!entityIn.isInGround()) {
