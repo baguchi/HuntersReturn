@@ -14,7 +14,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -77,18 +76,6 @@ public class BoomerangEntity extends Projectile {
 
 	public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
 		this(HunterEntityRegistry.BOOMERANG.get(), world, entity, boomerang);
-	}
-
-
-	private void onHitFluid(BlockHitResult result) {
-		double velocity = getVelocity();
-		double horizontal = getDeltaMovement().y * getDeltaMovement().y;
-		if (result.getType() == HitResult.Type.BLOCK && result.isInside() &&
-				velocity >= 0.6499999761581421D && horizontal < 0.17499999701976776D)
-			if (!this.level().getBlockState(result.getBlockPos()).isAir() && this.level().getFluidState(result.getBlockPos()).is(FluidTags.WATER)) {
-				setDeltaMovement(getDeltaMovement().x, Mth.clamp(getDeltaMovement().y + 0.10000000149011612D, -0.10000000149011612D, 0.30000001192092896D), getDeltaMovement().z);
-				this.hasImpulse = true;
-			}
 	}
 
 	public DamageSource boomerangAttack(@Nullable Entity p_270857_) {
@@ -330,7 +317,6 @@ public class BoomerangEntity extends Projectile {
 			Vec3 vec3d1 = this.position();
 			Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 			BlockHitResult fluidHitResult = this.level().clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
-			onHitFluid(fluidHitResult);
 
 			HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 			boolean flag = false;
@@ -386,7 +372,11 @@ public class BoomerangEntity extends Projectile {
 
 				f = 0.8F;
 			} else {
-				f = 0.99F;
+				if (loyaltyLevel > 0) {
+					f = 1.0F;
+				} else {
+					f = 0.99F;
+				}
 			}
 			this.setDeltaMovement(vec33.scale(loyaltyLevel > 0 && this.isReturning() ? 1.0F : f).add(0, -this.getGravity(), 0));
 			this.move(MoverType.SELF, this.getDeltaMovement());
