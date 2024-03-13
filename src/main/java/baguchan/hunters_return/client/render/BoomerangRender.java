@@ -32,11 +32,10 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 		stackIn.pushPose();
 		stackIn.translate(0.1F, 0, 0.1F);
 
+		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
 		if (!entityIn.inGround) {
-			stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
+			stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, -entityIn.xRotO, -entityIn.getXRot())));
 		}
-		stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, -entityIn.xRotO, -entityIn.getXRot())));
-
 		stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
 		if (!entityIn.isInGround()) {
 			stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F))));
