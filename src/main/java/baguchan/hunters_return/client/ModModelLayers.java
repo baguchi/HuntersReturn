@@ -6,4 +6,5 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModModelLayers {
     public static ModelLayerLocation HUNTER = new ModelLayerLocation(new ResourceLocation(HuntersReturn.MODID, "hunter"), "main");
+    public static ModelLayerLocation HUNTER_OLD = new ModelLayerLocation(new ResourceLocation(HuntersReturn.MODID, "hunter_old"), "main");
 }

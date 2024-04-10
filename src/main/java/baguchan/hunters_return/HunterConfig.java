@@ -59,10 +59,13 @@ public class HunterConfig {
 
 	public static class Client {
 		public final ForgeConfigSpec.BooleanValue oldAnimation;
+		public final ForgeConfigSpec.BooleanValue oldModel;
 
 		public Client(ForgeConfigSpec.Builder builder) {
 			oldAnimation = builder.comment("Enable The Old animations")
 					.define("Enable Old Animations", false);
+			oldModel = builder.comment("Enable The Old Model")
+					.define("Enable Old Model", false);
 		}
 	}
 }
