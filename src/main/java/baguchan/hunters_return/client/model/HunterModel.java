@@ -39,7 +39,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		this.root = root;
 		this.everything = root.getChild("everything");
 		this.body = this.everything.getChild("body");
-		this.cape = this.body.getChild("Cape");
+		this.cape = this.body.getChild("cape");
 		this.LeftLeg = this.everything.getChild("left_leg");
 		this.RightLeg = this.everything.getChild("right_leg");
 		this.RightArm = this.body.getChild("right_arm");
@@ -60,7 +60,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		PartDefinition body = everything.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 18).addBox(-4.0F, -12.0F, -3.0F, 8.0F, 12.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(28, 13).addBox(-4.0F, -11.75F, -2.5F, 8.0F, 14.0F, 5.0F, new CubeDeformation(0.75F)), PartPose.offset(0.0F, -12.0F, 0.0F));
 
-		PartDefinition Cape = body.addOrReplaceChild("Cape", CubeListBuilder.create().texOffs(28, 32).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 15.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -12.0F, 3.0F, 0.1309F, 0.0F, 0.0F));
+		PartDefinition cape = body.addOrReplaceChild("cape", CubeListBuilder.create().texOffs(28, 32).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 15.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -12.0F, 3.0F, 0.1309F, 0.0F, 0.0F));
 
 		PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8.0F, 10.0F, 8.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 0).addBox(-1.0F, -3.0F, -6.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -12.0F, 0.0F));

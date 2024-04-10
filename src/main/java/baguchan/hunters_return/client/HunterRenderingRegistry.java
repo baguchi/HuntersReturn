@@ -1,6 +1,7 @@
 package baguchan.hunters_return.client;
 
 import baguchan.hunters_return.client.model.HunterModel;
+import baguchan.hunters_return.client.model.OldHunterModel;
 import baguchan.hunters_return.client.render.BoomerangRender;
 import baguchan.hunters_return.client.render.HunterRender;
 import baguchan.hunters_return.init.HunterEntityRegistry;
@@ -22,6 +23,7 @@ public class HunterRenderingRegistry {
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.HUNTER, HunterModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.HUNTER_OLD, OldHunterModel::createBodyLayer);
 
     }
 }

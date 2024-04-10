@@ -42,7 +42,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(3.44f, KeyframeAnimations.degreeVec(2.5f, -12.5f, 1.5f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
@@ -273,7 +273,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.CATMULLROM),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(15f, 0f, 3.5f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(40f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR),
@@ -342,7 +342,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.48f, KeyframeAnimations.degreeVec(0f, 85f, 2.5f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
@@ -471,7 +471,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.48f, KeyframeAnimations.degreeVec(0f, -85f, 2.5f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(5f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR)))
@@ -930,7 +930,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(4f, 32.5f, -1f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(40f, -22.5f, 15f),
                                     AnimationChannel.Interpolations.LINEAR),
@@ -1016,7 +1016,7 @@ public class HunterAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(0.64f, KeyframeAnimations.degreeVec(4f, -32.5f, 1f),
                                     AnimationChannel.Interpolations.LINEAR)))
-            .addAnimation("Cape",
+            .addAnimation("cape",
                     new AnimationChannel(AnimationChannel.Targets.ROTATION,
                             new Keyframe(0f, KeyframeAnimations.degreeVec(40f, -22.5f, 15f),
                                     AnimationChannel.Interpolations.LINEAR),
