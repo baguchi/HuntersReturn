@@ -23,7 +23,7 @@ public class HunterRenderingRegistry {
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ModModelLayers.HUNTER, HunterModel::createBodyLayer);
-
+        event.registerLayerDefinition(ModModelLayers.HUNTER_OLD, HunterModel::createBodyLayer);
     }
 
     @SubscribeEvent
