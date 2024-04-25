@@ -7,7 +7,6 @@ import baguchan.hunters_return.entity.projectile.BoomerangEntity;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
 import baguchan.hunters_return.utils.HunterConfigUtils;
-import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,7 +49,6 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -63,7 +61,6 @@ import net.neoforged.neoforge.common.IExtensibleEnum;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -73,7 +70,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		return !p_213616_0_.isBaby() && HunterConfigUtils.isWhitelistedEntity(p_213616_0_.getType());
 	};
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
-		return p_213616_0_.getItem().getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(p_213616_0_.getItem().getItem());
+        return HunterConfigUtils.isWhitelistedItem(p_213616_0_.getItem().getItem());
 	};
 
 	private final SimpleContainer inventory = new SimpleContainer(5);
@@ -100,9 +97,10 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.setCanPickUpLoot(true);
 	}
 
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(HUNTER_TYPE, HunterType.NORMAL.name());
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder p_326255_) {
+        super.defineSynchedData(p_326255_);
+        p_326255_.define(HUNTER_TYPE, HunterType.NORMAL.name());
 	}
 
 	public void setHunterType(HunterType type) {
@@ -222,8 +220,8 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 	@Override
 	public ItemStack eat(Level p_21067_, ItemStack p_21068_) {
-		if (p_21068_.isEdible()) {
-			this.heal(p_21068_.getItem().getFoodProperties().getNutrition());
+        if (p_21068_.getFoodProperties(this) != null) {
+            this.heal(p_21068_.getFoodProperties(this).nutrition());
 		}
 		return super.eat(p_21067_, p_21068_);
 	}
@@ -243,7 +241,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 				if (!stack.isEmpty()) {
 					this.setItemSlot(EquipmentSlot.OFFHAND, stack);
-					if (stack.isEdible()) {
+                    if (stack.getFoodProperties(this) != null) {
 						this.startUsingItem(InteractionHand.OFF_HAND);
 					}
 				}
@@ -256,7 +254,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	private ItemStack findFood() {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 			ItemStack itemstack = this.inventory.getItem(i);
-			if (!itemstack.isEmpty() && itemstack.getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(itemstack.getItem())) {
+            if (!itemstack.isEmpty() && itemstack.getFoodProperties(this) != null && HunterConfigUtils.isWhitelistedItem(itemstack.getItem())) {
 				return itemstack.split(1);
 			}
 		}
@@ -287,7 +285,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 			ItemStack itemstack = this.inventory.getItem(i);
 			if (!itemstack.isEmpty()) {
-				listnbt.add(itemstack.save(new CompoundTag()));
+                listnbt.add(itemstack.save(this.registryAccess(), new CompoundTag()));
 			}
 		}
 
@@ -300,14 +298,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	public void readAdditionalSaveData(CompoundTag p_70037_1_) {
 		super.readAdditionalSaveData(p_70037_1_);
 		if (p_70037_1_.contains("HomeTarget")) {
-			this.homeTarget = NbtUtils.readBlockPos(p_70037_1_.getCompound("HomeTarget"));
+            this.homeTarget = NbtUtils.readBlockPos(p_70037_1_, "HomeTarget").orElse(null);
 		}
 		ListTag listnbt = p_70037_1_.getList("Inventory", 10);
 
 		for (int i = 0; i < listnbt.size(); ++i) {
-			ItemStack itemstack = ItemStack.of(listnbt.getCompound(i));
-			if (!itemstack.isEmpty()) {
-				this.inventory.addItem(itemstack);
+            Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompound(i));
+            if (itemstack.isPresent() && !itemstack.get().isEmpty()) {
+                this.inventory.addItem(itemstack.orElse(null));
 			}
 		}
 
@@ -328,7 +326,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			i = 2;
 		}
 
-		if (raid.getBadOmenLevel() < 2 || p_213660_1_ <= raid.getNumGroups(Difficulty.NORMAL)) {
+        if (raid.getRaidOmenLevel() < 2 || p_213660_1_ <= raid.getNumGroups(Difficulty.NORMAL)) {
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.STONE_SWORD);
 		} else {
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
@@ -339,32 +337,24 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
 			if (itemstack.getItem() == Items.BOW) {
-				Map<Enchantment, Integer> map = Maps.newHashMap();
-				map.put(Enchantments.POWER_ARROWS, i);
-				EnchantmentHelper.setEnchantments(map, itemstack);
+                itemstack.enchant(Enchantments.POWER, i);
 			} else {
-				Map<Enchantment, Integer> map = Maps.newHashMap();
-				map.put(Enchantments.SHARPNESS, i);
-				EnchantmentHelper.setEnchantments(map, itemstack);
+                itemstack.enchant(Enchantments.SHARPNESS, i);
 			}
 
 			inventory.addItem(new ItemStack(Items.COOKED_BEEF, 2));
 
 
-			Map<Enchantment, Integer> map2 = Maps.newHashMap();
-			map2.put(Enchantments.SHARPNESS, i);
-			EnchantmentHelper.setEnchantments(map2, offHandStack);
+            offHandStack.enchant(Enchantments.SHARPNESS, i);
 		}
 
 		if (this.random.nextFloat() < 0.25F && !itemstack.is(Items.BOW)) {
-			Map<Enchantment, Integer> map3 = Maps.newHashMap();
-			map3.put(Enchantments.LOYALTY, i);
-			EnchantmentHelper.setEnchantments(map3, offHandStack);
+            offHandStack.enchant(Enchantments.LOYALTY, i);
 
 			this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 		}
 
-		if (itemstack.is(Items.BOW) && raid.getBadOmenLevel() > 2) {
+        if (itemstack.is(Items.BOW) && raid.getRaidOmenLevel() > 2) {
 			if (this.random.nextFloat() < 0.25F) {
 				this.setItemInHand(InteractionHand.OFF_HAND, createHorn());
 			}
@@ -409,14 +399,14 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	private boolean wantsFood(ItemStack p_213672_1_) {
-		return p_213672_1_.getItem().getFoodProperties() != null && HunterConfigUtils.isWhitelistedItem(p_213672_1_.getItem());
+        return p_213672_1_.getFoodProperties(this) != null && HunterConfigUtils.isWhitelistedItem(p_213672_1_.getItem());
 	}
 
-	@Nullable
+    @org.jetbrains.annotations.Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, MobSpawnType p_37858_, @Nullable SpawnGroupData p_37859_, @Nullable CompoundTag p_37860_) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, MobSpawnType p_37858_, @org.jetbrains.annotations.Nullable SpawnGroupData p_37859_) {
 		RandomSource randomsource = p_37856_.getRandom();
-		SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_, p_37860_);
+        SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 
@@ -467,11 +457,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 					if (this.random.nextBoolean()) {
 						ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
-
-						Map<Enchantment, Integer> map3 = Maps.newHashMap();
-						map3.put(Enchantments.LOYALTY, 1);
-						EnchantmentHelper.setEnchantments(map3, offHandStack);
-
+                        offHandStack.enchant(Enchantments.LOYALTY, 1);
 						this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 					}
 				}
@@ -491,16 +477,6 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 			return InstrumentItem.create(Items.GOAT_HORN, holderset.get());
 		}
 		return ItemStack.EMPTY;
-	}
-
-	public boolean isAlliedTo(Entity p_184191_1_) {
-		if (super.isAlliedTo(p_184191_1_)) {
-			return true;
-		} else if (p_184191_1_ instanceof LivingEntity && ((LivingEntity) p_184191_1_).getMobType() == MobType.ILLAGER) {
-			return this.getTeam() == null && p_184191_1_.getTeam() == null;
-		} else {
-			return false;
-		}
 	}
 
 	@Override

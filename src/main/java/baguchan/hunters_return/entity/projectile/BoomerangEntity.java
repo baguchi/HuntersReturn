@@ -97,15 +97,14 @@ public class BoomerangEntity extends Projectile {
 				int damage = (int) ((3.0D * Math.sqrt(getDeltaMovement().length()) + Math.min(1, sharpness) + Math.max(0, sharpness - 1) * 0.5D) + 0.5F * piercingLevel);
 
 				if (this.isOnFire()) {
-					result.getEntity().setSecondsOnFire(5);
+                    result.getEntity().setRemainingFireTicks(5);
 				}
 
 				if (damage > 0) {
 					result.getEntity().hurt(this.boomerangAttack(shooter), damage);
 				}
 				if (shooter instanceof LivingEntity) {
-					getBoomerang().hurtAndBreak(1, (LivingEntity) shooter, p_222182_1_ -> {
-					});
+                    getBoomerang().hurtAndBreak(1, random, (LivingEntity) shooter, () -> getBoomerang().setCount(0));
 				}
 
 				double speed = getSpeed();
@@ -416,18 +415,6 @@ public class BoomerangEntity extends Projectile {
 		this.inGroundTime = 0;
 	}
 
-	protected float getGravity() {
-		if (getLoyaltyLevel() > 0 && !this.isReturning()) {
-			if (this.isInWater()) {
-				return 0.01F;
-			}
-
-			return 0.0F;
-		}
-
-		return getLoyaltyLevel() > 0 && this.isReturning() ? 0.0F : 0.03F;
-	}
-
 	@Override
 	public boolean shouldRenderAtSqrDistance(double p_70112_1_) {
 		double d0 = this.getBoundingBox().getSize() * 5.0F;
@@ -440,18 +427,18 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		this.entityData.define(LOYALTY_LEVEL, (byte) 0);
-		this.entityData.define(PIERCING_LEVEL, (byte) 0);
-		this.entityData.define(BOUNCE_LEVEL, (byte) 0);
-		this.entityData.define(RETURNING, false);
-		this.entityData.define(BOOMERANG, ItemStack.EMPTY);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(LOYALTY_LEVEL, (byte) 0);
+        builder.define(PIERCING_LEVEL, (byte) 0);
+        builder.define(BOUNCE_LEVEL, (byte) 0);
+        builder.define(RETURNING, false);
+        builder.define(BOOMERANG, ItemStack.EMPTY);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag nbt) {
 		super.addAdditionalSaveData(nbt);
-		nbt.put("boomerang", getBoomerang().save(new CompoundTag()));
+        nbt.put("boomerang", getBoomerang().save(this.registryAccess(), new CompoundTag()));
 		nbt.putInt("totalHits", this.totalHits);
 		nbt.putInt("InGroundTime", this.inGroundTime);
 		nbt.putInt("FlyTick", this.flyTick);
@@ -467,7 +454,7 @@ public class BoomerangEntity extends Projectile {
 	@Override
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
-		setBoomerang(ItemStack.of(nbt.getCompound("boomerang")));
+        setBoomerang(ItemStack.parse(this.registryAccess(), nbt.getCompound("boomerang")).orElse(this.getBoomerang()));
 		this.totalHits = nbt.getInt("totalHits");
 		this.inGroundTime = nbt.getInt("InGroundTime");
 		if (nbt.contains("inBlockState", 10)) {

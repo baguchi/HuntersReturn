@@ -2,10 +2,10 @@ package baguchan.hunters_return.init;
 
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = baguchan.hunters_return.HuntersReturn.MODID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = baguchan.hunters_return.HuntersReturn.MODID)
 public class ModCreativeTabEvents {
 	@SubscribeEvent
 	public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {

@@ -2,11 +2,7 @@ package baguchan.hunters_return.entity.ai;
 
 import baguchan.hunters_return.entity.Hunter;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -93,14 +89,12 @@ public class CallAllyGoal extends Goal {
 	}
 
 	private Optional<? extends Holder<Instrument>> getInstrument(ItemStack p_220135_) {
-		CompoundTag compoundtag = p_220135_.getTag();
-		if (compoundtag != null) {
-			ResourceLocation resourcelocation = ResourceLocation.tryParse(compoundtag.getString("instrument"));
-			if (resourcelocation != null) {
-				return BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, resourcelocation));
-			}
-		}
-		return Optional.empty();
+        Holder<Instrument> holder = p_220135_.get(DataComponents.INSTRUMENT);
+        if (holder != null) {
+            return Optional.of(holder);
+        } else {
+            return Optional.empty();
+        }
 	}
 
 	@Override
