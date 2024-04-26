@@ -7,7 +7,7 @@ import baguchan.hunters_return.init.HunterSounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.raid.Raid;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,15 +22,15 @@ public class HuntersReturn {
 	public static final String MODID = "hunters_return";
 	public static final Logger LOGGER = LogManager.getLogger();
 
-	public HuntersReturn(IEventBus modEventBus) {
+	public HuntersReturn(ModContainer modContainer, IEventBus modEventBus) {
 		// Register the setup method for modloading
 		modEventBus.addListener(this::setup);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
 		HunterItems.ITEM_REGISTRY.register(modEventBus);
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
 		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(modEventBus);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
+		modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
+		modContainer.registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
 
 		// Register ourselves for server and other game events we are interested in
 		NeoForge.EVENT_BUS.addListener(this::serverStart);
