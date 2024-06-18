@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/entity/raid/Raid$RaiderType",
+      "name": "HUNTERS_RETURN_HUNTER",
+      "constructor": "(Ljava/util/function/Supplier;[I)V",
+      "parameters": {
+        "class": "baguchan/hunters_return/init/RaiderEnumParams",
+        "field": "HUNTER"
+      }
+    }
+  ]
+}
