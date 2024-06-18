@@ -30,8 +30,8 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 	@Override
 	public void render(BoomerangEntity entityIn, float entityYaw, float partialTicks, PoseStack stackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		stackIn.pushPose();
-		stackIn.translate(0.1F, 0, 0.1F);
 
+		stackIn.translate(0.05F, 0, 0.05F);
 		stackIn.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot())));
 		if (!entityIn.inGround) {
 			stackIn.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, -entityIn.xRotO, -entityIn.getXRot())));
@@ -40,6 +40,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 		if (!entityIn.isInGround()) {
             stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks) * (((float) entityIn.getSpeed() * 80.0F))));
 		}
+		stackIn.scale(1.25F, 1.0F, 1.25F);
 		BakedModel bakedmodel = this.itemRenderer.getModel(entityIn.getBoomerang(), entityIn.level(), (LivingEntity) null, entityIn.getId());
 
 		this.itemRenderer.render(entityIn.getBoomerang(), ItemDisplayContext.GROUND, false, stackIn, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, bakedmodel);
