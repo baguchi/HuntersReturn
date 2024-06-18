@@ -4,12 +4,15 @@ import bagu_chan.bagus_lib.entity.goal.AnimateAttackGoal;
 import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.entity.ai.*;
 import baguchan.hunters_return.entity.projectile.BoomerangEntity;
+import baguchan.hunters_return.init.HunterEnchantments;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
 import baguchan.hunters_return.utils.HunterConfigUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -48,7 +51,10 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -56,7 +62,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.IExtensibleEnum;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -219,11 +224,11 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	@Override
-	public ItemStack eat(Level p_21067_, ItemStack p_21068_) {
-        if (p_21068_.getFoodProperties(this) != null) {
-            this.heal(p_21068_.getFoodProperties(this).nutrition());
+    public ItemStack eat(Level p_347678_, ItemStack p_347507_, FoodProperties p_347707_) {
+        if (p_347707_ != null) {
+            this.heal(p_347707_.nutrition());
 		}
-		return super.eat(p_21067_, p_21068_);
+        return super.eat(p_347678_, p_347507_, p_347707_);
 	}
 
 	public void aiStep() {
@@ -315,18 +320,19 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 	}
 
 	@Override
-	public void applyRaidBuffs(int p_213660_1_, boolean p_213660_2_) {
+    public void applyRaidBuffs(ServerLevel p_348605_, int p_37844_, boolean p_37845_) {
 		ItemStack itemstack;
 		ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
 
+        Registry<Enchantment> enchantment = p_348605_.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
 		Raid raid = this.getCurrentRaid();
 
 		int i = 1;
-		if (p_213660_1_ > raid.getNumGroups(Difficulty.NORMAL)) {
+        if (p_37844_ > raid.getNumGroups(Difficulty.NORMAL)) {
 			i = 2;
 		}
 
-        if (raid.getRaidOmenLevel() < 2 || p_213660_1_ <= raid.getNumGroups(Difficulty.NORMAL)) {
+        if (raid.getRaidOmenLevel() < 2 || p_37844_ <= raid.getNumGroups(Difficulty.NORMAL)) {
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.STONE_SWORD);
 		} else {
 			itemstack = this.random.nextBoolean() ? new ItemStack(Items.BOW) : new ItemStack(Items.IRON_SWORD);
@@ -337,19 +343,19 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		boolean flag = this.random.nextFloat() <= raid.getEnchantOdds();
 		if (flag) {
 			if (itemstack.getItem() == Items.BOW) {
-                itemstack.enchant(Enchantments.POWER, i);
+                itemstack.enchant(enchantment.getHolderOrThrow(Enchantments.POWER), i);
 			} else {
-                itemstack.enchant(Enchantments.SHARPNESS, i);
+                itemstack.enchant(enchantment.getHolderOrThrow(Enchantments.SHARPNESS), i);
 			}
 
 			inventory.addItem(new ItemStack(Items.COOKED_BEEF, 2));
 
 
-            offHandStack.enchant(Enchantments.SHARPNESS, i);
+            offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.CUTTING), i);
 		}
 
 		if (this.random.nextFloat() < 0.25F && !itemstack.is(Items.BOW)) {
-            offHandStack.enchant(Enchantments.LOYALTY, i);
+            offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.RETURN), i);
 
 			this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 		}
@@ -365,7 +371,9 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 
 		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
+
 	}
+
 
 	@Override
 	protected void pickUpItem(ItemEntity p_175445_1_) {
@@ -410,14 +418,12 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 
-		for (int i = 0; i < 2; ++i) {
 			if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
 				Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
 				if (item != Items.AIR) {
-					this.inventory.addItem(new ItemStack(item, 2 + this.random.nextInt(3)));
-				}
-			}
-		}
+                    this.inventory.addItem(new ItemStack(item, 3 + this.random.nextInt(3)));
+                }
+            }
 
 		if (p_37856_.getBiome(this.blockPosition()).value().coldEnoughToSnow(this.blockPosition())) {
 			this.setHunterType(HunterType.COLD);
@@ -428,8 +434,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		this.populateDefaultEquipmentSlots(randomsource, p_37857_);
 
 
-
-		this.populateDefaultEquipmentEnchantments(randomsource, p_37857_);
+        this.populateDefaultEquipmentEnchantments(p_37856_, randomsource, p_37857_);
 		return ilivingentitydata;
 	}
 
@@ -439,7 +444,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		if (this.inventory != null) {
 			for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
 				ItemStack itemstack = this.inventory.getItem(i);
-				if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
+                if (!itemstack.isEmpty() && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
 					this.spawnAtLocation(itemstack);
 				}
 			}
@@ -456,9 +461,11 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				} else {
 					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 					if (this.random.nextBoolean()) {
+                        Registry<Enchantment> enchantment = this.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+
 						ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
-                        offHandStack.enchant(Enchantments.LOYALTY, 1);
-						this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
+                        offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.RETURN), 1);
+                        this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 					}
 				}
 			}
@@ -524,23 +531,26 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 	@Override
 	public void performRangedAttack(LivingEntity p_32141_, float p_32142_) {
-		ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
-		AbstractArrow abstractarrow = this.getArrow(itemstack, p_32142_);
+        ItemStack weapon = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
+        ItemStack itemstack1 = this.getProjectile(weapon);
+        AbstractArrow abstractarrow = this.getArrow(itemstack1, p_32142_, weapon);
+        if (weapon.getItem() instanceof net.minecraft.world.item.ProjectileWeaponItem weaponItem)
+            abstractarrow = weaponItem.customArrow(abstractarrow, weapon);
 		double d0 = p_32141_.getX() - this.getX();
-		double d1 = p_32141_.getY(0.3333333333333333D) - abstractarrow.getY();
+        double d1 = p_32141_.getY(0.3333333333333333) - abstractarrow.getY();
 		double d2 = p_32141_.getZ() - this.getZ();
 		double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-		abstractarrow.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
+        abstractarrow.shoot(d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(abstractarrow);
-		this.level().broadcastEntityEvent(this, (byte) 61);
 	}
 
-	protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_) {
-		return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_);
+    protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_, @Nullable ItemStack p_346155_) {
+        return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_, p_346155_);
 	}
 
-	public void performBoomerangAttack(LivingEntity p_82196_1_) {
+
+    public void performBoomerangAttack(LivingEntity p_82196_1_) {
 		BoomerangEntity boomerang = new BoomerangEntity(this.level(), this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
@@ -628,7 +638,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 		}
 	}
 
-	public enum HunterType implements IExtensibleEnum {
+    public enum HunterType {
 		NORMAL,
 		COLD;
 

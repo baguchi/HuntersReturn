@@ -1,11 +1,9 @@
 package baguchan.hunters_return;
 
-import baguchan.hunters_return.init.HunterEnchantments;
 import baguchan.hunters_return.init.HunterEntityRegistry;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.raid.Raid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -28,7 +26,6 @@ public class HuntersReturn {
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
 		HunterItems.ITEM_REGISTRY.register(modEventBus);
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
-		HunterEnchantments.DEFERRED_REGISTRY_ENCHANTMET.register(modEventBus);
 		modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		modContainer.registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
 
@@ -38,12 +35,11 @@ public class HuntersReturn {
 
 	private void setup(FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
-			Raid.RaiderType.create("hunters_return", HunterEntityRegistry.HUNTERILLAGER.get(), new int[]{0, 1, 2, 3, 2, 2, 2, 3});
 		});
 	}
 
 	public static ResourceLocation locate(String path) {
-		return new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, path);
+		return ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, path);
 	}
 
 

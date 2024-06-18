@@ -38,7 +38,7 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity> {
 		}
 		stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
 		if (!entityIn.isInGround()) {
-			stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks + entityIn.getPiercingLevel() * 0.85F) * (((float) entityIn.getSpeed() * 80.0F))));
+            stackIn.mulPose(Axis.ZP.rotationDegrees((entityIn.tickCount + partialTicks) * (((float) entityIn.getSpeed() * 80.0F))));
 		}
 		BakedModel bakedmodel = this.itemRenderer.getModel(entityIn.getBoomerang(), entityIn.level(), (LivingEntity) null, entityIn.getId());
 

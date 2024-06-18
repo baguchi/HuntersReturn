@@ -18,12 +18,12 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T>> {
-	private static final ResourceLocation ILLAGER = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
-	private static final ResourceLocation ILLAGER_SLEEP = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");
-	private static final ResourceLocation ILLAGER_COLD = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold.png");
-	private static final ResourceLocation ILLAGER_COLD_SLEEP = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_sleep.png");
-	private static final ResourceLocation ILLAGER_OLD = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_old.png");
-	private static final ResourceLocation ILLAGER_COLD_OLD = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_old.png");
+    private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
+    private static final ResourceLocation ILLAGER_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");
+    private static final ResourceLocation ILLAGER_COLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold.png");
+    private static final ResourceLocation ILLAGER_COLD_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_sleep.png");
+    private static final ResourceLocation ILLAGER_OLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_old.png");
+    private static final ResourceLocation ILLAGER_COLD_OLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_old.png");
 
 	private final HunterModel<T> old;
 	private final HunterModel<T> normal = this.getModel();

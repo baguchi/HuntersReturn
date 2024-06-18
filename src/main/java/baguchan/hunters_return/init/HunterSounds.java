@@ -17,7 +17,7 @@ public final class HunterSounds {
 	public static final Supplier<SoundEvent> HUNTER_ILLAGER_LAUGH = createEvent("mob.hunterillager.laugh");
 
 	private static Supplier<SoundEvent> createEvent(String sound) {
-		ResourceLocation name = new ResourceLocation(baguchan.hunters_return.HuntersReturn.MODID, sound);
+		ResourceLocation name = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, sound);
 		return SOUND_EVENTS.register(sound, () -> SoundEvent.createVariableRangeEvent(name));
 	}
 }
