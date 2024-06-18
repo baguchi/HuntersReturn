@@ -53,7 +53,7 @@ public class BoomerangEntity extends Projectile {
 	private int flyTick;
 	public boolean inGround;
 	protected int inGroundTime;
-	private double baseDamage = 2.0;
+	private double baseDamage = 3.0;
 
 	@Nullable
 	private BlockState lastState;
