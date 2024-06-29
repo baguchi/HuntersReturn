@@ -531,26 +531,30 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 
 	@Override
 	public void performRangedAttack(LivingEntity p_32141_, float p_32142_) {
-        ItemStack weapon = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
-        ItemStack itemstack1 = this.getProjectile(weapon);
-        AbstractArrow abstractarrow = this.getArrow(itemstack1, p_32142_, weapon);
-        if (weapon.getItem() instanceof net.minecraft.world.item.ProjectileWeaponItem weaponItem)
-            abstractarrow = weaponItem.customArrow(abstractarrow, weapon);
+		ItemStack weapon = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
+		ItemStack itemstack1 = this.getProjectile(weapon);
+		AbstractArrow abstractarrow = this.getArrow(itemstack1, p_32142_, weapon);
+		if (weapon.getItem() instanceof net.minecraft.world.item.ProjectileWeaponItem weaponItem)
+			abstractarrow = weaponItem.customArrow(abstractarrow, itemstack1, weapon);
 		double d0 = p_32141_.getX() - this.getX();
-        double d1 = p_32141_.getY(0.3333333333333333) - abstractarrow.getY();
+		double d1 = p_32141_.getY(0.3333333333333333) - abstractarrow.getY();
 		double d2 = p_32141_.getZ() - this.getZ();
 		double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        abstractarrow.shoot(d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
+		abstractarrow.shoot(d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(abstractarrow);
 	}
-
     protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_, @Nullable ItemStack p_346155_) {
         return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_, p_346155_);
 	}
 
+	@Override
+	public boolean canFireProjectileWeapon(ProjectileWeaponItem p_32144_) {
+		return p_32144_ == Items.BOW;
+	}
 
-    public void performBoomerangAttack(LivingEntity p_82196_1_) {
+
+	public void performBoomerangAttack(LivingEntity p_82196_1_) {
 		BoomerangEntity boomerang = new BoomerangEntity(this.level(), this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
