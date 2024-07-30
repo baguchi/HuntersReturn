@@ -71,6 +71,7 @@ public class BoomerangEntity extends Projectile {
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, boomerang));
 		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE.get(), boomerang));
 		this.totalHits = 0;
+		this.setTouchGround(false);
 	}
 
 	public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
