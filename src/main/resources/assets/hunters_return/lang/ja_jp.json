@@ -16,8 +16,11 @@
   "hunters_return.config.foodWhitelist": "邪悪なハンターが食べる食べ物のホワイトリスト",
   "hunters_return.config.attackableWhitelist": "邪悪なハンターが狩るエンティティのホワイトリスト",
   "enchantment.hunters_return.bounce": "弾力",
+  "enchantment.hunters_return.bounce.desc": "このエンチャントは、ブーメランがより跳ね返るようになります",
   "enchantment.hunters_return.return": "跳返",
+  "enchantment.hunters_return.return.desc": "このエンチャントは、ブーメランが壁に当たっても戻るようになります",
   "enchantment.hunters_return.cutting": "切り裂き",
+  "enchantment.hunters_return.cutting.desc": "このエンチャントは、ブーメランのダメージを増やします",
   "hunters_return.config.spacing": "Spacing",
   "hunters_return.config.separation": "Separation",
   "hunters_return.config.rudeHogSpawnInBastion": "ルードホッグを、砦の遺跡に出現させる"
