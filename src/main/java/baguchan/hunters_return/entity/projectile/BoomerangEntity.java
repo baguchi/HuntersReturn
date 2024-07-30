@@ -27,16 +27,14 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -47,6 +45,7 @@ public class BoomerangEntity extends Projectile {
 	private static final EntityDataAccessor<Byte> PIERCING_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Byte> BOUNCE_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> TOUCH_GROUND = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
 
 
@@ -163,18 +162,21 @@ public class BoomerangEntity extends Projectile {
 		BlockState state = this.level().getBlockState(pos);
 		SoundType soundType = state.getSoundType(this.level(), pos, this);
 
-		int loyaltyLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
+		int returnLevel = this.entityData.get(LOYALTY_LEVEL).byteValue();
 		Entity entity = getOwner();
 		Vec3 movement = this.getDeltaMovement();
-		if (!isReturning()) {
+		if (!isReturning() || returnLevel > 0 && isReturning()) {
+
 			if (movement.length() < 0.2F && movement.y <= 0) {
-				if (loyaltyLevel > 0) {
+				if (returnLevel > 0) {
 					if (!isReturning() &&
 							entity != null) {
 						this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 						setReturning(true);
 					}
 				} else {
+					setReturning(false);
+
 					this.inGround = true;
 					this.lastState = this.level().getBlockState(result.getBlockPos());
 					Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
@@ -194,6 +196,10 @@ public class BoomerangEntity extends Projectile {
 				this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
 				if (!isReturning()) {
 					this.level().playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
+				}
+				if (returnLevel <= 0) {
+					this.setTouchGround(true);
+					this.setReturning(false);
 				}
 			}
 		}
@@ -273,117 +279,115 @@ public class BoomerangEntity extends Projectile {
 	@Override
 	public void tick() {
 		super.tick();
+		int returningLevel = (this.entityData.get(LOYALTY_LEVEL));
+		boolean flag = false;
 		Vec3 vec3 = this.getDeltaMovement();
 		if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
 			double d0 = vec3.horizontalDistance();
-			this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
-			this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
+			this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * 180.0F / (float) Math.PI));
+			this.setXRot((float) (Mth.atan2(vec3.y, d0) * 180.0F / (float) Math.PI));
 			this.yRotO = this.getYRot();
 			this.xRotO = this.getXRot();
 		}
 
-		BlockPos blockpos2 = this.blockPosition();
-		BlockState blockstate2 = this.level().getBlockState(blockpos2);
-		if (this.getDeltaMovement().length() < 0.2F && this.getDeltaMovement().y <= 0) {
+		BlockPos blockpos = this.blockPosition();
+		BlockState blockstate = this.level().getBlockState(blockpos);
+		if (!blockstate.isAir() && !flag && returningLevel <= 0) {
+			VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
+			if (!voxelshape.isEmpty()) {
+				Vec3 vec31 = this.position();
 
-			if (!blockstate2.isAir()) {
-				VoxelShape voxelshape = blockstate2.getCollisionShape(this.level(), blockpos2);
-				if (!voxelshape.isEmpty()) {
-					Vec3 vec31 = this.position().add(this.getDeltaMovement());
-
-					for (AABB aabb : voxelshape.toAabbs()) {
-						if (aabb.move(blockpos2).contains(vec31)) {
-							this.setInGround(true);
-							break;
-						}
+				for (AABB aabb : voxelshape.toAabbs()) {
+					if (aabb.move(blockpos).contains(vec31)) {
+						this.inGround = true;
+						break;
 					}
 				}
 			}
 		}
 
-		if (this.isInWaterOrRain() || blockstate2.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+
+		if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
 			this.clearFire();
 		}
 
-		if (this.isInGround()) {
-			if (this.lastState != blockstate2 && this.shouldFall()) {
+		if (this.inGround && !flag) {
+			if (this.lastState != blockstate && this.shouldFall()) {
 				this.startFalling();
 			} else if (!this.level().isClientSide) {
 				this.tickDespawn();
 			}
-			++this.inGroundTime;
+
+			this.inGroundTime++;
 		} else {
 			this.inGroundTime = 0;
-			Vec3 vec3d1 = this.position();
-			Vec3 vec3d2 = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-			BlockHitResult fluidHitResult = this.level().clip(new ClipContext(vec3d1, vec3d2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
-
 			HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-			boolean flag = false;
-			if (hitresult.getType() == HitResult.Type.BLOCK) {
-				BlockPos blockpos = ((BlockHitResult) hitresult).getBlockPos();
-				BlockState blockstate = this.level().getBlockState(blockpos);
-				if (blockstate.is(Blocks.NETHER_PORTAL)) {
-					this.handleInsidePortal(blockpos);
-					flag = true;
-				} else if (blockstate.is(Blocks.END_GATEWAY)) {
-					BlockEntity blockentity = this.level().getBlockEntity(blockpos);
-					if (blockentity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this)) {
-						TheEndGatewayBlockEntity.teleportEntity(this.level(), blockpos, blockstate, this, (TheEndGatewayBlockEntity) blockentity);
-					}
-
-					flag = true;
-				}
-			}
-
-			if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+			if (hitresult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 				this.onHit(hitresult);
-				this.hasImpulse = true;
 			}
-			this.updateRotation();
 
-			Vec3 vec32 = this.getDeltaMovement();
-			this.flyTick++;
 
-			int loyaltyLevel = (this.entityData.get(LOYALTY_LEVEL)).byteValue();
+
+
 			Entity entity = getOwner();
-			if (loyaltyLevel > 0 && !isReturning()) {
-				if (this.flyTick >= 80 && entity != null) {
+			if (returningLevel > 0 && !isReturning()) {
+				if (this.flyTick >= 30 && entity != null) {
 					this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
 					setReturning(true);
 				}
 			}
-			if (loyaltyLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
+			if (returningLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
 				drop(getX(), getY(), getZ());
-			} else if (loyaltyLevel > 0 && entity != null && isReturning()) {
+			} else if (returningLevel > 0 && entity != null && isReturning()) {
 				this.noPhysics = true;
 				Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-				double d0 = 0.05D * loyaltyLevel;
+				double d0 = 0.05D * returningLevel;
 				this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
 			}
 
-			Vec3 vec33 = this.getDeltaMovement();
-			double d2 = this.getX() + vec33.x;
-			double d0 = this.getY() + vec33.y;
-			double d1 = this.getZ() + vec33.z;
-			float f;
-			if (this.isInWater()) {
-				this.level().addParticle(ParticleTypes.BUBBLE, d2 - vec32.x * 0.25D, d0 - vec32.y * 0.25D, d1 - vec32.z * 0.25D, vec32.x, vec32.y, vec32.z);
 
-				f = 0.8F;
+			vec3 = this.getDeltaMovement();
+			double d5 = vec3.x;
+			double d6 = vec3.y;
+			double d1 = vec3.z;
+
+			double d7 = this.getX() + d5;
+			double d2 = this.getY() + d6;
+			double d3 = this.getZ() + d1;
+			double d4 = vec3.horizontalDistance();
+
+
+			if (flag) {
+				this.setYRot((float) (Mth.atan2(-d5, -d1) * 180.0F / (float) Math.PI));
 			} else {
-				if (loyaltyLevel > 0) {
-					f = 1.0F;
-				} else {
-					f = 0.99F;
-				}
+				this.setYRot((float) (Mth.atan2(d5, d1) * 180.0F / (float) Math.PI));
 			}
-			this.setDeltaMovement(vec33.scale(loyaltyLevel > 0 && this.isReturning() ? 1.0F : f).add(0, -this.getGravity(), 0));
-			this.move(MoverType.SELF, this.getDeltaMovement());
+
+			this.setXRot((float) (Mth.atan2(d6, d4) * 180.0F / (float) Math.PI));
+			this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+			this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
+			float f = returningLevel > 0 ? 1.0F : 0.99F;
+			if (this.isInWater()) {
+				for (int j = 0; j < 4; j++) {
+					float f1 = 0.25F;
+					this.level().addParticle(ParticleTypes.BUBBLE, d7 - d5 * 0.25, d2 - d6 * 0.25, d3 - d1 * 0.25, d5, d6, d1);
+				}
+
+				f = this.getWaterInertia();
+			}
+
+			if (!flag) {
+				this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y - this.getGravity(), this.getDeltaMovement().z);
+			}
+
+			this.setDeltaMovement(this.getDeltaMovement().scale((double) f));
+
+
+			this.setPos(d7, d2, d3);
 			this.checkInsideBlocks();
 
 			if (!this.level().isClientSide()) {
-				if (loyaltyLevel > 0) {
+				if (returningLevel > 0) {
 					List<ItemEntity> list = this.level().getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
 
 					if (this.getPassengers().isEmpty()) {
@@ -393,11 +397,16 @@ public class BoomerangEntity extends Projectile {
 					}
 				}
 			}
+			this.flyTick++;
 		}
 
 		if (this.shouldDropToThrower()) {
 			this.drop(this.getX(), this.getY(), this.getZ());
 		}
+	}
+
+	private float getWaterInertia() {
+		return 0.6F;
 	}
 
 	protected void tickDespawn() {
@@ -428,7 +437,7 @@ public class BoomerangEntity extends Projectile {
 			return 0.0F;
 		}
 
-		return getLoyaltyLevel() > 0 && this.isReturning() ? 0.0F : 0.03F;
+		return this.getLoyaltyLevel() <= 0 && this.isTouchGround() ? 0.05F : 0.0F;
 	}
 
 	@Override
@@ -448,6 +457,7 @@ public class BoomerangEntity extends Projectile {
 		this.entityData.define(PIERCING_LEVEL, (byte) 0);
 		this.entityData.define(BOUNCE_LEVEL, (byte) 0);
 		this.entityData.define(RETURNING, false);
+		this.entityData.define(TOUCH_GROUND, true);
 		this.entityData.define(BOOMERANG, ItemStack.EMPTY);
 	}
 
@@ -464,6 +474,7 @@ public class BoomerangEntity extends Projectile {
 		}
 
 		nbt.putBoolean("inGround", this.isInGround());
+		nbt.putBoolean("TouchGround", this.isTouchGround());
 	}
 
 
@@ -483,6 +494,7 @@ public class BoomerangEntity extends Projectile {
 		this.entityData.set(LOYALTY_LEVEL, (byte) EnchantmentHelper.getLoyalty(getBoomerang()));
 		this.entityData.set(PIERCING_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, getBoomerang()));
 		this.entityData.set(BOUNCE_LEVEL, (byte) EnchantmentHelper.getItemEnchantmentLevel(HunterEnchantments.BOUNCE.get(), getBoomerang()));
+		this.setTouchGround(nbt.getBoolean("TouchGround"));
 	}
 
 	private int getLoyaltyLevel() {
@@ -535,5 +547,13 @@ public class BoomerangEntity extends Projectile {
 
 	public void setBoomerang(ItemStack stack) {
 		this.entityData.set(BOOMERANG, stack);
+	}
+
+	public void setTouchGround(boolean flag) {
+		this.entityData.set(TOUCH_GROUND, flag);
+	}
+
+	public boolean isTouchGround() {
+		return this.entityData.get(TOUCH_GROUND);
 	}
 }
