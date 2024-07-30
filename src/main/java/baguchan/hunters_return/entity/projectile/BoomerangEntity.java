@@ -18,10 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -103,7 +101,16 @@ public class BoomerangEntity extends Projectile {
 				}
 
 				if (realDamage > 0) {
-					result.getEntity().hurt(damageSource, realDamage);
+					if (result.getEntity().hurt(damageSource, realDamage)) {
+						if (result.getEntity() instanceof LivingEntity livingEntity) {
+							this.doKnockback(livingEntity, damageSource);
+							if (this.level() instanceof ServerLevel) {
+								ServerLevel serverlevel1 = (ServerLevel) this.level();
+								EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel1, livingEntity, damageSource, this.getWeaponItem());
+							}
+						}
+
+					}
 				}
 
 				double speed = getSpeed();
@@ -166,11 +173,18 @@ public class BoomerangEntity extends Projectile {
 		BlockPos pos = result.getBlockPos();
 		BlockState state = this.level().getBlockState(pos);
 		SoundType soundType = state.getSoundType(this.level(), pos, this);
-
+		ItemStack itemstack = this.getWeaponItem();
+		Level var5 = this.level();
 		int loyaltyLevel = this.getReturnLevel();
 		Entity entity = getOwner();
 		Vec3 movement = this.getDeltaMovement();
 		if (!isReturning()) {
+			if (var5 instanceof ServerLevel serverlevel) {
+				if (itemstack != null) {
+					this.hitBlockEnchantmentEffects(serverlevel, result, itemstack);
+				}
+			}
+
 			if (movement.length() < 0.35F && movement.y <= 0) {
 				if (loyaltyLevel > 0) {
 					if (!isReturning() &&
@@ -201,6 +215,47 @@ public class BoomerangEntity extends Projectile {
 				}
 			}
 		}
+	}
+
+	protected void doKnockback(LivingEntity p_346111_, DamageSource p_346412_) {
+		float var10000;
+		label18:
+		{
+			if (this.getBoomerang() != null) {
+				Level var6 = this.level();
+				if (var6 instanceof ServerLevel) {
+					ServerLevel serverlevel = (ServerLevel) var6;
+					var10000 = EnchantmentHelper.modifyKnockback(serverlevel, this.getBoomerang(), p_346111_, p_346412_, 0.0F);
+					break label18;
+				}
+			}
+
+			var10000 = 0.0F;
+		}
+
+		double d0 = (double) var10000;
+		if (d0 > 0.0) {
+			double d1 = Math.max(0.0, 1.0 - p_346111_.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+			Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale(d0 * 0.6 * d1);
+			if (vec3.lengthSqr() > 0.0) {
+				p_346111_.push(vec3.x, 0.1, vec3.z);
+			}
+		}
+
+	}
+
+	protected void hitBlockEnchantmentEffects(ServerLevel p_345462_, BlockHitResult p_345204_, ItemStack p_345083_) {
+		Vec3 vec3 = p_345204_.getBlockPos().clampLocationWithin(p_345204_.getLocation());
+		Entity var6 = this.getOwner();
+		LivingEntity var10002;
+		if (var6 instanceof LivingEntity livingentity) {
+			var10002 = livingentity;
+		} else {
+			var10002 = null;
+		}
+
+		EnchantmentHelper.onHitBlock(p_345462_, p_345083_, var10002, this, (EquipmentSlot) null, vec3, p_345462_.getBlockState(p_345204_.getBlockPos()), (p_348569_) -> {
+		});
 	}
 
 
