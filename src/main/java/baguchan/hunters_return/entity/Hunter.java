@@ -461,10 +461,7 @@ public class Hunter extends AbstractIllager implements RangedAttackMob {
 				} else {
 					this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.WOODEN_SWORD));
 					if (this.random.nextBoolean()) {
-                        Registry<Enchantment> enchantment = this.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-
 						ItemStack offHandStack = new ItemStack(HunterItems.BOOMERANG.get());
-                        offHandStack.enchant(enchantment.getHolderOrThrow(HunterEnchantments.RETURN), 1);
                         this.setItemInHand(InteractionHand.OFF_HAND, offHandStack);
 					}
 				}
