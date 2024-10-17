@@ -6,12 +6,8 @@
     "# "
   ],
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    "P": {
-      "item": "minecraft:paper"
-    }
+    "#": "#minecraft:planks",
+    "P": "minecraft:paper"
   },
   "result": {
     "id": "hunters_return:boomerang",
