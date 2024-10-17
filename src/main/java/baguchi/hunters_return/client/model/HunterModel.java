@@ -108,7 +108,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 			}
 		}
 		super.setupAnim(entityIn);
-		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.head.yRot = entityIn.yRot * ((float) Math.PI / 180F);
 		this.head.xRot = entityIn.xRot * ((float) Math.PI / 180F);
 		if (entityIn.isRiding) {
