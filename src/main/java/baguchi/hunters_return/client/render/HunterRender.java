@@ -14,6 +14,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.item.CrossbowItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -54,6 +56,16 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	@Override
 	public void extractRenderState(Hunter hunter, HunterRenderState hunterState, float p_361157_) {
 		super.extractRenderState(hunter, hunterState, p_361157_);
+
+		hunterState.isRiding = hunter.isPassenger();
+		hunterState.mainArm = hunter.getMainArm();
+		hunterState.armPose = hunter.getArmPose();
+		hunterState.maxCrossbowChargeDuration = hunterState.armPose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE
+				? CrossbowItem.getChargeDuration(hunter.getUseItem(), hunter)
+				: 0;
+		hunterState.ticksUsingItem = hunter.getTicksUsingItem();
+		hunterState.attackAnim = hunter.getAttackAnim(p_361157_);
+		hunterState.isAggressive = hunter.isAggressive();
 
 		hunterState.attackAnimationState.copyFrom(hunter.attackAnimationState);
 		hunterState.chargeAnimationState.copyFrom(hunter.chargeAnimationState);
