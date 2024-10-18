@@ -57,5 +57,6 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 		p_364204_.yRot = p_361771_.getYRot(p_360538_);
 		p_364204_.inGround = p_361771_.inGround;
 		p_364204_.speed = (float) p_361771_.getSpeed();
+		p_364204_.boomerang = p_361771_.getBoomerang();
 	}
 }
