@@ -3,7 +3,6 @@ package baguchi.hunters_return.entity.ai;
 import baguchi.hunters_return.entity.Hunter;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BowItem;
 
@@ -39,7 +38,7 @@ public class DodgeGoal extends Goal {
 		if (--this.cooldownTime < 0) {
 			if (this.hunter.getTarget() != null) {
 				this.toAvoid = this.hunter.level().getEntitiesOfClass(this.dodgeAtType, this.hunter.getBoundingBox().inflate((double) 10.0F, 5.0D, (double) 10.0F), (p_148124_) -> {
-					return (!(p_148124_ instanceof AbstractArrow) || !(((AbstractArrow) p_148124_).inGround) && p_148124_.getOwner() != this.hunter && (p_148124_.getOwner() == null || !this.hunter.isAlliedTo(p_148124_.getOwner())));
+					return (p_148124_.getOwner() != this.hunter && (p_148124_.getOwner() == null || !this.hunter.isAlliedTo(p_148124_.getOwner())));
 				});
 				return !toAvoid.isEmpty();
 			}
