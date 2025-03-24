@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "hunters_return:item/hunter_spawn_egg"
+  }
+}

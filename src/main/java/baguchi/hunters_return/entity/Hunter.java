@@ -18,7 +18,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -397,13 +396,14 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.MAX_HEALTH, 26.0D).add(Attributes.ARMOR, 1.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag p_213281_1_) {
 		super.addAdditionalSaveData(p_213281_1_);
 		if (!this.getMouthItem().isEmpty()) {
 			p_213281_1_.put("mouth_item", this.getMouthItem().save(this.registryAccess(), new CompoundTag()));
 		}
 		if (this.homeTarget != null) {
-			p_213281_1_.put("HomeTarget", NbtUtils.writeBlockPos(this.homeTarget));
+			p_213281_1_.store("HomeTarget", BlockPos.CODEC, this.homeTarget);
 		}
 		ListTag listnbt = new ListTag();
 
@@ -422,22 +422,22 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
-		this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompound("mouth_item")).orElse(this.getMouthItem()));
+		this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("mouth_item")).orElse(this.getMouthItem()));
 
 		if (nbt.contains("HomeTarget")) {
-			this.homeTarget = NbtUtils.readBlockPos(nbt, "HomeTarget").orElse(null);
+			this.homeTarget = nbt.read("HomeTarget", BlockPos.CODEC).orElse(null);
 		}
-		ListTag listnbt = nbt.getList("Inventory", 10);
+		ListTag listnbt = nbt.getListOrEmpty("Inventory");
 
 		for (int i = 0; i < listnbt.size(); ++i) {
-            Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompound(i));
+			Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompoundOrEmpty(i));
             if (itemstack.isPresent() && !itemstack.get().isEmpty()) {
                 this.inventory.addItem(itemstack.orElse(null));
 			}
 		}
 
-		this.cooldown = nbt.getInt("HuntingCooldown");
-		this.setHunterType(HunterType.get(nbt.getString("HunterType")));
+		this.cooldown = nbt.getInt("HuntingCooldown").orElse(0);
+		this.setHunterType(HunterType.get(nbt.getStringOr("HunterType", HunterType.NORMAL.name())));
 		this.setCanPickUpLoot(true);
 	}
 
@@ -681,7 +681,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		double d3 = Math.sqrt(d0 * d0 + d2 * d2);
 		if (this.level() instanceof ServerLevel serverlevel) {
 			Projectile.spawnProjectileUsingShoot(
-					abstractarrow, serverlevel, itemstack1, d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (14 - serverlevel.getDifficulty().getId() * 4)
+					abstractarrow, serverlevel, itemstack1, d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (13 - serverlevel.getDifficulty().getId() * 4)
 			);
 		}
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
@@ -742,7 +742,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		public boolean canUse() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
 
-			double distance = this.hunter.level().isDay() ? this.stopDistance : this.stopDistance / 1.5F;
+			double distance = this.hunter.level().isBrightOutside() ? this.stopDistance : this.stopDistance / 1.5F;
 
 			return blockpos != null && this.isTooFarAway(blockpos, distance);
 		}

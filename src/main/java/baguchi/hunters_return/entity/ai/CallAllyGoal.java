@@ -12,6 +12,7 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.InstrumentComponent;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
@@ -78,18 +79,20 @@ public class CallAllyGoal extends Goal {
 				abstractIllager.setTarget(this.hunter.getTarget());
 			});
 		}
-		Optional<? extends Holder<Instrument>> optional = this.getInstrument(this.hunter.getUseItem());
+		Optional<InstrumentComponent> optional = this.getInstrument(this.hunter.getUseItem());
 		if (optional.isPresent()) {
-			Instrument instrument = optional.get().value();
-			SoundEvent soundevent = instrument.soundEvent().value();
-			float f = instrument.range() / 16.0F;
-			this.hunter.level().playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
-			this.hunter.gameEvent(GameEvent.INSTRUMENT_PLAY, this.hunter);
+			Optional<Holder<Instrument>> instrument = optional.get().instrument().contents().left();
+			if (instrument.isPresent()) {
+				SoundEvent soundevent = instrument.get().value().soundEvent().value();
+				float f = instrument.get().value().range() / 16.0F;
+				this.hunter.level().playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
+				this.hunter.gameEvent(GameEvent.INSTRUMENT_PLAY, this.hunter);
+			}
 		}
 	}
 
-	private Optional<? extends Holder<Instrument>> getInstrument(ItemStack p_220135_) {
-        Holder<Instrument> holder = p_220135_.get(DataComponents.INSTRUMENT);
+	private Optional<InstrumentComponent> getInstrument(ItemStack p_220135_) {
+		InstrumentComponent holder = p_220135_.get(DataComponents.INSTRUMENT);
         if (holder != null) {
             return Optional.of(holder);
         } else {

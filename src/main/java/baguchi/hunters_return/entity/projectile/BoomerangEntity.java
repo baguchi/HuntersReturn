@@ -534,19 +534,19 @@ public class BoomerangEntity extends Projectile {
 	@Override
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
-        setBoomerang(ItemStack.parse(this.registryAccess(), nbt.getCompound("boomerang")).orElse(this.getBoomerang()));
-		this.totalHits = nbt.getInt("totalHits");
-		this.inGroundTime = nbt.getInt("InGroundTime");
-		if (nbt.contains("inBlockState", 10)) {
-			this.lastState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), nbt.getCompound("inBlockState"));
+		setBoomerang(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("boomerang")).orElse(this.getBoomerang()));
+		this.totalHits = nbt.getIntOr("totalHits", 0);
+		this.inGroundTime = nbt.getIntOr("InGroundTime", 0);
+		if (nbt.contains("inBlockState")) {
+			this.lastState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), nbt.getCompoundOrEmpty("inBlockState"));
 		}
 
-		this.setInGround(nbt.getBoolean("inGround"));
-		this.flyTick = nbt.getInt("FlyTick");
-		setReturning(nbt.getBoolean("returning"));
-		this.setReturnLevel(nbt.getInt("ReturnLevel"));
-		this.setBounceLevel(nbt.getInt("BounceLevel"));
-		this.setTouchGround(nbt.getBoolean("TouchGround"));
+		this.setInGround(nbt.getBooleanOr("inGround", false));
+		this.flyTick = nbt.getIntOr("FlyTick", 0);
+		setReturning(nbt.getBooleanOr("returning", false));
+		this.setReturnLevel(nbt.getIntOr("ReturnLevel", 0));
+		this.setBounceLevel(nbt.getIntOr("BounceLevel", 0));
+		this.setTouchGround(nbt.getBooleanOr("TouchGround", false));
 	}
 
 	private int getReturnLevel() {
