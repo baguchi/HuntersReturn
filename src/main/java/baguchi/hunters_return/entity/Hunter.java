@@ -166,7 +166,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
 		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
 		this.goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Creaking.class, 8.0F, 1.2, 1.35));
-		this.goalSelector.addGoal(4, new MiniCrossBowAttackGoal<>(this, 1.1D, 9.0F));
+		this.goalSelector.addGoal(4, new MiniCrossBowAttackGoal<>(this, 1.1D, 10.0F));
 		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.1F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
 		this.goalSelector.addGoal(4, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
@@ -420,6 +420,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		p_213281_1_.putString("HunterType", getHunterType().name());
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
 		this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("mouth_item")).orElse(this.getMouthItem()));
@@ -563,9 +564,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		}
 		if (p_37858_ == EntitySpawnReason.STRUCTURE) {
 			this.setHomeTarget(this.blockPosition());
+		} else {
+			this.populateDefaultEquipmentSlots(randomsource, p_37857_);
 		}
-		this.populateDefaultEquipmentSlots(randomsource, p_37857_);
-
 
         this.populateDefaultEquipmentEnchantments(p_37856_, randomsource, p_37857_);
 		return ilivingentitydata;
