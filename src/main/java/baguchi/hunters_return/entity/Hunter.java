@@ -423,13 +423,16 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	@Override
 	public void readAdditionalSaveData(CompoundTag nbt) {
 		super.readAdditionalSaveData(nbt);
-		this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("mouth_item")).orElse(this.getMouthItem()));
+		if (nbt.contains("mouth_item")) {
+			this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("mouth_item")).orElse(ItemStack.EMPTY));
+		}
 
 		if (nbt.contains("HomeTarget")) {
 			this.homeTarget = nbt.read("HomeTarget", BlockPos.CODEC).orElse(null);
 		}
 		ListTag listnbt = nbt.getListOrEmpty("Inventory");
 
+		this.inventory.clearContent();
 		for (int i = 0; i < listnbt.size(); ++i) {
 			Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompoundOrEmpty(i));
             if (itemstack.isPresent() && !itemstack.get().isEmpty()) {
