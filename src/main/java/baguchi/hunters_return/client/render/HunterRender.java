@@ -4,6 +4,7 @@ import baguchi.bagus_lib.client.layer.CustomArmorLayer;
 import baguchi.hunters_return.HunterConfig;
 import baguchi.hunters_return.client.ModModelLayers;
 import baguchi.hunters_return.client.model.HunterModel;
+import baguchi.hunters_return.client.model.NewHunterModel;
 import baguchi.hunters_return.client.model.OldHunterModel;
 import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
@@ -29,14 +30,15 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	private static final ResourceLocation ILLAGER_COLD_OLD = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_old.png");
 
 	private final HunterModel<HunterRenderState> old;
-	private final HunterModel<HunterRenderState> normal = this.getModel();
+	private final HunterModel<HunterRenderState> normal;
 
 	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
-		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
+		super(renderManagerIn, new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
 		this.addLayer(new ItemInHandLayer<>(this));
 		this.addLayer(new MouthItemLayer<>(this));
 		this.old = new OldHunterModel(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
+		this.normal = new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class DataGenerators {
         //event.getGenerator().addProvider(true, new EnchantTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
         BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, lookupProvider);
         event.getGenerator().addProvider(true, blocktags);
-        event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, lookupProvider, blocktags.contentsGetter()));
+        event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, lookupProvider));
         event.getGenerator().addProvider(true, new EntityTagGenerator(packOutput, lookupProvider));
         event.getGenerator().addProvider(true, new BiomeTagGenerator(packOutput, lookupProvider));
         event.getGenerator().addProvider(true, new Runner(packOutput, lookupProvider));

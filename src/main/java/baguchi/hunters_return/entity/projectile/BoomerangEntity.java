@@ -8,8 +8,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -35,6 +33,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -512,9 +512,9 @@ public class BoomerangEntity extends Projectile {
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag nbt) {
+	public void addAdditionalSaveData(ValueOutput nbt) {
 		super.addAdditionalSaveData(nbt);
-        nbt.put("boomerang", getBoomerang().save(this.registryAccess(), new CompoundTag()));
+		nbt.store("boomerang", ItemStack.CODEC, getBoomerang());
 		nbt.putInt("totalHits", this.totalHits);
 		nbt.putInt("InGroundTime", this.inGroundTime);
 		nbt.putInt("FlyTick", this.flyTick);
@@ -523,7 +523,7 @@ public class BoomerangEntity extends Projectile {
 		nbt.putInt("BounceLevel", this.getBounceLevel());
 		nbt.putBoolean("returning", isReturning());
 		if (this.lastState != null) {
-			nbt.put("inBlockState", NbtUtils.writeBlockState(this.lastState));
+			nbt.store("inBlockState", BlockState.CODEC, this.lastState);
 		}
 
 		nbt.putBoolean("inGround", this.isInGround());
@@ -532,14 +532,14 @@ public class BoomerangEntity extends Projectile {
 
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag nbt) {
+	public void readAdditionalSaveData(ValueInput nbt) {
 		super.readAdditionalSaveData(nbt);
-		setBoomerang(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("boomerang")).orElse(this.getBoomerang()));
+		setBoomerang(nbt.read("boomerang", ItemStack.CODEC).orElse(this.getBoomerang()));
 		this.totalHits = nbt.getIntOr("totalHits", 0);
 		this.inGroundTime = nbt.getIntOr("InGroundTime", 0);
-		if (nbt.contains("inBlockState")) {
-			this.lastState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), nbt.getCompoundOrEmpty("inBlockState"));
-		}
+
+		this.lastState = nbt.read("inBlockState", BlockState.CODEC).orElse(null);
+
 
 		this.setInGround(nbt.getBooleanOr("inGround", false));
 		this.flyTick = nbt.getIntOr("FlyTick", 0);

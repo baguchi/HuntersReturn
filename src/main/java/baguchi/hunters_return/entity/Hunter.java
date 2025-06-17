@@ -16,8 +16,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -49,6 +47,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.creaking.Creaking;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -65,6 +64,8 @@ import net.minecraft.world.item.equipment.trim.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -77,7 +78,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class Hunter extends AbstractIllager implements CrossbowAttackMob, RangedAttackMob {
+public class Hunter extends AbstractIllager implements CrossbowAttackMob, RangedAttackMob, InventoryCarrier {
 	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> IS_USING_MOUTH = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<ItemStack> MOUTH_ITEM = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.ITEM_STACK);
@@ -308,13 +309,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	public void startUsingMouthItem() {
 		ItemStack itemstack = this.getMouthItem();
 		if (!itemstack.isEmpty() && !this.isUsingMouthItem()) {
-			int duration = EventHooks.onItemUseStart(this, itemstack, itemstack.getUseDuration(this));
-			if (duration < 0) {
-				return;
-			}
 
 			this.useMouthItem = itemstack;
-			this.mouthItemRemaining = duration;
+			this.mouthItemRemaining = itemstack.getUseDuration(this);
 			this.setUsingMouthItem(true);
 			if (!this.level().isClientSide) {
 				this.gameEvent(GameEvent.ITEM_INTERACT_START);
@@ -397,52 +394,39 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag p_213281_1_) {
+	public void addAdditionalSaveData(ValueOutput p_213281_1_) {
 		super.addAdditionalSaveData(p_213281_1_);
 		if (!this.getMouthItem().isEmpty()) {
-			p_213281_1_.put("mouth_item", this.getMouthItem().save(this.registryAccess(), new CompoundTag()));
+			p_213281_1_.store("mouth_item", ItemStack.CODEC, this.getMouthItem());
 		}
 		if (this.homeTarget != null) {
 			p_213281_1_.store("HomeTarget", BlockPos.CODEC, this.homeTarget);
 		}
-		ListTag listnbt = new ListTag();
-
-		for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
-			ItemStack itemstack = this.inventory.getItem(i);
-			if (!itemstack.isEmpty()) {
-                listnbt.add(itemstack.save(this.registryAccess(), new CompoundTag()));
-			}
-		}
-
-		p_213281_1_.put("Inventory", listnbt);
+		this.writeInventoryToTag(p_213281_1_);
 
 		p_213281_1_.putInt("HuntingCooldown", this.cooldown);
 		p_213281_1_.putString("HunterType", getHunterType().name());
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag nbt) {
+	public void readAdditionalSaveData(ValueInput nbt) {
 		super.readAdditionalSaveData(nbt);
-		if (nbt.contains("mouth_item")) {
-			this.setMouthItem(ItemStack.parse(this.registryAccess(), nbt.getCompoundOrEmpty("mouth_item")).orElse(ItemStack.EMPTY));
-		}
 
-		if (nbt.contains("HomeTarget")) {
-			this.homeTarget = nbt.read("HomeTarget", BlockPos.CODEC).orElse(null);
-		}
-		ListTag listnbt = nbt.getListOrEmpty("Inventory");
+		this.setMouthItem(nbt.read("mouth_item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
 
-		this.inventory.clearContent();
-		for (int i = 0; i < listnbt.size(); ++i) {
-			Optional<ItemStack> itemstack = ItemStack.parse(this.registryAccess(), listnbt.getCompoundOrEmpty(i));
-            if (itemstack.isPresent() && !itemstack.get().isEmpty()) {
-                this.inventory.addItem(itemstack.orElse(null));
-			}
-		}
+
+		this.homeTarget = nbt.read("HomeTarget", BlockPos.CODEC).orElse(null);
+
+		this.readInventoryFromTag(nbt);
 
 		this.cooldown = nbt.getInt("HuntingCooldown").orElse(0);
 		this.setHunterType(HunterType.get(nbt.getStringOr("HunterType", HunterType.NORMAL.name())));
 		this.setCanPickUpLoot(true);
+	}
+
+	@Override
+	public SimpleContainer getInventory() {
+		return inventory;
 	}
 
 	@Override
