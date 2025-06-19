@@ -82,75 +82,81 @@ public class OldHunterModel<T extends HunterRenderState> extends HunterModel<T> 
         AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.armPose;
 
         super.setupAnim(entityIn);
-        this.head.yRot = entityIn.yRot * ((float) Math.PI / 180F);
-        this.head.xRot = entityIn.xRot * ((float) Math.PI / 180F);
-        if (entityIn.isRiding) {
-            this.RightArm.xRot = (-(float) Math.PI / 5F);
-            this.RightArm.yRot = 0.0F;
-            this.RightArm.zRot = 0.0F;
-            this.LeftArm.xRot = (-(float) Math.PI / 5F);
-            this.LeftArm.yRot = 0.0F;
-            this.LeftArm.zRot = 0.0F;
-            this.RightLeg.xRot = -1.4137167F;
-            this.RightLeg.yRot = ((float) Math.PI / 10F);
-            this.RightLeg.zRot = 0.07853982F;
-            this.LeftLeg.xRot = -1.4137167F;
-            this.LeftLeg.yRot = (-(float) Math.PI / 10F);
-            this.LeftLeg.zRot = -0.07853982F;
-        } else {
-            this.RightArm.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F + 3.1415927F) * 2.0F * entityIn.walkAnimationSpeed * 0.5F;
-            this.RightArm.yRot = 0.0F;
-            this.RightArm.zRot = 0.0F;
-            this.LeftArm.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F) * 2.0F * entityIn.walkAnimationSpeed * 0.5F;
-            this.LeftArm.yRot = 0.0F;
-            this.LeftArm.zRot = 0.0F;
-            this.RightLeg.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F) * 1.4F * entityIn.walkAnimationSpeed * 0.5F;
-            this.RightLeg.yRot = 0.0F;
-            this.RightLeg.zRot = 0.0F;
-            this.LeftLeg.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F + 3.1415927F) * 1.4F * entityIn.walkAnimationSpeed * 0.5F;
-            this.LeftLeg.yRot = 0.0F;
-            this.LeftLeg.zRot = 0.0F;
-        }
 
 
-        if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
-            if (entityIn.getMainHandItem().isEmpty()) {
-                AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, entityIn.attackAnim, entityIn.ageInTicks);
+        if (!entityIn.dodghRightAnimationState.isStarted() && !entityIn.dodghLeftAnimationState.isStarted()) {
+            this.head.yRot = entityIn.yRot * ((float) Math.PI / 180F);
+            this.head.xRot = entityIn.xRot * ((float) Math.PI / 180F);
+            if (entityIn.isRiding) {
+                this.RightArm.xRot = (-(float) Math.PI / 5F);
+                this.RightArm.yRot = 0.0F;
+                this.RightArm.zRot = 0.0F;
+                this.LeftArm.xRot = (-(float) Math.PI / 5F);
+                this.LeftArm.yRot = 0.0F;
+                this.LeftArm.zRot = 0.0F;
+                this.RightLeg.xRot = -1.4137167F;
+                this.RightLeg.yRot = ((float) Math.PI / 10F);
+                this.RightLeg.zRot = 0.07853982F;
+                this.LeftLeg.xRot = -1.4137167F;
+                this.LeftLeg.yRot = (-(float) Math.PI / 10F);
+                this.LeftLeg.zRot = -0.07853982F;
             } else {
-                AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn.mainArm, entityIn.attackAnim, entityIn.ageInTicks);
+                this.RightArm.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F + 3.1415927F) * 2.0F * entityIn.walkAnimationSpeed * 0.5F;
+                this.RightArm.yRot = 0.0F;
+                this.RightArm.zRot = 0.0F;
+                this.LeftArm.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F) * 2.0F * entityIn.walkAnimationSpeed * 0.5F;
+                this.LeftArm.yRot = 0.0F;
+                this.LeftArm.zRot = 0.0F;
+                this.RightLeg.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F) * 1.4F * entityIn.walkAnimationSpeed * 0.5F;
+                this.RightLeg.yRot = 0.0F;
+                this.RightLeg.zRot = 0.0F;
+                this.LeftLeg.xRot = Mth.cos(entityIn.walkAnimationPos * 0.6662F + 3.1415927F) * 1.4F * entityIn.walkAnimationSpeed * 0.5F;
+                this.LeftLeg.yRot = 0.0F;
+                this.LeftLeg.zRot = 0.0F;
             }
-        } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.SPELLCASTING) {
-            this.RightArm.z = 0.0F;
-            this.RightArm.x = -5.0F;
-            this.LeftArm.z = 0.0F;
-            this.LeftArm.x = 5.0F;
-            this.RightArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.25F;
-            this.LeftArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.25F;
-            this.RightArm.zRot = 2.3561945F;
-            this.LeftArm.zRot = -2.3561945F;
-            this.RightArm.yRot = 0.0F;
-            this.LeftArm.yRot = 0.0F;
-        } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.BOW_AND_ARROW) {
-            this.RightArm.yRot = -0.1F + this.head.yRot;
-            this.RightArm.xRot = -1.5707964F + this.head.xRot;
-            this.LeftArm.xRot = -0.9424779F + this.head.xRot;
-            this.LeftArm.yRot = this.head.yRot - 0.4F;
-            this.LeftArm.zRot = 1.5707964F;
-        } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
-            AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
-        } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
-            AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn.ageInTicks, entityIn.maxCrossbowChargeDuration, true);
-        } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CELEBRATING) {
-            this.RightArm.z = 0.0F;
-            this.RightArm.x = -5.0F;
-            this.RightArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.05F;
-            this.RightArm.zRot = 2.670354F;
-            this.RightArm.yRot = 0.0F;
-            this.LeftArm.z = 0.0F;
-            this.LeftArm.x = 5.0F;
-            this.LeftArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.05F;
-            this.LeftArm.zRot = -2.3561945F;
-            this.LeftArm.yRot = 0.0F;
+
+            if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
+                if (entityIn.getMainHandItem().isEmpty()) {
+                    AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, entityIn.attackAnim, entityIn.ageInTicks);
+                } else {
+                    AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn.mainArm, entityIn.attackAnim, entityIn.ageInTicks);
+                }
+            } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.SPELLCASTING) {
+                this.RightArm.z = 0.0F;
+                this.RightArm.x = -5.0F;
+                this.LeftArm.z = 0.0F;
+                this.LeftArm.x = 5.0F;
+                this.RightArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.25F;
+                this.LeftArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.25F;
+                this.RightArm.zRot = 2.3561945F;
+                this.LeftArm.zRot = -2.3561945F;
+                this.RightArm.yRot = 0.0F;
+                this.LeftArm.yRot = 0.0F;
+            } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.BOW_AND_ARROW) {
+                this.RightArm.yRot = -0.1F + this.head.yRot;
+                this.RightArm.xRot = -1.5707964F + this.head.xRot;
+                this.LeftArm.xRot = -0.9424779F + this.head.xRot;
+                this.LeftArm.yRot = this.head.yRot - 0.4F;
+                this.LeftArm.zRot = 1.5707964F;
+            } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
+                AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);
+            } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
+                AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn.ageInTicks, entityIn.maxCrossbowChargeDuration, true);
+            } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CELEBRATING) {
+                this.RightArm.z = 0.0F;
+                this.RightArm.x = -5.0F;
+                this.RightArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.05F;
+                this.RightArm.zRot = 2.670354F;
+                this.RightArm.yRot = 0.0F;
+                this.LeftArm.z = 0.0F;
+                this.LeftArm.x = 5.0F;
+                this.LeftArm.xRot = Mth.cos(entityIn.ageInTicks * 0.6662F) * 0.05F;
+                this.LeftArm.zRot = -2.3561945F;
+                this.LeftArm.yRot = 0.0F;
+            }
+        } else {
+            dodghRightAnimation.apply(entityIn.dodghRightAnimationState, entityIn.ageInTicks);
+            dodghLeftAnimation.apply(entityIn.dodghLeftAnimationState, entityIn.ageInTicks);
         }
         if (!entityIn.mouthItem.isEmpty()) {
             this.nose.xRot = -0.5F;
