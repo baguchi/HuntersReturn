@@ -3,9 +3,11 @@ package baguchi.hunters_return.client.model;
 // Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
+import baguchi.hunters_return.client.animation.HunterAnimations;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -29,6 +31,8 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	private final ModelPart cape;
 	public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;
 	public HumanoidModel.ArmPose rightArmPose = HumanoidModel.ArmPose.EMPTY;
+	public final KeyframeAnimation dodghRightAnimation;
+	public final KeyframeAnimation dodghLeftAnimation;
 
 	public HunterModel(ModelPart root) {
 		super(root);
@@ -42,6 +46,8 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		this.LeftArm = this.body.getChild("left_arm");
 		this.head = this.body.getChild("head");
 		this.nose = this.head.getChild("nose");
+		this.dodghRightAnimation = HunterAnimations.right_dodge.bake(root);
+		this.dodghLeftAnimation = HunterAnimations.left_dodge.bake(root);
 	}
 
 	public static LayerDefinition createBodyLayer() {

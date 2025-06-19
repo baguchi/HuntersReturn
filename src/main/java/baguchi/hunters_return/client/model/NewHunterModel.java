@@ -84,17 +84,21 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
             this.LeftLeg.yRot = (-(float) Math.PI / 10F);
             this.LeftLeg.zRot = -0.07853982F;
         } else {
-            if (entityIn.chargeAnimationState.isStarted()) {
-                if (entityIn.mainArm == HumanoidArm.RIGHT) {
-                    this.walkRightAttackAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
+            if (!(entityIn.dodghRightAnimationState.isStarted() || entityIn.dodghLeftAnimationState.isStarted())) {
+                if (entityIn.chargeAnimationState.isStarted()) {
+                    if (entityIn.mainArm == HumanoidArm.RIGHT) {
+                        this.walkRightAttackAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
 
-                } else {
-                    this.walkLeftAttackAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
+                    } else {
+                        this.walkLeftAttackAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
+                    }
+                } else if (!entityIn.sleep) {
+                    this.walkAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
                 }
-            } else if (!entityIn.sleep) {
-                this.walkAnimation.applyWalk(entityIn.walkAnimationPos, entityIn.walkAnimationSpeed, 1, 1.5F);
+            } else {
+                dodghRightAnimation.apply(entityIn.dodghRightAnimationState, entityIn.ageInTicks);
+                dodghLeftAnimation.apply(entityIn.dodghLeftAnimationState, entityIn.ageInTicks);
             }
-
         }
         if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD) {
             AnimationUtils.animateCrossbowHold(this.RightArm, this.LeftArm, this.head, true);

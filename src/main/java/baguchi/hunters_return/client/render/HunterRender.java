@@ -76,6 +76,8 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		hunterState.chargeAnimationState.copyFrom(hunter.chargeAnimationState);
 		hunterState.shootAnimationState.copyFrom(hunter.shootAnimationState);
 		hunterState.thrownAnimationState.copyFrom(hunter.thrownAnimationState);
+		hunterState.dodghRightAnimationState.copyFrom(hunter.dodghRightAnimationState);
+		hunterState.dodghLeftAnimationState.copyFrom(hunter.dodghLeftAnimationState);
 		hunterState.hunterType = hunter.getHunterType();
 		hunterState.sleep = hunter.isSleeping();
 	}

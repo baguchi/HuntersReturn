@@ -12,6 +12,9 @@ public class HunterRenderState extends IllagerRenderState {
     public final AnimationState shootAnimationState = new AnimationState();
     public final AnimationState chargeAnimationState = new AnimationState();
     public final AnimationState thrownAnimationState = new AnimationState();
+    public final AnimationState dodghRightAnimationState = new AnimationState();
+    public final AnimationState dodghLeftAnimationState = new AnimationState();
+
     public Hunter.HunterType hunterType;
     public boolean sleep;
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
