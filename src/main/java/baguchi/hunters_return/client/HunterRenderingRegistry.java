@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID, value = Dist.CLIENT)
 public class HunterRenderingRegistry {
     @SubscribeEvent
     public static void registerEntityRenders(EntityRenderersEvent.RegisterRenderers event) {

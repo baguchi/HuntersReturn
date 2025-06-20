@@ -5,7 +5,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = baguchi.hunters_return.HuntersReturn.MODID)
+@EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID)
 public class ModCreativeTabEvents {
 	@SubscribeEvent
 	public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {

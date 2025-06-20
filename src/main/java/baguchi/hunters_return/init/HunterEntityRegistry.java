@@ -20,7 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID)
 public class HunterEntityRegistry {
     public static final DeferredRegister<EntityType<?>> ENTITIES_REGISTRY = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, HuntersReturn.MODID);
 
