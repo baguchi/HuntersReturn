@@ -9,13 +9,12 @@ import baguchi.hunters_return.client.render.item.properties.MiniCrossbowPull;
 import baguchi.hunters_return.init.HunterEntityRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
 
-@OnlyIn(Dist.CLIENT)
+
 @EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID, value = Dist.CLIENT)
 public class HunterRenderingRegistry {
     @SubscribeEvent

@@ -17,10 +17,8 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.AbstractIllager;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+
 public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterModel<HunterRenderState>> {
 	private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
 	private static final ResourceLocation ILLAGER_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");

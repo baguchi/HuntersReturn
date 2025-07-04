@@ -67,8 +67,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.event.EventHooks;
 
@@ -643,8 +641,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	}
 
 
-	@OnlyIn(Dist.CLIENT)
-	public AbstractIllager.IllagerArmPose getArmPose() {
+    public AbstractIllager.IllagerArmPose getArmPose() {
 		if (this.isAggressive()) {
 			if (this.isChargingCrossbow()) {
 				return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;
