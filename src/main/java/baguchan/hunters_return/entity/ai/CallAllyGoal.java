@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -44,7 +45,7 @@ public class CallAllyGoal extends Goal {
 		if (--this.cooldownTime < 0) {
 			if (this.hunter.getTarget() != null) {
 				this.toCall = this.hunter.level().getEntitiesOfClass(AbstractIllager.class, this.hunter.getBoundingBox().inflate((double) 30.0F, 30.0D, (double) 30.0F), (p_148124_) -> {
-					return this.hunter != p_148124_ && this.hunter.isAlliedTo(p_148124_) && p_148124_.getTarget() == null;
+					return this.hunter != p_148124_ && this.hunter.isAlliedTo(p_148124_) && !(p_148124_ instanceof SpellcasterIllager) && p_148124_.getTarget() == null;
 				});
 				this.cooldownTime = 600;
 				return !toCall.isEmpty();
