@@ -10,7 +10,7 @@
       "tag": "minecraft:planks"
     },
     "P": {
-      "item": "minecraft:leather"
+      "tag": "c:leathers"
     }
   },
   "result": {
