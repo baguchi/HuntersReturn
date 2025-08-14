@@ -26,8 +26,8 @@ public class CraftingGenerator extends RecipeProvider {
                 .pattern("BL")
                 .pattern(" B")
                 .define('B', ItemTags.PLANKS)
-                .define('L', Items.LEATHER)
-                .unlockedBy("has_item", has(Items.LEATHER)).save(this.output);
+                .define('L', Tags.Items.LEATHERS)
+                .unlockedBy("has_item", has(Tags.Items.LEATHERS)).save(this.output);
         ShapedRecipeBuilder.shaped(lookup, RecipeCategory.COMBAT, HunterItems.MINI_CROSSBOW, 1)
                 .pattern("RIR")
                 .pattern("SIS")

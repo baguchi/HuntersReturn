@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "B": "#minecraft:planks",
-    "L": "minecraft:leather"
+    "L": "#c:leathers"
   },
   "pattern": [
     " B",
