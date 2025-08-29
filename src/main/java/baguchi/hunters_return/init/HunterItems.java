@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class HunterItems {
 	public static final DeferredRegister.Items ITEM_REGISTRY = DeferredRegister.createItems(baguchi.hunters_return.HuntersReturn.MODID);
 
-	public static final DeferredItem<SpawnEggItem> SPAWNEGG_HUNTER = ITEM_REGISTRY.register("spawnegg_hunter", () -> new SpawnEggItem(HunterEntityRegistry.HUNTERILLAGER.get(), (new Item.Properties().setId(prefix("spawnegg_hunter")))));
+    public static final DeferredItem<SpawnEggItem> SPAWNEGG_HUNTER = ITEM_REGISTRY.register("hunter_spawn_egg", () -> new SpawnEggItem(HunterEntityRegistry.HUNTERILLAGER.get(), (new Item.Properties().setId(prefix("spawnegg_hunter")))));
 	public static final DeferredItem<Item> BOOMERANG = ITEM_REGISTRY.register("boomerang", () -> new BoomerangItem((new Item.Properties().enchantable(2).setId(prefix("boomerang"))).durability(384)));
 	public static final DeferredItem<Item> MINI_CROSSBOW = ITEM_REGISTRY.register("mini_crossbow", () -> new MiniCrossbowItem((new Item.Properties().setId(prefix("mini_crossbow"))).durability(412).component(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).enchantable(2).stacksTo(1)));
 

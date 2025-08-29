@@ -32,6 +32,7 @@ public class HuntersReturn {
         HunterEntityDatas.ENTITY_DATAS.register(modEventBus);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
 		HunterItems.ITEM_REGISTRY.register(modEventBus);
+        HunterItems.ITEM_REGISTRY.addAlias(HuntersReturn.locate("spawnegg_hunter"), HuntersReturn.locate("hunter_spawn_egg"));
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
