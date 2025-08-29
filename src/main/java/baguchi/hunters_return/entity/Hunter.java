@@ -2,17 +2,17 @@ package baguchi.hunters_return.entity;
 
 import baguchi.bagus_lib.entity.goal.AnimateAttackGoal;
 import baguchi.hunters_return.HunterConfig;
+import baguchi.hunters_return.api.HunterVariant;
+import baguchi.hunters_return.data.resources.registries.HunterVariants;
 import baguchi.hunters_return.entity.ai.*;
 import baguchi.hunters_return.entity.projectile.BoomerangEntity;
 import baguchi.hunters_return.init.HunterEnchantments;
+import baguchi.hunters_return.init.HunterEntityDatas;
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.init.HunterSounds;
 import baguchi.hunters_return.item.MiniCrossbowItem;
 import baguchi.hunters_return.utils.HunterConfigUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -36,7 +36,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -63,6 +62,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.equipment.trim.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -80,8 +80,8 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Boolean> IS_USING_MOUTH = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<ItemStack> MOUTH_ITEM = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Holder<HunterVariant>> HUNTER_VARIANT = SynchedEntityData.defineId(Hunter.class, HunterEntityDatas.HUNTER_VARIANT.get());
 
-	private static final EntityDataAccessor<String> HUNTER_TYPE = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.STRING);
 	private static final Predicate<? super ItemEntity> ALLOWED_ITEMS = (p_213616_0_) -> {
         return HunterConfigUtils.isWhitelistedItem(p_213616_0_.getItem().getItem());
 	};
@@ -94,7 +94,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	protected ItemStack useMouthItem = ItemStack.EMPTY;
 	protected int mouthItemRemaining;
 
-	private final int attackAnimationLength = (int) (18);
+    private final int attackAnimationLength = 18;
 	private final int shootAnimationLength = 20;
 	private final int attackAnimationActionPoint = (int) (0.4 * 20 * 0.75F);
 	private int attackAnimationTick;
@@ -110,18 +110,44 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	public Hunter(EntityType<? extends Hunter> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
-		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
+        this.getNavigation().setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 	}
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder p_326255_) {
         super.defineSynchedData(p_326255_);
-        p_326255_.define(HUNTER_TYPE, HunterType.NORMAL.name());
-		p_326255_.define(IS_CHARGING_CROSSBOW, false);
+        p_326255_.define(IS_CHARGING_CROSSBOW, false);
 		p_326255_.define(IS_USING_MOUTH, false);
 		p_326255_.define(MOUTH_ITEM, ItemStack.EMPTY);
-	}
+        RegistryAccess registryaccess = this.registryAccess();
+        Registry<HunterVariant> registry = registryaccess.lookupOrThrow(HunterVariants.HUNTER_VARIANT_KEY);
+        p_326255_.define(HUNTER_VARIANT, registry.get(HunterVariants.DEFAULT).or(registry::getAny).orElseThrow());
+    }
+
+    public Holder<HunterVariant> getHunterVariant() {
+        return this.entityData.get(HUNTER_VARIANT);
+    }
+
+    public void setHunterVariant(Holder<HunterVariant> p_332777_) {
+        this.entityData.set(HUNTER_VARIANT, p_332777_);
+    }
+
+    @Nullable
+    public ResourceLocation getTexture() {
+        HunterVariant tofunianVariant = this.getHunterVariant().value();
+        return tofunianVariant.texture();
+    }
+
+    @Nullable
+    public ResourceLocation getTextureOld() {
+        HunterVariant tofunianVariant = this.getHunterVariant().value();
+        if (tofunianVariant.textureOld().isPresent()) {
+            return tofunianVariant.textureOld().get();
+        }
+
+        return null;
+    }
 
 	public void setMouthItem(ItemStack itemStack) {
 		this.entityData.set(MOUTH_ITEM, itemStack);
@@ -139,18 +165,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		return this.entityData.get(IS_USING_MOUTH);
 	}
 
-
-	public void setHunterType(HunterType type) {
-		this.entityData.set(HUNTER_TYPE, type.name());
-	}
-
-	public HunterType getHunterType() {
-		return HunterType.get(this.entityData.get(HUNTER_TYPE));
-	}
-
 	@Override
 	public boolean canFreeze() {
-		if (this.getHunterType() == HunterType.COLD) {
+        if (this.getHunterVariant().is(HunterVariants.COLD)) {
 			return false;
 		}
 		return super.canFreeze();
@@ -287,7 +304,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		if (!this.level().isClientSide && this.isAlive()) {
 			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
 
-			if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() == Items.BOW && this.getTarget() == null || mainhand.getItem() != Items.BOW)) {
+            if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() != Items.BOW || this.getTarget() == null)) {
 				ItemStack stack = ItemStack.EMPTY;
 
 				if (this.getHealth() >= this.getMaxHealth() && this.random.nextFloat() < 0.01F) {
@@ -405,7 +422,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
-		return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.MAX_HEALTH, 26.0D).add(Attributes.ARMOR, 1.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
+        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.FOLLOW_RANGE, 20.0D).add(Attributes.MAX_HEALTH, 26.0D).add(Attributes.ARMOR, 1.0D).add(Attributes.ATTACK_DAMAGE, 3.0D);
 	}
 
 	@Override
@@ -420,13 +437,18 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.writeInventoryToTag(p_213281_1_);
 
 		p_213281_1_.putInt("HuntingCooldown", this.cooldown);
-		p_213281_1_.putString("HunterType", getHunterType().name());
+        p_213281_1_.store("hunter_variant", HunterVariant.CODEC, this.getHunterVariant());
 	}
 
 	@Override
 	public void readAdditionalSaveData(ValueInput nbt) {
 		super.readAdditionalSaveData(nbt);
 
+
+        Optional<Holder<HunterVariant>> optional = nbt.read("hunter_variant", HunterVariant.CODEC);
+        if (optional.isPresent()) {
+            this.setHunterVariant(optional.get());
+        }
 		this.setMouthItem(nbt.read("mouth_item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
 
 
@@ -435,7 +457,6 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.readInventoryFromTag(nbt);
 
 		this.cooldown = nbt.getInt("HuntingCooldown").orElse(0);
-		this.setHunterType(HunterType.get(nbt.getStringOr("HunterType", HunterType.NORMAL.name())));
 		this.setCanPickUpLoot(true);
 	}
 
@@ -551,19 +572,20 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_37856_, DifficultyInstance p_37857_, EntitySpawnReason p_37858_, @org.jetbrains.annotations.Nullable SpawnGroupData p_37859_) {
 		RandomSource randomsource = p_37856_.getRandom();
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(p_37856_, p_37857_, p_37858_, p_37859_);
-		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
+        this.getNavigation().setCanOpenDoors(true);
 		this.setCanPickUpLoot(true);
 
-			if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
+        Holder<Biome> holder = p_37856_.getBiome(this.blockPosition());
+        this.setHunterVariant(HunterVariants.getSpawnVariant(this.registryAccess(), holder));
+
+
+        if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
 				Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
 				if (item != Items.AIR) {
                     this.inventory.addItem(new ItemStack(item, 3 + this.random.nextInt(3)));
                 }
             }
 
-		if (p_37856_.getBiome(this.blockPosition()).value().coldEnoughToSnow(this.blockPosition(), p_37856_.getSeaLevel())) {
-			this.setHunterType(HunterType.COLD);
-		}
 		if (p_37858_ == EntitySpawnReason.STRUCTURE) {
 			this.setHomeTarget(this.blockPosition());
 		} else {
@@ -704,7 +726,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
-		double d3 = (double) Mth.sqrt((float) (d0 * d0 + d2 * d2));
+        double d3 = Mth.sqrt((float) (d0 * d0 + d2 * d2));
 		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.2F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(boomerang);
@@ -757,7 +779,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 					Vec3 vector3d1 = vector3d.scale(10.0D).add(this.hunter.getX(), this.hunter.getY(), this.hunter.getZ());
 					Hunter.this.navigation.moveTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speedModifier);
 				} else {
-					Hunter.this.navigation.moveTo((double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), this.speedModifier);
+                    Hunter.this.navigation.moveTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.speedModifier);
 				}
 			}
 
@@ -781,7 +803,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 				List<ItemEntity> list = this.mob.level().getEntitiesOfClass(ItemEntity.class, this.mob.getBoundingBox().inflate(16.0D, 8.0D, 16.0D), Hunter.ALLOWED_ITEMS);
 				if (!list.isEmpty() && this.mob.hasLineOfSight(list.get(0))) {
-					return this.mob.getNavigation().moveTo(list.get(0), (double) 1.1F);
+                    return this.mob.getNavigation().moveTo(list.get(0), 1.1F);
 				}
 
 				return false;
@@ -799,27 +821,6 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 				}
 			}
 
-		}
-	}
-
-    public enum HunterType {
-		NORMAL,
-		COLD;
-
-		private HunterType() {
-
-		}
-
-		public static HunterType get(String nameIn) {
-			for (HunterType role : values()) {
-				if (role.name().equals(nameIn))
-					return role;
-			}
-			return NORMAL;
-		}
-
-		public static HunterType create(String name) {
-			throw new IllegalStateException("Enum not extended");
 		}
 	}
 }

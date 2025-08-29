@@ -2,6 +2,7 @@ package baguchi.hunters_return.client.render;
 
 import baguchi.bagus_lib.client.layer.CustomArmorLayer;
 import baguchi.hunters_return.HunterConfig;
+import baguchi.hunters_return.HuntersReturn;
 import baguchi.hunters_return.client.ModModelLayers;
 import baguchi.hunters_return.client.model.HunterModel;
 import baguchi.hunters_return.client.model.NewHunterModel;
@@ -11,8 +12,10 @@ import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.resources.ResourceLocation;
@@ -20,12 +23,11 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 
 
 public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterModel<HunterRenderState>> {
-	private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
-	private static final ResourceLocation ILLAGER_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");
-	private static final ResourceLocation ILLAGER_COLD = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold.png");
-	private static final ResourceLocation ILLAGER_COLD_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_sleep.png");
-	private static final ResourceLocation ILLAGER_OLD = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_old.png");
-	private static final ResourceLocation ILLAGER_COLD_OLD = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_old.png");
+    private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
+    private static final ResourceLocation ILLAGER_OLD = ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/normal_old.png");
+
+    private static final RenderType SLEEP_EYE = RenderType.eyes(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
+    private static final RenderType SLEEP_EYE_OLD = RenderType.eyes(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
 
 	private final HunterModel<HunterRenderState> old;
 	private final HunterModel<HunterRenderState> normal;
@@ -35,6 +37,25 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
 		this.addLayer(new ItemInHandLayer<>(this));
 		this.addLayer(new MouthItemLayer<>(this));
+        this.addLayer(new EyesLayer<>(this) {
+            @Override
+            public void render(PoseStack p_116983_, MultiBufferSource p_116984_, int p_116985_, HunterRenderState p_363277_, float p_116987_, float p_116988_) {
+                float f3 = (p_363277_.ageInTicks + p_363277_.id);
+
+
+                if (!p_363277_.isInvisible && (0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F || p_363277_.sleep)) {
+                    super.render(p_116983_, p_116984_, p_116985_, p_363277_, p_116987_, p_116988_);
+                }
+            }
+
+            @Override
+            public RenderType renderType() {
+                if (HunterConfig.CLIENT.oldModel.get()) {
+                    return SLEEP_EYE_OLD;
+                }
+                return SLEEP_EYE;
+            }
+        });
 		this.old = new OldHunterModel(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
 		this.normal = new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER));
 	}
@@ -76,28 +97,24 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		hunterState.thrownAnimationState.copyFrom(hunter.thrownAnimationState);
 		hunterState.dodghRightAnimationState.copyFrom(hunter.dodghRightAnimationState);
 		hunterState.dodghLeftAnimationState.copyFrom(hunter.dodghLeftAnimationState);
-		hunterState.hunterType = hunter.getHunterType();
+        hunterState.texture = hunter.getTexture();
+        hunterState.textureOld = hunter.getTextureOld();
+        hunterState.eyeRot = (hunter.getYRot(p_361157_) - hunter.getYRot(p_361157_) + 180);
 		hunterState.sleep = hunter.isSleeping();
+        hunterState.id = hunter.getId();
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(HunterRenderState p_110775_1_) {
+    public ResourceLocation getTextureLocation(HunterRenderState hunterRenderState) {
 		if (HunterConfig.CLIENT.oldModel.get()) {
-			if (p_110775_1_.hunterType == Hunter.HunterType.COLD) {
-				return ILLAGER_COLD_OLD;
-			} else {
-				return ILLAGER_OLD;
-			}
-		}
-		if (p_110775_1_.hunterType == Hunter.HunterType.COLD) {
-			if (p_110775_1_.sleep) {
-				return ILLAGER_COLD_SLEEP;
-			}
-			return ILLAGER_COLD;
-		}
-		if (p_110775_1_.sleep) {
-			return ILLAGER_SLEEP;
-		}
+            if (hunterRenderState.textureOld != null) {
+                return hunterRenderState.textureOld;
+            }
+            return ILLAGER_OLD;
+        }
+        if (hunterRenderState.texture != null) {
+            return hunterRenderState.texture;
+        }
 		return ILLAGER;
 	}
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.AbstractIllager;
 
@@ -35,6 +36,8 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
     public final ModelPart head;
     private final ModelPart nose;
     private final ModelPart cape;
+    private final ModelPart rightEye;
+    private final ModelPart leftEye;
 
     public NewHunterModel(ModelPart root) {
         super(root);
@@ -47,6 +50,8 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
         this.RightArm = this.body.getChild("right_arm");
         this.LeftArm = this.body.getChild("left_arm");
         this.head = this.body.getChild("head");
+        this.rightEye = this.head.getChild("rightEye");
+        this.leftEye = this.head.getChild("leftEye");
         this.nose = this.head.getChild("nose");
         this.walkAnimation = HunterAnimations.walk.bake(root);
         this.walkRightAttackAnimation = HunterAnimations.right_walk_attack.bake(root);
@@ -120,6 +125,10 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
             }
         }
 
+        this.rightEye.visible = !entityIn.sleep;
+        this.leftEye.visible = !entityIn.sleep;
+        this.rightEye.setPos(Mth.clamp((entityIn.eyeRot % 360 - 180) / 90F, 0.0F, 0.5F), 0, 0);
+        this.leftEye.setPos(Mth.clamp((entityIn.eyeRot % 360 - 180) / 90F, -0.5F, 0.0F), 0, 0);
         if (!entityIn.mouthItem.isEmpty()) {
             this.nose.xRot = -0.5F;
         }

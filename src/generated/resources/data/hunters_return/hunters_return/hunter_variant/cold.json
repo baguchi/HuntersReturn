@@ -1,0 +1,5 @@
+{
+  "biomes": "#c:is_cold/overworld",
+  "texture": "hunters_return:entity/hunter/cold",
+  "texture_old": "hunters_return:entity/hunter/cold_old"
+}

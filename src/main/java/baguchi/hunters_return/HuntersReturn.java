@@ -1,5 +1,8 @@
 package baguchi.hunters_return;
 
+import baguchi.hunters_return.api.HunterVariant;
+import baguchi.hunters_return.data.resources.registries.HunterVariants;
+import baguchi.hunters_return.init.HunterEntityDatas;
 import baguchi.hunters_return.init.HunterEntityRegistry;
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.init.HunterSounds;
@@ -11,6 +14,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,10 +27,14 @@ public class HuntersReturn {
 	public HuntersReturn(ModContainer modContainer, IEventBus modEventBus) {
 		// Register the setup method for modloading
 		modEventBus.addListener(this::setup);
+        modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> event.dataPackRegistry(HunterVariants.HUNTER_VARIANT_KEY, HunterVariant.DIRECT_CODEC, HunterVariant.DIRECT_CODEC));
+
+        HunterEntityDatas.ENTITY_DATAS.register(modEventBus);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
 		HunterItems.ITEM_REGISTRY.register(modEventBus);
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
-		modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
+
+        modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
 		modContainer.registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
 
 		// Register ourselves for server and other game events we are interested in
