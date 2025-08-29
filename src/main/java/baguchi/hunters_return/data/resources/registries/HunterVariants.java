@@ -21,6 +21,7 @@ public class HunterVariants {
 
     public static final ResourceKey<HunterVariant> NORMAL = createKey("normal");
     public static final ResourceKey<HunterVariant> COLD = createKey("cold");
+    public static final ResourceKey<HunterVariant> SWAMP = createKey("swamp");
     public static final ResourceKey<HunterVariant> DEFAULT = NORMAL;
 
     private static ResourceKey<HunterVariant> createKey(String name) {
@@ -33,6 +34,10 @@ public class HunterVariants {
 
     static void register(BootstrapContext<HunterVariant> context, ResourceKey<HunterVariant> key, String name, TagKey<Biome> biomeTag) {
         register(context, key, name, context.lookup(Registries.BIOME).getOrThrow(biomeTag));
+    }
+
+    static void registerWithoutOld(BootstrapContext<HunterVariant> context, ResourceKey<HunterVariant> key, String name, TagKey<Biome> biomeTag) {
+        registerWithoutOld(context, key, name, context.lookup(Registries.BIOME).getOrThrow(biomeTag));
     }
 
     static void register(BootstrapContext<HunterVariant> context, ResourceKey<HunterVariant> key, String name, HolderSet<Biome> biomeHolderSet) {
@@ -59,5 +64,6 @@ public class HunterVariants {
     public static void bootstrap(BootstrapContext<HunterVariant> context) {
         register(context, NORMAL, "normal", HolderSet.empty());
         register(context, COLD, "cold", Tags.Biomes.IS_COLD_OVERWORLD);
+        registerWithoutOld(context, SWAMP, "swamp", Tags.Biomes.IS_SWAMP);
     }
 }
