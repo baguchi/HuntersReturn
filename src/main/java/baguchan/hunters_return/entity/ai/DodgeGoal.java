@@ -43,8 +43,8 @@ public class DodgeGoal extends Goal {
 				});
 				return !toAvoid.isEmpty();
 			}
-			this.cooldownTime = 10;
-		}
+            this.cooldownTime = 20 + this.hunter.getRandom().nextInt(2) * 10;
+        }
 		return false;
 	}
 
@@ -77,7 +77,7 @@ public class DodgeGoal extends Goal {
 	@Override
 	public void stop() {
 		super.stop();
-		this.cooldownTime = 40;
-		this.hunter.getMoveControl().strafe(0.0F, 0F);
-	}
+        this.cooldownTime = 40 + this.hunter.getRandom().nextInt(2) * 20;
+        this.hunter.setXxa(0F);
+    }
 }
