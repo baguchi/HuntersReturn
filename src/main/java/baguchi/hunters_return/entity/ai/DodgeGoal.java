@@ -36,8 +36,6 @@ public class DodgeGoal extends Goal {
 					return (p_148124_.getOwner() == this.hunter.getTarget() && (p_148124_.getOwner() == null || !this.hunter.isAlliedTo(p_148124_.getOwner())));
 				});
 				if (!toAvoid.isEmpty()) {
-
-
                     this.cooldownTime = 40 + this.hunter.getRandom().nextInt(2) * 20;
 					return true;
 				}
