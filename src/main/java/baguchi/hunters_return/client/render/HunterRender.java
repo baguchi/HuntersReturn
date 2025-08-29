@@ -99,7 +99,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		hunterState.dodghLeftAnimationState.copyFrom(hunter.dodghLeftAnimationState);
         hunterState.texture = hunter.getTexture();
         hunterState.textureOld = hunter.getTextureOld();
-        hunterState.eyeRot = (hunter.getYRot(p_361157_) - hunter.getYRot(p_361157_) + 180);
+        hunterState.eyeRot = (hunter.getViewYRot(p_361157_) - hunter.getPreciseBodyRotation(p_361157_) + 180);
 		hunterState.sleep = hunter.isSleeping();
         hunterState.id = hunter.getId();
 	}
