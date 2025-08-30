@@ -30,7 +30,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	private final ModelPart RightArm;
 	private final ModelPart LeftArm;
 	private final ModelPart root;
-	private final ModelPart head;
+    public final ModelPart head;
 	private final ModelPart cape;
 
 	public HumanoidModel.ArmPose leftArmPose = HumanoidModel.ArmPose.EMPTY;

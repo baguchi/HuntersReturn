@@ -1,6 +1,7 @@
 package baguchan.hunters_return.data;
 
 import baguchan.hunters_return.HuntersReturn;
+import baguchan.hunters_return.data.resources.registries.HunterVariants;
 import baguchan.hunters_return.init.HunterEnchantments;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -14,7 +15,8 @@ import java.util.concurrent.CompletableFuture;
 public class RegistryDataGenerator extends DatapackBuiltinEntriesProvider {
 
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.ENCHANTMENT, HunterEnchantments::bootstrap);
+            .add(Registries.ENCHANTMENT, HunterEnchantments::bootstrap)
+            .add(HunterVariants.HUNTER_VARIANT_KEY, HunterVariants::bootstrap);
 
 
     public RegistryDataGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

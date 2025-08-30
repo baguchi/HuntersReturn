@@ -4,6 +4,7 @@ import bagu_chan.bagus_lib.client.layer.CustomArmorLayer;
 import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.client.ModModelLayers;
 import baguchan.hunters_return.client.model.HunterModel;
+import baguchan.hunters_return.client.model.NewHunterModel;
 import baguchan.hunters_return.client.model.OldHunterModel;
 import baguchan.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,17 +20,13 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T>> {
     private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
-    private static final ResourceLocation ILLAGER_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_sleep.png");
-    private static final ResourceLocation ILLAGER_COLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold.png");
-    private static final ResourceLocation ILLAGER_COLD_SLEEP = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_sleep.png");
     private static final ResourceLocation ILLAGER_OLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_old.png");
-    private static final ResourceLocation ILLAGER_COLD_OLD = ResourceLocation.fromNamespaceAndPath(baguchan.hunters_return.HuntersReturn.MODID, "textures/entity/hunter/hunter_cold_old.png");
 
 	private final HunterModel<T> old;
 	private final HunterModel<T> normal = this.getModel();
 
 	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
-		super(renderManagerIn, new HunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
+        super(renderManagerIn, new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
 		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
 		this.addLayer(new ItemInHandLayer<>(this, Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()));
 		this.old = new OldHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
@@ -48,20 +45,14 @@ public class HunterRender<T extends Hunter> extends MobRenderer<T, HunterModel<T
 	@Override
 	public ResourceLocation getTextureLocation(T p_110775_1_) {
 		if (HunterConfig.CLIENT.oldModel.get()) {
-			if (p_110775_1_.getHunterType() == Hunter.HunterType.COLD) {
-				return ILLAGER_COLD_OLD;
+            if (p_110775_1_.getTextureOld() != null) {
+                return p_110775_1_.getTextureOld();
 			} else {
 				return ILLAGER_OLD;
 			}
 		}
-		if (p_110775_1_.getHunterType() == Hunter.HunterType.COLD) {
-			if (p_110775_1_.isSleeping()) {
-				return ILLAGER_COLD_SLEEP;
-			}
-			return ILLAGER_COLD;
-		}
-		if (p_110775_1_.isSleeping()) {
-			return ILLAGER_SLEEP;
+        if (p_110775_1_.getTexture() != null) {
+            return p_110775_1_.getTexture();
 		}
 		return ILLAGER;
 	}
