@@ -32,6 +32,7 @@ public class BoomerangItem extends Item {
 		return InteractionResult.CONSUME;
 	}
 
+    @Override
 	public boolean releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
 		int i = this.getUseDuration(stack, entity) - timeLeft;
 		if (i >= 10) {
@@ -56,7 +57,7 @@ public class BoomerangItem extends Item {
 
 	@Override
 	public int getUseDuration(ItemStack p_41454_, LivingEntity p_344979_) {
-		return 72000;
+        return 70000;
 	}
 
 	@Override

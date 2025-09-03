@@ -51,6 +51,11 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
                     vec2 = vec2.scale(0.775F);
                     cir.setReturnValue(modifyInputSpeedForSquareMovement(vec2));
                 }
+
+                if (itemStack.is(HunterItems.BOOMERANG)) {
+                    vec2 = vec2.scale(0.98F);
+                    cir.setReturnValue(modifyInputSpeedForSquareMovement(vec2));
+                }
             }
         }
     }
@@ -63,7 +68,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
     private void canStartSprinting(CallbackInfoReturnable<Boolean> cir) {
         if (this.isUsingItem()) {
             ItemStack itemStack = this.getItemInHand(this.getUsedItemHand());
-            if (itemStack.is(HunterItems.MINI_CROSSBOW)) {
+            if (itemStack.is(HunterItems.MINI_CROSSBOW) || itemStack.is(HunterItems.BOOMERANG)) {
                 cir.setReturnValue(!this.isSprinting() && this.input.hasForwardImpulse() && this.hasEnoughFoodToSprint() && !this.hasBlindness() && (!this.isPassenger() || this.vehicleCanSprint(this.getVehicle())) && (!this.isFallFlying() || this.isUnderWater()) && (!this.isMovingSlowly() || this.isUnderWater()) && (!this.isInWater() || this.isUnderWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && this.canStartSwimming()));
             }
         }
