@@ -48,7 +48,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
             if (this.isUsingItem() && !this.isPassenger()) {
                 ItemStack itemStack = this.getItemInHand(this.getUsedItemHand());
                 if (itemStack.is(HunterItems.MINI_CROSSBOW)) {
-                    vec2 = vec2.scale(0.85F);
+                    vec2 = vec2.scale(0.775F);
                     cir.setReturnValue(modifyInputSpeedForSquareMovement(vec2));
                 }
             }
