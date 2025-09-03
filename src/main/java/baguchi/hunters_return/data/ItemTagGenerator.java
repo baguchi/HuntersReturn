@@ -21,6 +21,8 @@ public class ItemTagGenerator extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(ItemTags.CROSSBOW_ENCHANTABLE).add(HunterItems.MINI_CROSSBOW.asItem());
         tag(ModItemTags.BOOMERANG_ENCHANTABLE).add(HunterItems.BOOMERANG.asItem());
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(HunterItems.BOOMERANG.asItem()).add(HunterItems.MINI_CROSSBOW.asItem());
+        tag(ItemTags.VANISHING_ENCHANTABLE).add(HunterItems.BOOMERANG.asItem()).add(HunterItems.MINI_CROSSBOW.asItem());
         tag(Tags.Items.TOOLS_CROSSBOW).add(HunterItems.MINI_CROSSBOW.asItem());
         tag(Tags.Items.PIGLIN_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.asItem());
         tag(Tags.Items.PILLAGER_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.asItem());
