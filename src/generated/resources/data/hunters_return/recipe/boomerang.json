@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "tag": "minecraft:planks"
+    },
+    "L": {
+      "tag": "c:leathers"
+    }
+  },
+  "pattern": [
+    " B",
+    "BL",
+    " B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hunters_return:boomerang"
+  }
+}

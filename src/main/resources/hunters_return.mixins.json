@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "baguchan.hunters_return.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "client": [
+    "client.LocalPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

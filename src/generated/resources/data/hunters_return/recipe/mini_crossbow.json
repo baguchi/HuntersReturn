@@ -5,11 +5,11 @@
     "I": {
       "item": "minecraft:iron_nugget"
     },
-    "S": {
-      "tag": "c:strings"
-    },
     "R": {
       "tag": "c:rods/wooden"
+    },
+    "S": {
+      "tag": "c:strings"
     }
   },
   "pattern": [
