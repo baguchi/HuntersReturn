@@ -48,7 +48,7 @@ public class BoomerangItem extends Item {
 
 	@Override
 	public int getUseDuration(ItemStack p_41454_, LivingEntity p_344979_) {
-		return 72000;
+        return 70000;
 	}
 
 	public UseAnim getUseAnimation(ItemStack p_43417_) {
