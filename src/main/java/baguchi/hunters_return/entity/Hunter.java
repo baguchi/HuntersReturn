@@ -165,14 +165,6 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		return this.entityData.get(IS_USING_MOUTH);
 	}
 
-	@Override
-	public boolean canFreeze() {
-        if (this.getHunterVariant().is(HunterVariants.COLD)) {
-			return false;
-		}
-		return super.canFreeze();
-	}
-
 	protected void registerGoals() {
 		super.registerGoals();
 		this.goalSelector.addGoal(0, new WakeUpGoal(this));
