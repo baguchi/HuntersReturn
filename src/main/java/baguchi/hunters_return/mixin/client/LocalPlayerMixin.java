@@ -7,6 +7,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,13 +48,25 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
             Vec2 vec2 = p_400209_.scale(0.98F);
             if (this.isUsingItem() && !this.isPassenger()) {
                 ItemStack itemStack = this.getItemInHand(this.getUsedItemHand());
+
+                boolean flag = false;
+
                 if (itemStack.is(HunterItems.MINI_CROSSBOW)) {
                     vec2 = vec2.scale(0.775F);
-                    cir.setReturnValue(modifyInputSpeedForSquareMovement(vec2));
+                    flag = true;
                 }
 
                 if (itemStack.is(HunterItems.BOOMERANG)) {
                     vec2 = vec2.scale(0.98F);
+                    flag = true;
+                }
+
+                if (this.isMovingSlowly()) {
+                    float f = (float) this.getAttributeValue(Attributes.SNEAKING_SPEED);
+                    vec2 = vec2.scale(f);
+                }
+
+                if (flag) {
                     cir.setReturnValue(modifyInputSpeedForSquareMovement(vec2));
                 }
             }
