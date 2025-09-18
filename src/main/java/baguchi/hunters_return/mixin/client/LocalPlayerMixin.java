@@ -20,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LocalPlayerMixin extends AbstractClientPlayer {
 
     @Shadow
+    protected abstract boolean isSprintingPossible(boolean p_443260_);
+
+    @Shadow
     public ClientInput input;
 
     @Shadow
     protected abstract boolean hasEnoughFoodToSprint();
-
-    @Shadow
-    protected abstract boolean hasBlindness();
 
     @Shadow
     protected abstract boolean vehicleCanSprint(Entity p_265184_);
@@ -82,7 +82,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
         if (this.isUsingItem()) {
             ItemStack itemStack = this.getItemInHand(this.getUsedItemHand());
             if (itemStack.is(HunterItems.MINI_CROSSBOW) || itemStack.is(HunterItems.BOOMERANG)) {
-                cir.setReturnValue(!this.isSprinting() && this.input.hasForwardImpulse() && this.hasEnoughFoodToSprint() && !this.hasBlindness() && (!this.isPassenger() || this.vehicleCanSprint(this.getVehicle())) && (!this.isFallFlying() || this.isUnderWater()) && (!this.isMovingSlowly() || this.isUnderWater()) && (!this.isInWater() || this.isUnderWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && this.canStartSwimming()));
+                cir.setReturnValue(!this.isSprinting() && this.input.hasForwardImpulse() && this.isSprintingPossible(this.getAbilities().flying) && (!this.isFallFlying() || this.isUnderWater()) && (!this.isMovingSlowly() || this.isUnderWater()));
             }
         }
     }

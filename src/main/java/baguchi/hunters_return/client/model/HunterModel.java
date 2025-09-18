@@ -17,7 +17,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
+public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel<T>, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
     // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
 	public final ModelPart body;
 	public final ModelPart everything;
@@ -112,13 +112,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	public ModelPart getHead() {
 		return this.head;
 	}
-
-	public void translateToHand(HumanoidArm p_102925_, PoseStack p_102926_) {
-		this.everything.translateAndRotate(p_102926_);
-		this.body.translateAndRotate(p_102926_);
-		this.getArm(p_102925_).translateAndRotate(p_102926_);
-	}
-
 	@Override
 	public void translateToHead(ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
@@ -139,7 +132,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	public void translateToLeg(ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
-		poseStack.translate(0, -(12F / 16F), 0);
+        //poseStack.translate(0, -(12F / 16F), 0);
 		poseStack.scale(1.05F, 1.05F, 1.05F);
 	}
 
@@ -174,4 +167,11 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	public Iterable<ModelPart> headPartArmors() {
 		return ImmutableList.of(this.head);
 	}
+
+    @Override
+    public void translateToHand(T entityRenderState, HumanoidArm humanoidArm, PoseStack poseStack) {
+        this.everything.translateAndRotate(poseStack);
+        this.body.translateAndRotate(poseStack);
+        this.getArm(humanoidArm).translateAndRotate(poseStack);
+    }
 }

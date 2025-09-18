@@ -11,13 +11,15 @@ import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.AbstractIllager;
 
@@ -32,19 +34,21 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	private final HunterModel<HunterRenderState> old;
 	private final HunterModel<HunterRenderState> normal;
 
-	public HunterRender(EntityRendererProvider.Context renderManagerIn) {
-		super(renderManagerIn, new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
-		this.addLayer(new CustomArmorLayer<>(this, renderManagerIn));
-		this.addLayer(new ItemInHandLayer<>(this));
+    public HunterRender(EntityRendererProvider.Context context) {
+        super(context, new NewHunterModel<>(context.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
+        this.addLayer(new CustomArmorLayer<>(this, context));
+        this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
+
+        this.addLayer(new ItemInHandLayer<>(this));
 		this.addLayer(new MouthItemLayer<>(this));
         this.addLayer(new EyesLayer<>(this) {
             @Override
-            public void render(PoseStack p_116983_, MultiBufferSource p_116984_, int p_116985_, HunterRenderState p_363277_, float p_116987_, float p_116988_) {
+            public void submit(PoseStack p_116983_, SubmitNodeCollector p_116984_, int p_116985_, HunterRenderState p_363277_, float p_116987_, float p_116988_) {
                 float f3 = (p_363277_.ageInTicks + p_363277_.id);
 
 
                 if (!p_363277_.isInvisible && (0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F || p_363277_.sleep)) {
-                    super.render(p_116983_, p_116984_, p_116985_, p_363277_, p_116987_, p_116988_);
+                    super.submit(p_116983_, p_116984_, p_116985_, p_363277_, p_116987_, p_116988_);
                 }
             }
 
@@ -56,19 +60,19 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
                 return SLEEP_EYE;
             }
         });
-		this.old = new OldHunterModel(renderManagerIn.bakeLayer(ModModelLayers.HUNTER_OLD));
-		this.normal = new NewHunterModel<>(renderManagerIn.bakeLayer(ModModelLayers.HUNTER));
+        this.old = new OldHunterModel(context.bakeLayer(ModModelLayers.HUNTER_OLD));
+        this.normal = new NewHunterModel<>(context.bakeLayer(ModModelLayers.HUNTER));
 	}
 
-	@Override
-	public void render(HunterRenderState p_361886_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
-		super.render(p_361886_, p_115311_, p_115312_, p_115313_);
-		if (HunterConfig.CLIENT.oldModel.get()) {
-			this.model = this.old;
-		} else {
-			this.model = this.normal;
-		}
-	}
+    @Override
+    public void submit(HunterRenderState p_433493_, PoseStack p_434615_, SubmitNodeCollector p_433768_, CameraRenderState p_450931_) {
+        super.submit(p_433493_, p_434615_, p_433768_, p_450931_);
+        if (HunterConfig.CLIENT.oldModel.get()) {
+            this.model = this.old;
+        } else {
+            this.model = this.normal;
+        }
+    }
 
 	@Override
 	public HunterRenderState createRenderState() {

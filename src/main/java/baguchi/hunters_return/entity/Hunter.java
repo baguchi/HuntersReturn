@@ -215,7 +215,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	@Override
 	public void baseTick() {
 		super.baseTick();
-		if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
 			if (this.attackAnimationTick < this.attackAnimationLength) {
 				this.attackAnimationTick++;
 				if (this.thrownAnimationState.isStarted()) {
@@ -293,7 +293,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	@Override
 	public void aiStep() {
-		if (!this.level().isClientSide && this.isAlive()) {
+        if (!this.level().isClientSide() && this.isAlive()) {
 			ItemStack mainhand = this.getItemInHand(InteractionHand.MAIN_HAND);
 
             if (!this.isUsingItem() && this.getOffhandItem().isEmpty() && (mainhand.getItem() != Items.BOW || this.getTarget() == null)) {
@@ -337,7 +337,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.useMouthItem = itemstack;
 			this.mouthItemRemaining = itemstack.getUseDuration(this);
 			this.setUsingMouthItem(true);
-			if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
 				this.gameEvent(GameEvent.ITEM_INTERACT_START);
 			}
 		}
@@ -369,7 +369,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			p_147201_.onUseTick(this.level(), this, this.mouthItemRemaining);
 		}
 
-		if (--this.mouthItemRemaining <= 0 && !this.level().isClientSide && !p_147201_.useOnRelease()) {
+        if (--this.mouthItemRemaining <= 0 && !this.level().isClientSide() && !p_147201_.useOnRelease()) {
 			this.completeUsingMouth();
 
 			this.stopUsingMouth();
@@ -669,10 +669,10 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	}
 
 	@Override
-	public boolean killedEntity(ServerLevel p_216988_, LivingEntity p_216989_) {
+    public boolean killedEntity(ServerLevel p_216988_, LivingEntity p_216989_, DamageSource damageSource) {
 		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH.get(), this.getSoundVolume(), this.getVoicePitch());
 		this.cooldown = 300;
-		return super.killedEntity(p_216988_, p_216989_);
+        return super.killedEntity(p_216988_, p_216989_, damageSource);
 	}
 
 	public void setHomeTarget(@Nullable BlockPos p_213726_1_) {
