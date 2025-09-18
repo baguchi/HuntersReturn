@@ -471,7 +471,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		}
 
         if (raid.getRaidOmenLevel() < 2 || p_37844_ <= raid.getNumGroups(Difficulty.NORMAL)) {
-			itemstack = this.random.nextBoolean() ? new ItemStack(HunterItems.MINI_CROSSBOW.asItem()) : new ItemStack(Items.STONE_SWORD);
+            itemstack = this.random.nextBoolean() ? new ItemStack(HunterItems.MINI_CROSSBOW.asItem()) : new ItemStack(Items.COPPER_SWORD);
 		} else {
 			itemstack = this.random.nextBoolean() ? new ItemStack(HunterItems.MINI_CROSSBOW.asItem()) : new ItemStack(Items.IRON_SWORD);
 		}
@@ -509,17 +509,22 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 
-		if (this.random.nextFloat() < 0.5F) {
-			HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
-			HolderLookup.RegistryLookup<TrimPattern> registrylookup2 = this.registryAccess().lookupOrThrow(Registries.TRIM_PATTERN);
+        ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
 
-			ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
-			stack.set(DataComponents.TRIM, new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.EMERALD), registrylookup2.getOrThrow(TrimPatterns.SENTRY)));
-			this.setItemSlot(EquipmentSlot.CHEST, stack);
-			this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+		if (this.random.nextFloat() < 0.5F) {
+            stack = new ItemStack(Items.COPPER_CHESTPLATE);
 		}
 
-		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
+        HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
+        HolderLookup.RegistryLookup<TrimPattern> registrylookup2 = this.registryAccess().lookupOrThrow(Registries.TRIM_PATTERN);
+
+
+        stack.set(DataComponents.TRIM, new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.EMERALD), registrylookup2.getOrThrow(TrimPatterns.SENTRY)));
+        this.setItemSlot(EquipmentSlot.CHEST, stack);
+        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+
+
+        this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
 
 	}
 
