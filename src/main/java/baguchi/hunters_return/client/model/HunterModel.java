@@ -173,5 +173,6 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
         this.everything.translateAndRotate(poseStack);
         this.body.translateAndRotate(poseStack);
         this.getArm(humanoidArm).translateAndRotate(poseStack);
+        poseStack.translate(0, -(2F / 16F), 0);
     }
 }
