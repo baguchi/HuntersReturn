@@ -13,9 +13,10 @@ public class BoomeranAttackGoal extends Goal {
 	private final float attackRadiusSqr;
 	private int attackTime = -1;
 	private int seeTime;
+    private int cannotMoveTime;
 
-	public BoomeranAttackGoal(Hunter hunters_returnEntity, int attackIntervalMin, float attackRadiusSqr) {
-		this.mob = hunters_returnEntity;
+    public BoomeranAttackGoal(Hunter hunter, int attackIntervalMin, float attackRadiusSqr) {
+        this.mob = hunter;
 		this.attackIntervalMin = attackIntervalMin;
 		this.attackRadiusSqr = attackRadiusSqr * attackRadiusSqr;
 	}
@@ -36,6 +37,7 @@ public class BoomeranAttackGoal extends Goal {
 		super.stop();
 		this.seeTime = 0;
 		this.attackTime = -1;
+        this.cannotMoveTime = 0;
 		this.mob.stopUsingItem();
 	}
 
@@ -55,15 +57,22 @@ public class BoomeranAttackGoal extends Goal {
 				--this.seeTime;
 			}
 
+            if (!this.mob.isPathFinding()) {
+                ++this.cannotMoveTime;
+            } else if (this.cannotMoveTime > 0) {
+                --this.cannotMoveTime;
+            }
+
 			if (mob.isHolding((item) -> item.getItem() instanceof BoomerangItem)) {
 				if (this.attackTime > 0 && this.seeTime >= -60) {
 					--this.attackTime;
 				} else if (this.attackTime <= 0) {
 					if (!flag && this.seeTime < -60) {
 						this.attackTime = this.attackIntervalMin;
-					} else if (flag && this.seeTime >= 40) {
+                    } else if (flag && this.seeTime >= 40 && this.cannotMoveTime >= 80) {
 						this.mob.performBoomerangAttack(livingentity);
 						this.attackTime = this.attackIntervalMin;
+                        this.cannotMoveTime = -80;
 					}
 				}
 			} else {

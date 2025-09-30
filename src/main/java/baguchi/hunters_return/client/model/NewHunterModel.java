@@ -1,20 +1,17 @@
 package baguchi.hunters_return.client.model;
 
 
-import baguchi.bagus_lib.client.layer.IArmor;
 import baguchi.hunters_return.client.animation.HunterAnimations;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.AnimationUtils;
-import net.minecraft.client.model.ArmedModel;
-import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.monster.AbstractIllager;
 
-public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> implements ArmedModel, HeadedModel, IArmor {
+public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> {
     private final KeyframeAnimation walkAnimation;
     private final KeyframeAnimation walkRightAttackAnimation;
     private final KeyframeAnimation walkLeftAttackAnimation;

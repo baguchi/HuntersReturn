@@ -288,7 +288,7 @@ public class BoomerangEntity extends Projectile {
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
 		if ((this.flyTick >= 10 || this.inGround) && entityIn == getOwner()) {
-			if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
 				if (!entityIn.isCreative() && this.tryPickup(entityIn) || entityIn.isCreative()) {
 					this.playSound(SoundEvents.ITEM_PICKUP);
 					entityIn.take(this, 1);
@@ -313,6 +313,7 @@ public class BoomerangEntity extends Projectile {
 		}
 	}
 
+    @Override
 	public void move(MoverType p_36749_, Vec3 p_36750_) {
 		super.move(p_36749_, p_36750_);
 		if (p_36749_ != MoverType.SELF && this.shouldFall()) {
@@ -321,17 +322,20 @@ public class BoomerangEntity extends Projectile {
 
 	}
 
+    @Override
 	public void shoot(double p_36775_, double p_36776_, double p_36777_, float p_36778_, float p_36779_) {
 		super.shoot(p_36775_, p_36776_, p_36777_, p_36778_, p_36779_);
 		this.inGroundTime = 0;
 	}
 
-	public void lerpMotion(double p_36786_, double p_36787_, double p_36788_) {
-		super.lerpMotion(p_36786_, p_36787_, p_36788_);
-		this.inGroundTime = 0;
-	}
 
-	@Override
+    @Override
+    public void lerpMotion(Vec3 p_436647_) {
+        super.lerpMotion(p_436647_);
+        this.inGroundTime = 0;
+    }
+
+    @Override
 	public void tick() {
 		super.tick();
 		int returningLevel = (this.entityData.get(RETURN_LEVEL));
@@ -370,7 +374,7 @@ public class BoomerangEntity extends Projectile {
 		if (this.inGround && !flag) {
 			if (this.lastState != blockstate && this.shouldFall()) {
 				this.startFalling();
-			} else if (!this.level().isClientSide) {
+            } else if (!this.level().isClientSide()) {
 				this.tickDespawn();
 			}
 

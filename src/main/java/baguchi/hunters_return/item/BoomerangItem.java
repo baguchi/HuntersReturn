@@ -36,8 +36,8 @@ public class BoomerangItem extends Item {
 	public boolean releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
 		int i = this.getUseDuration(stack, entity) - timeLeft;
 		if (i >= 10) {
-			if (!world.isClientSide) {
-				stack.hurtAndBreak(1, entity, LivingEntity.getSlotForHand(entity.getUsedItemHand()));
+            if (!world.isClientSide()) {
+                stack.hurtAndBreak(1, entity, entity.getUsedItemHand());
 
 				int heldTime = getUseDuration(stack, entity) - timeLeft;
 				float velocity = 1.5F * BowItem.getPowerForTime(heldTime);
