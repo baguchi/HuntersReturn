@@ -1,0 +1,9 @@
+{
+  "remove": [
+    "minecraft:pale_garden"
+  ],
+  "values": [
+    "#minecraft:is_taiga",
+    "#minecraft:is_forest"
+  ]
+}
