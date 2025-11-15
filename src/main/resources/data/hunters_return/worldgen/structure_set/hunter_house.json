@@ -3,6 +3,10 @@
     {
       "structure": "hunters_return:hunter_house",
       "weight": 1
+    },
+    {
+      "structure": "hunters_return:hunter_house_mangrove",
+      "weight": 1
     }
   ],
   "placement": {

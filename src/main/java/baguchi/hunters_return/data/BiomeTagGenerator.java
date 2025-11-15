@@ -18,6 +18,7 @@ public class BiomeTagGenerator extends BiomeTagsProvider {
     @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(ModBiomeTags.HAS_HUNTER_HOUSE).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_FOREST).add(Biomes.MANGROVE_SWAMP).remove(Biomes.PALE_GARDEN);
+        this.tag(ModBiomeTags.HAS_HUNTER_HOUSE).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_FOREST).remove(Biomes.PALE_GARDEN);
+        this.tag(ModBiomeTags.HAS_HUNTER_HOUSE_MANGROVE).add(Biomes.MANGROVE_SWAMP);
     }
 }

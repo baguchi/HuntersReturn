@@ -6,7 +6,8 @@ import net.minecraft.world.level.biome.Biome;
 
 public class ModBiomeTags {
 
-	public static final TagKey<Biome> HAS_HUNTER_HOUSE = create("has_structure/hunter_house");
+    public static final TagKey<Biome> HAS_HUNTER_HOUSE = create("has_structure/hunter_house_normal");
+    public static final TagKey<Biome> HAS_HUNTER_HOUSE_MANGROVE = create("has_structure/hunter_house_mangrove");
 
 	private static TagKey<Biome> create(String path) {
 		return TagKey.create(Registries.BIOME, baguchi.hunters_return.HuntersReturn.locate(path));

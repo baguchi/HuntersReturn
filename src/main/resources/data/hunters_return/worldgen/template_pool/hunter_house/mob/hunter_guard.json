@@ -1,5 +1,4 @@
 {
-  "name": "hunters_return:hunter_house/mob/hunter_illager",
   "fallback": "minecraft:empty",
   "elements": [
     {
