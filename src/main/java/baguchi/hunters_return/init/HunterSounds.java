@@ -1,7 +1,7 @@
 package baguchi.hunters_return.init;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -17,7 +17,7 @@ public final class HunterSounds {
 	public static final Supplier<SoundEvent> HUNTER_ILLAGER_LAUGH = createEvent("mob.hunterillager.laugh");
 
 	private static Supplier<SoundEvent> createEvent(String sound) {
-		ResourceLocation name = ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, sound);
+        Identifier name = Identifier.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, sound);
 		return SOUND_EVENTS.register(sound, () -> SoundEvent.createVariableRangeEvent(name));
 	}
 }

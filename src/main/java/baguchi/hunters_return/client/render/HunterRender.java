@@ -11,7 +11,6 @@ import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -19,17 +18,19 @@ import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.monster.illager.AbstractIllager;
 
 
 public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterModel<HunterRenderState>> {
-    private static final ResourceLocation ILLAGER = ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
-    private static final ResourceLocation ILLAGER_OLD = ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/normal_old.png");
+    private static final Identifier ILLAGER = Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
+    private static final Identifier ILLAGER_OLD = Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/normal_old.png");
 
-    private static final RenderType SLEEP_EYE = RenderType.entityCutoutNoCull(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
-    private static final RenderType SLEEP_EYE_OLD = RenderType.entityCutoutNoCull(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
+    private static final RenderType SLEEP_EYE = RenderTypes.entityCutoutNoCull(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
+    private static final RenderType SLEEP_EYE_OLD = RenderTypes.entityCutoutNoCull(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
 
 	private final HunterModel<HunterRenderState> old;
 	private final HunterModel<HunterRenderState> normal;
@@ -82,7 +83,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	@Override
 	public void extractRenderState(Hunter hunter, HunterRenderState hunterState, float p_361157_) {
 		super.extractRenderState(hunter, hunterState, p_361157_);
-		ArmedEntityRenderState.extractArmedEntityRenderState(hunter, hunterState, this.itemModelResolver);
+        ArmedEntityRenderState.extractArmedEntityRenderState(hunter, hunterState, this.itemModelResolver, p_361157_);
 		HunterRenderState.extractMouthEntityRenderState(hunter, hunterState, this.itemModelResolver);
 
 		hunterState.isRiding = hunter.isPassenger();
@@ -109,7 +110,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 	}
 
 	@Override
-    public ResourceLocation getTextureLocation(HunterRenderState hunterRenderState) {
+    public Identifier getTextureLocation(HunterRenderState hunterRenderState) {
 		if (HunterConfig.CLIENT.oldModel.get()) {
             if (hunterRenderState.textureOld != null) {
                 return hunterRenderState.textureOld;

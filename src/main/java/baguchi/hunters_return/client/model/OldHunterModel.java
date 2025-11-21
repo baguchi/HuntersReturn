@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.monster.AbstractIllager;
+import net.minecraft.world.entity.monster.illager.AbstractIllager;
 
 public class OldHunterModel<T extends HunterRenderState> extends HunterModel<T> {
     public final ModelPart body;
@@ -113,8 +113,8 @@ public class OldHunterModel<T extends HunterRenderState> extends HunterModel<T> 
             }
 
             if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING) {
-                if (entityIn.getMainHandItem().isEmpty()) {
-                    AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, entityIn.attackAnim, entityIn.ageInTicks);
+                if (entityIn.getMainHandItemStack().isEmpty()) {
+                    AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, entityIn);
                 } else {
                     AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn.mainArm, entityIn.attackAnim, entityIn.ageInTicks);
                 }
