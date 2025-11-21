@@ -19,7 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -37,20 +37,20 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.monster.creaking.Creaking;
-import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.monster.illager.AbstractIllager;
 import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.food.FoodProperties;
@@ -134,13 +134,13 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
     }
 
     @Nullable
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         HunterVariant tofunianVariant = this.getHunterVariant().value();
         return tofunianVariant.texture();
     }
 
     @Nullable
-    public ResourceLocation getTextureOld() {
+    public Identifier getTextureOld() {
         HunterVariant tofunianVariant = this.getHunterVariant().value();
         if (tofunianVariant.textureOld().isPresent()) {
             return tofunianVariant.textureOld().get();
@@ -577,7 +577,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 
         if (!HunterConfig.COMMON.foodInInventoryWhitelist.get().isEmpty()) {
-				Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.tryParse(HunterConfig.COMMON.foodInInventoryWhitelist.get().get(this.random.nextInt(HunterConfig.COMMON.foodInInventoryWhitelist.get().size()))));
 				if (item != Items.AIR) {
                     this.inventory.addItem(new ItemStack(item, 3 + this.random.nextInt(3)));
                 }
@@ -712,10 +712,11 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
         return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_, p_346155_);
 	}
 
-	@Override
-	public boolean canFireProjectileWeapon(ProjectileWeaponItem p_32144_) {
-		return p_32144_ == Items.BOW || p_32144_ instanceof CrossbowItem;
-	}
+    @Override
+    public boolean canUseNonMeleeWeapon(ItemStack p_478227_) {
+        return p_478227_.is(Items.BOW) || p_478227_.getItem() instanceof CrossbowItem;
+    }
+
 
 
 	public void performBoomerangAttack(LivingEntity p_82196_1_) {

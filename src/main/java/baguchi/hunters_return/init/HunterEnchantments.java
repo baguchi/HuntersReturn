@@ -1,12 +1,12 @@
 package baguchi.hunters_return.init;
 
 import baguchi.hunters_return.HuntersReturn;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
@@ -24,7 +24,7 @@ public class HunterEnchantments {
     public static final ResourceKey<Enchantment> CUTTING = key("cutting");
 
     private static ResourceKey<Enchantment> key(String p_345314_) {
-        return ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, p_345314_));
+        return ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(HuntersReturn.MODID, p_345314_));
     }
 
     public static void bootstrap(BootstrapContext<Enchantment> p_345935_) {
@@ -81,7 +81,7 @@ public class HunterEnchantments {
     }
 
     private static void register(BootstrapContext<Enchantment> p_346019_, ResourceKey<Enchantment> p_345703_, Enchantment.Builder p_345607_) {
-        p_346019_.register(p_345703_, p_345607_.build(p_345703_.location()));
+        p_346019_.register(p_345703_, p_345607_.build(p_345703_.identifier()));
     }
 
 

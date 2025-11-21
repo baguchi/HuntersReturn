@@ -7,7 +7,7 @@ import baguchi.hunters_return.client.render.BoomerangRender;
 import baguchi.hunters_return.client.render.HunterRender;
 import baguchi.hunters_return.client.render.item.properties.MiniCrossbowPull;
 import baguchi.hunters_return.init.HunterEntityRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -31,6 +31,6 @@ public class HunterRenderingRegistry {
 
     @SubscribeEvent
     public static void registerRangeModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
-        event.register(ResourceLocation.fromNamespaceAndPath(HuntersReturn.MODID, "mini_crossbow/pull"), MiniCrossbowPull.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "mini_crossbow/pull"), MiniCrossbowPull.MAP_CODEC);
     }
 }

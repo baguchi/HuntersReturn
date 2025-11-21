@@ -106,6 +106,14 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    maven {
+        name = "Maven for PR #2815" // https://github.com/neoforged/NeoForge/pull/2815
+        url = uri("https://prmaven.neoforged.net/NeoForge/pr2815")
+        content {
+            includeModule("net.neoforged", "neoforge")
+            includeModule("net.neoforged", "testframework")
+        }
+    }
 }
 
 dependencies {
@@ -115,8 +123,8 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
 
-    //implementation "baguchi.bagus_lib:BagusLib:${bagus_lib_version}"
-    implementation "maven.modrinth:bagus-lib:${bagus_lib_version}"
+    implementation "baguchi.bagus_lib:BagusLib:${bagus_lib_version}"
+    //implementation "maven.modrinth:bagus-lib:${bagus_lib_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
