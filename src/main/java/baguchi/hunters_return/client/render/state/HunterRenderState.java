@@ -4,7 +4,7 @@ import baguchi.hunters_return.entity.Hunter;
 import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.item.ItemDisplayContext;
 
@@ -19,9 +19,9 @@ public class HunterRenderState extends IllagerRenderState {
     public final AnimationState dodghLeftAnimationState = new AnimationState();
 
     @Nullable
-    public ResourceLocation texture;
+    public Identifier texture;
     @Nullable
-    public ResourceLocation textureOld;
+    public Identifier textureOld;
     public boolean sleep;
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
     public int id;

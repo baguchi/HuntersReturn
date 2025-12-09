@@ -6,7 +6,7 @@ import baguchi.hunters_return.init.HunterEntityDatas;
 import baguchi.hunters_return.init.HunterEntityRegistry;
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.init.HunterSounds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -48,8 +48,8 @@ public class HuntersReturn {
 	}
 
 
-	public static ResourceLocation locate(String path) {
-		return ResourceLocation.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, path);
+    public static Identifier locate(String path) {
+        return Identifier.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, path);
 	}
 
 
