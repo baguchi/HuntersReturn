@@ -14,7 +14,7 @@ public class ModCreativeTabEvents {
 			event.accept(HunterItems.MINI_CROSSBOW.get());
 		}
 		if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
-			event.accept(HunterItems.SPAWNEGG_HUNTER.get());
+			event.accept(HunterItems.HUNTER_SPAWN_EGG.get());
 		}
 	}
 }
