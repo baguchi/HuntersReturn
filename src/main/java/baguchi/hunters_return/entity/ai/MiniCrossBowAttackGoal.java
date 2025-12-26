@@ -123,7 +123,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
 
                 int i = this.mob.getTicksUsingItem();
                 ItemStack itemstack = this.mob.getUseItem();
-                if (i >= itemstack.getUseDuration(this.mob)) {
+                if (i >= CrossbowItem.getChargeDuration(itemstack, this.mob)) {
                     this.mob.releaseUsingItem();
                     this.crossbowState = MiniCrossBowAttackGoal.CrossbowState.CHARGED;
                     this.attackDelay = 12 + this.mob.getRandom().nextInt(4);
