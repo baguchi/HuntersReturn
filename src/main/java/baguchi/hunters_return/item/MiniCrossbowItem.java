@@ -1,7 +1,6 @@
 package baguchi.hunters_return.item;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,19 +10,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public class MiniCrossbowItem extends CrossbowItem {
-    private static final CrossbowItem.ChargingSounds DEFAULT_SOUNDS = new CrossbowItem.ChargingSounds(
-            Optional.of(SoundEvents.CROSSBOW_LOADING_START), Optional.of(SoundEvents.CROSSBOW_LOADING_MIDDLE), Optional.of(SoundEvents.CROSSBOW_LOADING_END)
-    );
-
 
     public MiniCrossbowItem(Item.Properties miniCrossbow) {
         super(miniCrossbow);
@@ -47,47 +39,7 @@ public class MiniCrossbowItem extends CrossbowItem {
         }
     }
 
-    private static float getPowerForTime(int timeHeld, ItemStack itemStack, LivingEntity holder) {
-        float pow = (float) timeHeld / (float) getChargeDuration(itemStack, holder);
-        if (pow > 1.0F) {
-            pow = 1.0F;
-        }
-
-        return pow;
-    }
-
-
-    @Override
-    public boolean releaseUsing(ItemStack p_40875_, Level p_40876_, LivingEntity p_40877_, int p_40878_) {
-        int i = this.getUseDuration(p_40875_, p_40877_) - p_40878_;
-        float f = getPowerForTime(i, p_40875_, p_40877_);
-        InteractionHand hand2 = p_40877_.getUsedItemHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        ItemStack itemstack2 = p_40877_.getItemInHand(hand2);
-        if (f >= 1.0F && !isCharged(p_40875_) && tryLoadProjectiles(p_40877_, p_40875_)) {
-            CrossbowItem.ChargingSounds crossbowitem$chargingsounds = this.getChargingSounds(p_40875_);
-            crossbowitem$chargingsounds.end()
-                    .ifPresent(
-                            p_381568_ -> p_40876_.playSound(
-                                    null,
-                                    p_40877_.getX(),
-                                    p_40877_.getY(),
-                                    p_40877_.getZ(),
-                                    p_381568_.value(),
-                                    p_40877_.getSoundSource(),
-                                    1.0F,
-                                    1.0F / (p_40876_.getRandom().nextFloat() * 0.5F + 1.0F) + 0.5F
-                            )
-                    );
-            if (itemstack2.getItem() instanceof MiniCrossbowItem && !isCharged(itemstack2)) {
-                tryLoadProjectiles(p_40877_, itemstack2);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private static boolean tryLoadProjectiles(LivingEntity p_40860_, ItemStack p_40861_) {
+    public static boolean tryLoadProjectiles(LivingEntity p_40860_, ItemStack p_40861_) {
         List<ItemStack> list = draw(p_40861_, p_40860_.getProjectile(p_40861_), p_40860_);
         if (!list.isEmpty()) {
             p_40861_.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(list));
@@ -96,11 +48,6 @@ public class MiniCrossbowItem extends CrossbowItem {
             return false;
         }
     }
-
-    CrossbowItem.ChargingSounds getChargingSounds(ItemStack p_345050_) {
-        return EnchantmentHelper.pickHighestLevel(p_345050_, EnchantmentEffectComponents.CROSSBOW_CHARGING_SOUNDS).orElse(DEFAULT_SOUNDS);
-    }
-
 
 
     @Override
