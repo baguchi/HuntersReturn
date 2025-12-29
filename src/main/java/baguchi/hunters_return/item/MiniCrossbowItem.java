@@ -3,6 +3,7 @@ package baguchi.hunters_return.item;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
@@ -10,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 
 public class MiniCrossbowItem extends CrossbowItem {
@@ -36,6 +39,15 @@ public class MiniCrossbowItem extends CrossbowItem {
         }
     }
 
+    public static boolean tryLoadProjectiles(LivingEntity p_40860_, ItemStack p_40861_) {
+        List<ItemStack> list = draw(p_40861_, p_40860_.getProjectile(p_40861_), p_40860_);
+        if (!list.isEmpty()) {
+            p_40861_.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(list));
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public boolean useOnRelease(ItemStack p_41464_) {
