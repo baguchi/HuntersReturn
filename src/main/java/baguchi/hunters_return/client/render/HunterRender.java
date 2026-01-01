@@ -7,6 +7,7 @@ import baguchi.hunters_return.client.ModModelLayers;
 import baguchi.hunters_return.client.model.HunterModel;
 import baguchi.hunters_return.client.model.NewHunterModel;
 import baguchi.hunters_return.client.model.OldHunterModel;
+import baguchi.hunters_return.client.render.layer.CustomHunterHeadLayer;
 import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
@@ -14,7 +15,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
@@ -38,7 +38,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
     public HunterRender(EntityRendererProvider.Context context) {
         super(context, new NewHunterModel<>(context.bakeLayer(ModModelLayers.HUNTER)), 0.5F);
         this.addLayer(new CustomArmorLayer<>(this, context));
-        this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
+        this.addLayer(new CustomHunterHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
 
         this.addLayer(new ItemInHandLayer<>(this));
 		this.addLayer(new MouthItemLayer<>(this));
