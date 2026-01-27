@@ -19,10 +19,11 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        RegistryDataGenerator registryDataGenerator = new RegistryDataGenerator(packOutput, event.getLookupProvider());
+        CompletableFuture<HolderLookup.Provider> lookupProvider = registryDataGenerator.getRegistryProvider();
 
         event.getGenerator().addProvider(true, new RegistryDataGenerator(packOutput, lookupProvider));
-        //event.getGenerator().addProvider(true, new EnchantTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new EnchantmentTagProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
         BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, lookupProvider, existingFileHelper);
         event.getGenerator().addProvider(true, blocktags);
         event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, lookupProvider, blocktags.contentsGetter(), existingFileHelper));
