@@ -20,16 +20,16 @@ public class DataGenerators {
     public static void gatherData(GatherDataEvent.Client event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        RegistryDataGenerator registryDataGenerator = new RegistryDataGenerator(packOutput, event.getLookupProvider());
 
-        event.getGenerator().addProvider(true, new RegistryDataGenerator(packOutput, lookupProvider));
-        //event.getGenerator().addProvider(true, new EnchantTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
-        BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, lookupProvider);
+        event.getGenerator().addProvider(true, registryDataGenerator);
+        event.getGenerator().addProvider(true, new EnchantmentTagProvider(packOutput, registryDataGenerator.getRegistryProvider()));
+        BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, registryDataGenerator.getRegistryProvider());
         event.getGenerator().addProvider(true, blocktags);
-        event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, lookupProvider));
-        event.getGenerator().addProvider(true, new EntityTagGenerator(packOutput, lookupProvider));
-        event.getGenerator().addProvider(true, new BiomeTagGenerator(packOutput, lookupProvider));
-        event.getGenerator().addProvider(true, new Runner(packOutput, lookupProvider));
+        event.getGenerator().addProvider(true, new ItemTagGenerator(packOutput, registryDataGenerator.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new EntityTagGenerator(packOutput, registryDataGenerator.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new BiomeTagGenerator(packOutput, registryDataGenerator.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new Runner(packOutput, registryDataGenerator.getRegistryProvider()));
     }
 
     public static final class Runner extends RecipeProvider.Runner {
