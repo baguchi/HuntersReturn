@@ -29,8 +29,8 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
     private static final Identifier ILLAGER = Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/hunter.png");
     private static final Identifier ILLAGER_OLD = Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/normal_old.png");
 
-    private static final RenderType SLEEP_EYE = RenderTypes.entityCutoutNoCull(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
-    private static final RenderType SLEEP_EYE_OLD = RenderTypes.entityCutoutNoCull(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
+    private static final RenderType SLEEP_EYE = RenderTypes.entityCutout(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
+    private static final RenderType SLEEP_EYE_OLD = RenderTypes.entityCutout(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
 
 	private final HunterModel<HunterRenderState> old;
 	private final HunterModel<HunterRenderState> normal;

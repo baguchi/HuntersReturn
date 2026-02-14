@@ -42,7 +42,7 @@ public class MiniCrossbowItem extends CrossbowItem {
     public static boolean tryLoadProjectiles(LivingEntity p_40860_, ItemStack p_40861_) {
         List<ItemStack> list = draw(p_40861_, p_40860_.getProjectile(p_40861_), p_40860_);
         if (!list.isEmpty()) {
-            p_40861_.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(list));
+            p_40861_.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(list));
             return true;
         } else {
             return false;

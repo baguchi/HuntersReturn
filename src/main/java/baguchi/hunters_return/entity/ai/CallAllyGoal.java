@@ -82,13 +82,11 @@ public class CallAllyGoal extends Goal {
 		}
 		Optional<InstrumentComponent> optional = this.getInstrument(this.hunter.getUseItem());
 		if (optional.isPresent()) {
-			Optional<Holder<Instrument>> instrument = optional.get().instrument().contents().left();
-			if (instrument.isPresent()) {
-				SoundEvent soundevent = instrument.get().value().soundEvent().value();
-				float f = instrument.get().value().range() / 16.0F;
+			Holder<Instrument> instrument = optional.get().instrument();
+			SoundEvent soundevent = instrument.value().soundEvent().value();
+			float f = instrument.value().range() / 16.0F;
 				this.hunter.level().playSound(this.hunter, this.hunter.blockPosition(), soundevent, SoundSource.RECORDS, f, 1.0F);
 				this.hunter.gameEvent(GameEvent.INSTRUMENT_PLAY, this.hunter);
-			}
 		}
 	}
 
