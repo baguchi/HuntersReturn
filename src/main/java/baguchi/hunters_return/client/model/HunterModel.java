@@ -3,6 +3,7 @@ package baguchi.hunters_return.client.model;
 // Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
+import baguchi.bagus_lib.client.layer.CustomArmorRender;
 import baguchi.hunters_return.client.animation.HunterAnimations;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import com.google.common.collect.ImmutableList;
@@ -17,7 +18,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
-public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel<T>, HeadedModel, baguchi.bagus_lib.client.layer.IArmor {
+public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel<T>, HeadedModel, CustomArmorRender<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
 	public final ModelPart body;
 	public final ModelPart everything;
@@ -113,7 +114,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 		return this.head;
 	}
 	@Override
-	public void translateToHead(ModelPart modelPart, PoseStack poseStack) {
+	public void translateToHead(T entity, ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		this.body.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
@@ -121,7 +122,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	}
 
 	@Override
-	public void translateToChest(ModelPart modelPart, PoseStack poseStack) {
+	public void translateToChest(T entity, ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
 		poseStack.translate(0, -(12F / 16F), 0);
@@ -129,7 +130,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	}
 
 	@Override
-	public void translateToLeg(ModelPart modelPart, PoseStack poseStack) {
+	public void translateToLeg(T entity, ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);
         //poseStack.translate(0, -(12F / 16F), 0);
@@ -137,7 +138,7 @@ public class HunterModel<T extends HunterRenderState> extends EntityModel<T> imp
 	}
 
 	@Override
-	public void translateToChestPat(ModelPart modelPart, PoseStack poseStack) {
+	public void translateToChestPat(T entity, ModelPart modelPart, PoseStack poseStack) {
 		this.everything.translateAndRotate(poseStack);
 		this.body.translateAndRotate(poseStack);
 		modelPart.translateAndRotate(poseStack);

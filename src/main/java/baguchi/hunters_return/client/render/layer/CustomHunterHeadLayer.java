@@ -47,7 +47,7 @@ public class CustomHunterHeadLayer<S extends HunterRenderState, M extends Hunter
             poseStack.pushPose();
             poseStack.scale(this.transforms.horizontalScale(), 1.0F, this.transforms.horizontalScale());
             M parentModel = this.getParentModel();
-            parentModel.translateToHead(parentModel.head, poseStack);
+            parentModel.translateToHead(state, parentModel.head, poseStack);
             if (state.wornHeadType != null) {
                 poseStack.translate(0.0F, this.transforms.skullYOffset(), 0.0F);
                 poseStack.scale(1.1875F, -1.1875F, -1.1875F);
