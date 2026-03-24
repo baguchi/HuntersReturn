@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.135'
+    id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
 }
 tasks.named('wrapper', Wrapper).configure {
@@ -108,14 +108,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     maven {
         url = "https://api.modrinth.com/maven"
-    }
-    maven {
-        name = "Maven for PR #2815" // https://github.com/neoforged/NeoForge/pull/2815
-        url = uri("https://prmaven.neoforged.net/NeoForge/pr2815")
-        content {
-            includeModule("net.neoforged", "neoforge")
-            includeModule("net.neoforged", "testframework")
-        }
     }
 }
 

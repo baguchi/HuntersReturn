@@ -56,7 +56,7 @@ public class CustomHunterHeadLayer<S extends HunterRenderState, M extends Hunter
                 SkullModelBase skullModel = this.skullModels.apply(type);
                 RenderType renderType = this.resolveSkullRenderType(state, type);
                 SkullBlockRenderer.submitSkull(
-                        null, 180.0F, state.wornHeadAnimationPos, poseStack, submitNodeCollector, lightCoords, skullModel, renderType, state.outlineColor, null
+                        0.0F, poseStack, submitNodeCollector, lightCoords, skullModel, renderType, state.outlineColor, null
                 );
             } else {
                 translateToHead(poseStack, this.transforms);
