@@ -33,7 +33,7 @@ public class DodgeGoal extends Goal {
 		if (--this.cooldownTime < 0) {
 			if (this.hunter.getTarget() != null) {
 				this.toAvoid = this.hunter.level().getEntitiesOfClass(this.dodgeAtType, this.hunter.getBoundingBox().inflate((double) 10.0F, 5.0D, (double) 10.0F), (p_148124_) -> {
-					return (p_148124_.getOwner() == this.hunter.getTarget() && (p_148124_.getOwner() == null || !this.hunter.isAlliedTo(p_148124_.getOwner())));
+					return p_148124_.getDeltaMovement().length() >= 0.35F && (p_148124_.getOwner() == this.hunter.getTarget() && (p_148124_.getOwner() == null || !this.hunter.isAlliedTo(p_148124_.getOwner())));
 				});
 				if (!toAvoid.isEmpty()) {
                     this.cooldownTime = 20 + this.hunter.getRandom().nextInt(2) * 10;
