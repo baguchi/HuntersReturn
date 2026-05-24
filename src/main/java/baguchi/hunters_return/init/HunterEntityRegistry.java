@@ -3,7 +3,6 @@ package baguchi.hunters_return.init;
 import baguchi.hunters_return.HuntersReturn;
 import baguchi.hunters_return.entity.Hunter;
 import baguchi.hunters_return.entity.projectile.BoomerangEntity;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -16,17 +15,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = baguchi.hunters_return.HuntersReturn.MODID)
 public class HunterEntityRegistry {
-    public static final DeferredRegister<EntityType<?>> ENTITIES_REGISTRY = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, HuntersReturn.MODID);
+    public static final DeferredRegister.Entities ENTITIES_REGISTRY = DeferredRegister.createEntities(HuntersReturn.MODID);
 
 
-    public static final Supplier<EntityType<Hunter>> HUNTERILLAGER = ENTITIES_REGISTRY.register("hunter", () -> EntityType.Builder.of(Hunter::new, MobCategory.MONSTER).sized(0.6F, 1.95F).passengerAttachments(2.0F).ridingOffset(-0.6F).clientTrackingRange(8).notInPeaceful().build(prefix("hunter")));
-    public static final Supplier<EntityType<BoomerangEntity>> BOOMERANG = ENTITIES_REGISTRY.register("boomerang", () -> EntityType.Builder.<BoomerangEntity>of(BoomerangEntity::new, MobCategory.MISC).sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(20).build(prefix("boomerang")));
+    public static final DeferredHolder<EntityType<?>, EntityType<Hunter>> HUNTERILLAGER = ENTITIES_REGISTRY.registerEntityType("hunter", Hunter::new, MobCategory.MONSTER, (builder) -> builder.sized(0.6F, 1.95F).passengerAttachments(2.0F).ridingOffset(-0.6F).clientTrackingRange(8).notInPeaceful());
+    public static final DeferredHolder<EntityType<?>, EntityType<BoomerangEntity>> BOOMERANG = ENTITIES_REGISTRY.registerEntityType("boomerang", BoomerangEntity::new, MobCategory.MISC, (builder) -> builder.sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(20));
 
 
 	@SubscribeEvent

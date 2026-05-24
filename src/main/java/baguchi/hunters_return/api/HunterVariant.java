@@ -19,12 +19,12 @@ import java.util.Optional;
 
 public class HunterVariant {
     public static final Codec<HunterVariant> DIRECT_CODEC = RecordCodecBuilder.create(
-            p_332779_ -> p_332779_.group(
+            instance -> instance.group(
                             Identifier.CODEC.fieldOf("texture").forGetter(p_335261_ -> p_335261_.texture),
                             Identifier.CODEC.optionalFieldOf("texture_old").forGetter(p_335261_ -> p_335261_.textureOld),
                             RegistryCodecs.homogeneousList(Registries.BIOME).fieldOf("biomes").forGetter(HunterVariant::biomes)
                     )
-                    .apply(p_332779_, HunterVariant::new)
+                    .apply(instance, HunterVariant::new)
     );
     public static final Codec<Holder<HunterVariant>> CODEC = RegistryFileCodec.create(HunterVariants.HUNTER_VARIANT_KEY, DIRECT_CODEC);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<HunterVariant>> STREAM_CODEC = ByteBufCodecs.holderRegistry(HunterVariants.HUNTER_VARIANT_KEY);

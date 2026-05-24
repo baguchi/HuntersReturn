@@ -1,7 +1,4 @@
 package baguchi.hunters_return.client.model;
-// Made with Blockbench 4.5.2
-// Exported for Minecraft version 1.17 - 1.18 with Mojang mappings
-// Paste this class into your mod and generate all required imports
 
 import baguchi.bagus_lib.client.layer.CustomArmorRender;
 import baguchi.hunters_return.client.animation.HunterAnimations;
@@ -19,7 +16,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 
 public class HunterModel<T extends HunterRenderState> extends EntityModel<T> implements ArmedModel<T>, HeadedModel, CustomArmorRender<T> {
-    // This layer location should be baked with EntityRendererProvider.Context in the entityId renderer and passed into this model's constructor
 	public final ModelPart body;
 	public final ModelPart everything;
 	private final ModelPart LeftLeg;

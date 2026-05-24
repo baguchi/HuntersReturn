@@ -37,7 +37,6 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
@@ -197,8 +196,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, (living, server) -> {
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, (living, server) -> {
 			return !living.isBaby() && HunterConfigUtils.isWhitelistedEntity(living.getType());
 
 		}) {
@@ -438,9 +436,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 
         Optional<Holder<HunterVariant>> optional = nbt.read("hunter_variant", HunterVariant.CODEC);
-        if (optional.isPresent()) {
-            this.setHunterVariant(optional.get());
-        }
+		optional.ifPresent(this::setHunterVariant);
 		this.setMouthItem(nbt.read("mouth_item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
 
 
@@ -636,10 +632,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	public ItemStack createHorn() {
 		Optional<Holder.Reference<Instrument>> holderset = this.registryAccess().lookupOrThrow(Registries.INSTRUMENT).get(Instruments.CALL_GOAT_HORN);
-		if (holderset.isPresent()) {
-			return InstrumentItem.create(Items.GOAT_HORN, holderset.get());
-		}
-		return ItemStack.EMPTY;
+		return holderset.map(instrumentReference -> InstrumentItem.create(Items.GOAT_HORN, instrumentReference)).orElse(ItemStack.EMPTY);
 	}
 
 	@Override
@@ -647,19 +640,22 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		return HunterSounds.HUNTER_ILLAGER_CHEER.get();
 	}
 
+	@Override
 	protected SoundEvent getAmbientSound() {
 		return HunterSounds.HUNTER_ILLAGER_IDLE.get();
 	}
 
+	@Override
 	protected SoundEvent getDeathSound() {
 		return HunterSounds.HUNTER_ILLAGER_DEATH.get();
 	}
 
+	@Override
 	protected SoundEvent getHurtSound(DamageSource p_184601_1_) {
 		return HunterSounds.HUNTER_ILLAGER_HURT.get();
 	}
 
-
+	@Override
     public AbstractIllager.IllagerArmPose getArmPose() {
 		if (this.isAggressive()) {
 			if (this.isChargingCrossbow()) {
@@ -708,6 +704,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(abstractarrow);
 	}
+
     protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_, @Nullable ItemStack p_346155_) {
         return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_, p_346155_);
 	}
@@ -757,10 +754,12 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
+		@Override
 		public void stop() {
 			Hunter.this.navigation.stop();
 		}
 
+		@Override
 		public boolean canUse() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
 
@@ -769,6 +768,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			return blockpos != null && this.isTooFarAway(blockpos, distance);
 		}
 
+		@Override
 		public void tick() {
 			BlockPos blockpos = this.hunter.getHomeTarget();
 			if (blockpos != null && Hunter.this.navigation.isDone()) {
@@ -796,6 +796,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 		}
 
+		@Override
 		public boolean canUse() {
 			if (!this.mob.hasActiveRaid()) {
 

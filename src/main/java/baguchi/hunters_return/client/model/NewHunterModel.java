@@ -124,7 +124,6 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
 
         float f3 = (entityIn.ageInTicks + entityIn.id);
 
-
         this.rightEye.visible = !entityIn.sleep && !(0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F);
         this.leftEye.visible = !entityIn.sleep && !(0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F);
         this.rightEye.x -= (Mth.clamp((entityIn.eyeRot % 360 - 180) / 90F, 0.0F, 0.5F));
