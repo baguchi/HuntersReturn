@@ -107,7 +107,6 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	public Hunter(EntityType<? extends Hunter> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
 		((GroundPathNavigation) this.getNavigation()).setCanOpenDoors(true);
-		this.moveControl = new DodgeMoveControl(this);
 		this.setCanPickUpLoot(true);
 	}
 
