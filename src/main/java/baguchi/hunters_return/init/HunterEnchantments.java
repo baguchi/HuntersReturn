@@ -1,7 +1,7 @@
 package baguchi.hunters_return.init;
 
 import baguchi.hunters_return.HuntersReturn;
-import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
