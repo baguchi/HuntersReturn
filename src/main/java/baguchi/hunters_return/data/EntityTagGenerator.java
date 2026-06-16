@@ -18,10 +18,10 @@ public class EntityTagGenerator extends EntityTypeTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
 
-        this.tag(EntityTypeTags.ILLAGER).add(HunterEntityRegistry.HUNTERILLAGER.get());
-        this.tag(EntityTypeTags.RAIDERS).add(HunterEntityRegistry.HUNTERILLAGER.get());
-        this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(HunterEntityRegistry.BOOMERANG.get());
-        this.tag(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS).add(HunterEntityRegistry.HUNTERILLAGER.get());
-        this.tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(HunterEntityRegistry.HUNTERILLAGER.get());
+        this.tag(EntityTypeTags.ILLAGER).add(HunterEntityRegistry.HUNTERILLAGER.getKey());
+        this.tag(EntityTypeTags.RAIDERS).add(HunterEntityRegistry.HUNTERILLAGER.getKey());
+        this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(HunterEntityRegistry.BOOMERANG.getKey());
+        this.tag(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS).add(HunterEntityRegistry.HUNTERILLAGER.getKey());
+        this.tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(HunterEntityRegistry.HUNTERILLAGER.getKey());
     }
 }
