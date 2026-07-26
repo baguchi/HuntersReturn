@@ -119,7 +119,7 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
 
     //implementation "baguchi.bagus_lib:BagusLib:${bagus_lib_version}"
-    implementation "maven.modrinth:bagus-lib:${bagus_lib_version}"
+    implementation "maven.modrinth:95nSN4Rd:${bagus_lib_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
