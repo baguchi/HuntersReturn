@@ -61,7 +61,7 @@ public class MiniCrossbowItem extends CrossbowItem {
 
     @Override
     protected int getDurabilityUse(ItemStack p_331489_) {
-        return p_331489_.is(Items.FIREWORK_ROCKET) ? 3 : 1;
+        return p_331489_.is(Items.FIREWORK_ROCKET) ? 4 : 1;
     }
 
 

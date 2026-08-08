@@ -26,6 +26,7 @@ public class HunterRenderState extends IllagerRenderState {
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
     public int id;
     public float eyeRot;
+    public boolean boomerangUsing;
 
     public static void extractMouthEntityRenderState(Hunter p_387833_, HunterRenderState p_387185_, ItemModelResolver p_386820_) {
         p_386820_.updateForLiving(p_387185_.mouthItem, p_387833_.getMouthItem(), ItemDisplayContext.GROUND, p_387833_);
