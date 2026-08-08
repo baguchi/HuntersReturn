@@ -278,7 +278,7 @@ public class BoomerangEntity extends Projectile {
     private boolean shouldDropToThrower() {
         Entity entity = getOwner();
         if (entity != null && entity.isAlive())
-            return !entity.isSpectator() && !(entity instanceof Player) && (this.distanceToSqr(entity) < 3);
+            return !entity.isSpectator() && !(entity instanceof Player) && (this.distanceToSqr(entity) < 3) && this.flyTick >= 5;
         return false;
     }
 
