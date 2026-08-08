@@ -107,18 +107,31 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
         } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
             AnimationUtils.animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn.ageInTicks, entityIn.maxCrossbowChargeDuration, true);
         } else {
-            if (entityIn.mainArm == HumanoidArm.RIGHT) {
-                this.shootRightAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
-                this.chargeRightAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
-                this.attackRightAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
-                this.thrownRightAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
-
+            if (entityIn.boomerangUsing) {
+                if (entityIn.mainArm == HumanoidArm.RIGHT) {
+                    this.shootLeftAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
+                    this.chargeLeftAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
+                    this.attackLeftAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
+                    this.thrownLeftAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
+                } else {
+                    this.shootRightAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
+                    this.chargeRightAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
+                    this.attackRightAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
+                    this.thrownRightAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
+                }
             } else {
-                this.shootLeftAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
-                this.chargeLeftAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
-                this.attackLeftAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
-                this.thrownLeftAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
+                if (entityIn.mainArm == HumanoidArm.RIGHT) {
+                    this.shootRightAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
+                    this.chargeRightAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
+                    this.attackRightAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
+                    this.thrownRightAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
 
+                } else {
+                    this.shootLeftAnimation.apply(entityIn.shootAnimationState, entityIn.ageInTicks);
+                    this.chargeLeftAnimation.apply(entityIn.chargeAnimationState, entityIn.ageInTicks);
+                    this.attackLeftAnimation.apply(entityIn.attackAnimationState, entityIn.ageInTicks, 1.5F);
+                    this.thrownLeftAnimation.apply(entityIn.thrownAnimationState, entityIn.ageInTicks);
+                }
             }
         }
 

@@ -11,6 +11,7 @@ import baguchi.hunters_return.client.render.layer.CustomHunterHeadLayer;
 import baguchi.hunters_return.client.render.layer.MouthItemLayer;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import baguchi.hunters_return.entity.Hunter;
+import baguchi.hunters_return.item.BoomerangItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -96,6 +97,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		hunterState.attackAnim = hunter.getAttackAnim(p_361157_);
 		hunterState.isAggressive = hunter.isAggressive();
 
+        hunterState.boomerangUsing = hunter.isUsingItem() && hunter.isHolding(item -> item.getItem() instanceof BoomerangItem);
 		hunterState.attackAnimationState.copyFrom(hunter.attackAnimationState);
 		hunterState.chargeAnimationState.copyFrom(hunter.chargeAnimationState);
 		hunterState.shootAnimationState.copyFrom(hunter.shootAnimationState);
@@ -107,7 +109,8 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
         hunterState.eyeRot = (hunter.getViewYRot(p_361157_) - hunter.getPreciseBodyRotation(p_361157_) + 180);
 		hunterState.sleep = hunter.isSleeping();
         hunterState.id = hunter.getId();
-	}
+
+    }
 
 	@Override
     public Identifier getTextureLocation(HunterRenderState hunterRenderState) {
