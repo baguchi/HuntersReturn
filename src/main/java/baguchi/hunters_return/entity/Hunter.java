@@ -501,14 +501,16 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.setItemInHand(InteractionHand.OFF_HAND, HunterItems.MINI_CROSSBOW.toStack());
 		}
 
-		if (this.random.nextFloat() < 0.25F) {
+		if (this.random.nextFloat() < 0.15F) {
+			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+		} else if (this.random.nextFloat() < 0.25F) {
 			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 
         ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
 
 		if (this.random.nextFloat() < 0.5F) {
-            stack = new ItemStack(Items.COPPER_CHESTPLATE);
+			stack = new ItemStack(Items.CHAINMAIL_CHESTPLATE);
 		}
 
         HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
@@ -624,7 +626,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			if (this.random.nextFloat() < 0.25F) {
 				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 			}
-			if (this.random.nextFloat() < 0.25F) {
+			if (this.random.nextFloat() < 0.1F) {
+				this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+			} else if (this.random.nextFloat() < 0.25F) {
 				this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
 			}
 		}
