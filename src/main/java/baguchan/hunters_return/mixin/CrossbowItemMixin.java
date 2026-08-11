@@ -1,6 +1,6 @@
 package baguchan.hunters_return.mixin;
 
-import baguchan.hunters_return.item.MiniCrossBowItem;
+import baguchan.hunters_return.item.MiniCrossbowItem;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +21,7 @@ public abstract class CrossbowItemMixin extends ProjectileWeaponItem {
 
     @Inject(method = "getChargeDuration", at = @At("HEAD"), cancellable = true)
     private static void getChargeDuration(ItemStack stack, LivingEntity shooter, CallbackInfoReturnable<Integer> cir) {
-        if (stack.getItem() instanceof MiniCrossBowItem) {
+        if (stack.getItem() instanceof MiniCrossbowItem) {
             float f = EnchantmentHelper.modifyCrossbowChargingTime(stack, shooter, 0.65F);
             cir.setReturnValue(Mth.floor(f * 20.0F));
         }
@@ -29,11 +29,11 @@ public abstract class CrossbowItemMixin extends ProjectileWeaponItem {
 
     @Inject(method = "tryLoadProjectiles", at = @At("RETURN"))
     private static void tryLoadProjectiles(LivingEntity shooter, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.getItem() instanceof MiniCrossBowItem && cir.getReturnValue()) {
+        if (stack.getItem() instanceof MiniCrossbowItem && cir.getReturnValue()) {
             InteractionHand hand2 = shooter.getUsedItemHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
             ItemStack itemstack2 = shooter.getItemInHand(hand2);
-            if (itemstack2.getItem() instanceof MiniCrossBowItem && !CrossbowItem.isCharged(itemstack2)) {
-                MiniCrossBowItem.tryLoadProjectiles(shooter, itemstack2);
+            if (itemstack2.getItem() instanceof MiniCrossbowItem && !CrossbowItem.isCharged(itemstack2)) {
+                MiniCrossbowItem.tryLoadProjectiles(shooter, itemstack2);
             }
         }
     }

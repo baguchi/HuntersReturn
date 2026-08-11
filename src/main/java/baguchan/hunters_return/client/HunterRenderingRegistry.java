@@ -6,7 +6,7 @@ import baguchan.hunters_return.client.render.BoomerangRender;
 import baguchan.hunters_return.client.render.HunterRender;
 import baguchan.hunters_return.init.HunterEntityRegistry;
 import baguchan.hunters_return.init.HunterItems;
-import baguchan.hunters_return.item.MiniCrossBowItem;
+import baguchan.hunters_return.item.MiniCrossbowItem;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -47,7 +47,7 @@ public class HunterRenderingRegistry {
                         return CrossbowItem.isCharged(p_351682_)
                                 ? 0.0F
                                 : (float) (p_351682_.getUseDuration(p_351684_) - p_351684_.getUseItemRemainingTicks())
-                                / (float) MiniCrossBowItem.getChargeDuration(p_351682_, p_351684_);
+                                / (float) MiniCrossbowItem.getChargeDuration(p_351682_, p_351684_);
                     }
                 }
         );

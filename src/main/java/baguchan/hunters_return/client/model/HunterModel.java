@@ -7,6 +7,7 @@ import bagu_chan.bagus_lib.client.layer.IArmor;
 import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.client.animation.HunterAnimations;
 import baguchan.hunters_return.entity.Hunter;
+import baguchan.hunters_return.item.BoomerangItem;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.*;
@@ -151,18 +152,30 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			} else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE) {
 				animateCrossbowCharge(this.RightArm, this.LeftArm, entityIn, true);
 			} else {
-				if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
-					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
-					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
-					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
-
+				if (entityIn.isUsingItem() && entityIn.getUseItem().getItem() instanceof BoomerangItem) {
+					if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+						this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
+						this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
+						this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
+						this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+					} else {
+						this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
+						this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
+						this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
+						this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
+					}
 				} else {
-					this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
-					this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
-					this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
-					this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
-
+					if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+						this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_RIGHT_SHOT, ageInTicks);
+						this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_RANGE_CHARGE, ageInTicks);
+						this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks, 1.5F);
+						this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks);
+					} else {
+						this.animate(entityIn.shootAnimationState, HunterAnimations.HUNTER_LEFT_SHOT, ageInTicks);
+						this.animate(entityIn.chargeAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_RANGE_CHARGE, ageInTicks);
+						this.animate(entityIn.attackAnimationState, HunterAnimations.HUNTER_LEFT_ATTACK_MELEE, ageInTicks, 1.5F);
+						this.animate(entityIn.thrownAnimationState, HunterAnimations.HUNTER_RIGHT_ATTACK_MELEE, ageInTicks);
+					}
 				}
 			}
 		} else {

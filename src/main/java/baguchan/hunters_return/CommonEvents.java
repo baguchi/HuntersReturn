@@ -1,6 +1,6 @@
 package baguchan.hunters_return;
 
-import baguchan.hunters_return.item.MiniCrossBowItem;
+import baguchan.hunters_return.item.MiniCrossbowItem;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -18,7 +18,7 @@ public class CommonEvents {
 
         if (entity instanceof Projectile projectile) {
             if (projectile.getOwner() != null && projectile.getWeaponItem() != null) {
-                if (projectile.getWeaponItem().getItem() instanceof MiniCrossBowItem) {
+                if (projectile.getWeaponItem().getItem() instanceof MiniCrossbowItem) {
                     event.getEntity().invulnerableTime = 5;
                     event.getEntity().hurtDuration = 5;
                     event.getEntity().hurtTime = 5;

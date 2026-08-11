@@ -10,7 +10,8 @@ import baguchan.hunters_return.init.HunterEnchantments;
 import baguchan.hunters_return.init.HunterEntityDatas;
 import baguchan.hunters_return.init.HunterItems;
 import baguchan.hunters_return.init.HunterSounds;
-import baguchan.hunters_return.item.MiniCrossBowItem;
+import baguchan.hunters_return.item.BoomerangItem;
+import baguchan.hunters_return.item.MiniCrossbowItem;
 import baguchan.hunters_return.utils.HunterConfigUtils;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
@@ -43,7 +44,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
@@ -52,7 +52,6 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
@@ -67,8 +66,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -91,7 +88,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	@Nullable
 	private BlockPos homeTarget;
-	private int cooldown;
+	private int huntCooldown;
 
 	private final int attackAnimationLength = (int) (18);
 	private final int shootAnimationLength = 20;
@@ -151,42 +148,44 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		return super.canFreeze();
 	}
 
+	@Override
 	protected void registerGoals() {
 		super.registerGoals();
 		this.goalSelector.addGoal(0, new WakeUpGoal(this));
 		this.goalSelector.addGoal(0, new DoSleepingGoal(this));
 		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(0, new CallAllyGoal(this));
-		this.goalSelector.addGoal(0, new DodgeGoal(this, Projectile.class));
+		this.goalSelector.addGoal(0, new DodgeGoal(this));
 		this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
-		this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
-		this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
-		this.goalSelector.addGoal(4, new MiniCrossBowAttackGoal<>(this, 1.1D, 9.0F));
+		this.goalSelector.addGoal(2, new RaiderOpenDoorGoal(this));
+		this.goalSelector.addGoal(3, new HoldGroundAttackGoal(this, 10.0F));
+		this.goalSelector.addGoal(4, new MiniCrossBowAttackGoal<>(this, 1.1D, 10.0F));
 		this.goalSelector.addGoal(4, new RangedBowAttackGoal<>(this, 1.1F, 50, 16.0F));
 		this.goalSelector.addGoal(4, new BoomeranAttackGoal(this, 50, 16.0F));
-		this.goalSelector.addGoal(4, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
+		this.goalSelector.addGoal(5, new AnimateAttackGoal(this, 1.15F, attackAnimationActionPoint, attackAnimationLength) {
 			@Override
 			public boolean canUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossbowItem) && super.canUse();
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossBowItem) && super.canContinueToUse();
+				return !mob.isHolding((item) -> item.getItem() instanceof BowItem || item.getItem() instanceof MiniCrossbowItem) && super.canContinueToUse();
 			}
 		});
-		this.goalSelector.addGoal(5, new SleepOnBedGoal(this, 1.0F, 12));
-		this.goalSelector.addGoal(6, new GetFoodGoal<>(this));
-		this.goalSelector.addGoal(7, new MoveToGoal(this, 45.0D, 1.2D));
+		this.goalSelector.addGoal(6, new SleepOnBedGoal(this, 1.0F, 12));
+		this.goalSelector.addGoal(7, new GetFoodGoal<>(this));
+		this.goalSelector.addGoal(8, new MoveToGoal(this, 45.0D, 1.2D));
 		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers(AbstractIllager.class));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Goat.class, true));
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Animal.class, 10, true, false, TARGET_ENTITY_SELECTOR) {
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, (living) -> {
+			return !living.isBaby() && HunterConfigUtils.isWhitelistedEntity(living.getType());
+		}) {
 			@Override
 			public boolean canUse() {
-				return cooldown <= 0 && super.canUse();
+				return huntCooldown <= 0 && super.canUse();
 			}
 		});
 		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
@@ -226,6 +225,10 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 
 			if (this.isHolding(is -> is.getItem() instanceof BowItem) && this.isAggressive() && this.shootAnimationTick >= this.shootAnimationLength) {
+				if (!this.chargeAnimationState.isStarted()) {
+					this.chargeAnimationState.start(this.tickCount);
+				}
+			} else if (this.isHolding(is -> is.getItem() instanceof BoomerangItem) && this.isUsingItem()) {
 				if (!this.chargeAnimationState.isStarted()) {
 					this.chargeAnimationState.start(this.tickCount);
 				}
@@ -326,7 +329,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 		p_213281_1_.put("Inventory", listnbt);
 
-		p_213281_1_.putInt("HuntingCooldown", this.cooldown);
+		p_213281_1_.putInt("HuntingCooldown", this.huntCooldown);
         p_213281_1_.putString("hunter_variant", this.getHunterVariant().unwrapKey().orElse(HunterVariants.DEFAULT).location().toString());
     }
 
@@ -345,7 +348,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			}
 		}
 
-		this.cooldown = p_70037_1_.getInt("HuntingCooldown");
+		this.huntCooldown = p_70037_1_.getInt("HuntingCooldown");
         Optional.ofNullable(ResourceLocation.tryParse(p_70037_1_.getString("hunter_variant")))
                 .map(p_335980_ -> ResourceKey.create(HunterVariants.HUNTER_VARIANT_KEY, p_335980_))
                 .flatMap(this.registryAccess().registryOrThrow(HunterVariants.HUNTER_VARIANT_KEY)::getHolder)
@@ -401,19 +404,26 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			this.setItemInHand(InteractionHand.OFF_HAND, HunterItems.MINI_CROSSBOW.toStack());
 		}
 
-		if (this.random.nextFloat() < 0.25F) {
+		if (this.random.nextFloat() < 0.15F) {
+			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+		} else if (this.random.nextFloat() < 0.25F) {
 			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 
-		if (this.random.nextFloat() < 0.5F) {
-			HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
-			HolderLookup.RegistryLookup<TrimPattern> registrylookup2 = this.registryAccess().lookupOrThrow(Registries.TRIM_PATTERN);
+		ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
 
-			ItemStack stack = new ItemStack(Items.LEATHER_CHESTPLATE);
-			stack.set(DataComponents.TRIM, new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.EMERALD), registrylookup2.getOrThrow(TrimPatterns.SENTRY)));
-			this.setItemSlot(EquipmentSlot.CHEST, stack);
-			this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+		if (this.random.nextFloat() < 0.5F) {
+			stack = new ItemStack(Items.CHAINMAIL_CHESTPLATE);
 		}
+
+
+		HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL);
+		HolderLookup.RegistryLookup<TrimPattern> registrylookup2 = this.registryAccess().lookupOrThrow(Registries.TRIM_PATTERN);
+
+		stack.set(DataComponents.TRIM, new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.EMERALD), registrylookup2.getOrThrow(TrimPatterns.SENTRY)));
+		this.setItemSlot(EquipmentSlot.CHEST, stack);
+		this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+
 
 		this.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
 
@@ -450,6 +460,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		}
 
 	}
+
 
 	private boolean wantsFood(ItemStack p_213672_1_) {
         return p_213672_1_.getFoodProperties(this) != null && HunterConfigUtils.isWhitelistedItem(p_213672_1_.getItem());
@@ -517,7 +528,9 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			if (this.random.nextFloat() < 0.25F) {
 				this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 			}
-			if (this.random.nextFloat() < 0.25F) {
+			if (this.random.nextFloat() < 0.1F) {
+				this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+			} else if (this.random.nextFloat() < 0.25F) {
 				this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
 			}
 		}
@@ -549,23 +562,27 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	}
 
 
-	@OnlyIn(Dist.CLIENT)
-	public AbstractIllager.IllagerArmPose getArmPose() {
+	@Override
+	public IllagerArmPose getArmPose() {
+		if (this.isUsingItem() && this.isHolding(HunterItems.BOOMERANG.get())) {
+			return IllagerArmPose.BOW_AND_ARROW;
+		}
 		if (this.isAggressive()) {
 			if (this.isChargingCrossbow()) {
-				return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;
-			} else if (this.isHolding(is -> is.getItem() instanceof net.minecraft.world.item.CrossbowItem)) {
-				return AbstractIllager.IllagerArmPose.CROSSBOW_HOLD;
+				return IllagerArmPose.CROSSBOW_CHARGE;
+			} else if (this.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+				return IllagerArmPose.CROSSBOW_HOLD;
 			}
-			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG.get()) ? AbstractIllager.IllagerArmPose.BOW_AND_ARROW : AbstractIllager.IllagerArmPose.ATTACKING;
+			return this.isHolding(Items.BOW) || this.isHolding(HunterItems.BOOMERANG.get()) ? IllagerArmPose.BOW_AND_ARROW : IllagerArmPose.ATTACKING;
 		} else {
-			return this.isCelebrating() ? AbstractIllager.IllagerArmPose.CELEBRATING : AbstractIllager.IllagerArmPose.CROSSED;
+			return this.isCelebrating() ? IllagerArmPose.CELEBRATING : IllagerArmPose.CROSSED;
 		}
 	}
+
 	@Override
 	public boolean killedEntity(ServerLevel p_216988_, LivingEntity p_216989_) {
 		this.playSound(HunterSounds.HUNTER_ILLAGER_LAUGH.get(), this.getSoundVolume(), this.getVoicePitch());
-		this.cooldown = 300;
+		this.huntCooldown = 300;
 		return super.killedEntity(p_216988_, p_216989_);
 	}
 
@@ -609,7 +626,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();
 		double d3 = (double) Mth.sqrt((float) (d0 * d0 + d2 * d2));
-		boomerang.shoot(d0, d1 + d3 * (double) 0.2F, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
+		boomerang.shoot(d0, d1, d2, 1.0F, (float) (14 - this.level().getDifficulty().getId() * 4));
 		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
 		this.level().addFreshEntity(boomerang);
 		this.level().broadcastEntityEvent(this, (byte) 62);

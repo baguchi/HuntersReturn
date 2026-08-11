@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class MiniCrossBowItem extends CrossbowItem {
+public class MiniCrossbowItem extends CrossbowItem {
     private static final ChargingSounds DEFAULT_SOUNDS = new ChargingSounds(
             Optional.of(SoundEvents.CROSSBOW_LOADING_START), Optional.of(SoundEvents.CROSSBOW_LOADING_MIDDLE), Optional.of(SoundEvents.CROSSBOW_LOADING_END)
     );
 
-    public MiniCrossBowItem(Properties miniCrossbow) {
+    public MiniCrossbowItem(Properties miniCrossbow) {
         super(miniCrossbow);
     }
 
@@ -64,7 +64,7 @@ public class MiniCrossBowItem extends CrossbowItem {
 
     @Override
     protected int getDurabilityUse(ItemStack p_331489_) {
-        return p_331489_.is(Items.FIREWORK_ROCKET) ? 3 : 1;
+        return p_331489_.is(Items.FIREWORK_ROCKET) ? 4 : 1;
     }
 
 

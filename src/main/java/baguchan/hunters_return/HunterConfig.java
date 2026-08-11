@@ -37,14 +37,14 @@ public class HunterConfig {
 					.defineList("Hunter's Food Whitelist"
 							, Lists.newArrayList("minecraft:apple"
 									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minecraft:cooked_mutton", "minecraft:cooked_porkchop"
-									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop")
+									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop", "minecraft:rabbit", "minecraft:cooked_rabbit")
 							, validator);
 			foodInInventoryWhitelist = builder
 					.comment("Add Item for What Hunter Illager has in own Inventory [example: minecraft:apple]")
 					.defineList("Hunter's Food In Inventory Whitelist"
 							, Lists.newArrayList("minecraft:apple"
 									, "minecraft:cooked_beef", "minecraft:cooked_chicken", "minecraft:cooked_mutton", "minecraft:cooked_porkchop"
-									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop")
+									, "minecraft:beef", "minecraft:chicken", "minecraft:mutton", "minecraft:porkchop", "minecraft:rabbit", "minecraft:cooked_rabbit")
 							, validator);
 			attackableWhitelist = builder
 					.translation(HuntersReturn.MODID + ".config.attackableWhitelist")
