@@ -1,4 +1,4 @@
-package baguchi.hunters_return.mixin;
+package baguchi.hunters_return.mixin.client;
 
 import baguchi.hunters_return.init.HunterItems;
 import baguchi.hunters_return.item.MiniCrossbowItem;

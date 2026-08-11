@@ -7,7 +7,7 @@
     "CrossbowItemMixin"
   ],
   "client": [
-    "ItemInHandRendererMixin"
+    "client.ItemInHandRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
