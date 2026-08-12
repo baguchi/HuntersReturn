@@ -1,6 +1,8 @@
 package baguchi.hunters_return.init;
 
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -10,8 +12,8 @@ public class ModCreativeTabEvents {
 	@SubscribeEvent
 	public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.COMBAT) {
-			event.accept(HunterItems.BOOMERANG.get());
-			event.accept(HunterItems.MINI_CROSSBOW.get());
+			event.insertAfter(Items.CROSSBOW.getDefaultInstance(), HunterItems.MINI_CROSSBOW.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			event.insertAfter(HunterItems.MINI_CROSSBOW.get().getDefaultInstance(), HunterItems.BOOMERANG.toStack(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 		}
 		if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(HunterItems.HUNTER_SPAWN_EGG.get());
