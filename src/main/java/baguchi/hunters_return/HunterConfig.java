@@ -60,10 +60,13 @@ public class HunterConfig {
 
 	public static class Client {
 		public final ModConfigSpec.BooleanValue oldModel;
+		public final ModConfigSpec.BooleanValue moveEyeModel;
 
 		public Client(ModConfigSpec.Builder builder) {
 			oldModel = builder.comment("Enable The Old Model")
 					.define("Enable Old Model", false);
+			moveEyeModel = builder.comment("Moveable Eye In New Model")
+					.define("Moveable Eye In New Model", false);
 		}
 	}
 }

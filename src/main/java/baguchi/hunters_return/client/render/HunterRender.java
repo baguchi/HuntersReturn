@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.monster.illager.AbstractIllager;
 
@@ -32,6 +33,8 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 
     private static final RenderType SLEEP_EYE = RenderTypes.entityCutout(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye.png"));
     private static final RenderType SLEEP_EYE_OLD = RenderTypes.entityCutout(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/sleep_eye_old.png"));
+    private static final RenderType EYE = RenderTypes.entityCutout(Identifier.fromNamespaceAndPath(HuntersReturn.MODID, "textures/entity/hunter/eye.png"));
+
 
 	private final HunterModel<HunterRenderState> old;
 	private final HunterModel<HunterRenderState> normal;
@@ -45,12 +48,15 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 		this.addLayer(new MouthItemLayer<>(this));
         this.addLayer(new EyesLayer<>(this) {
             @Override
-            public void submit(PoseStack p_116983_, SubmitNodeCollector p_116984_, int p_116985_, HunterRenderState p_363277_, float p_116987_, float p_116988_) {
-                float f3 = (p_363277_.ageInTicks + p_363277_.id);
+            public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, HunterRenderState renderState, float p_116987_, float p_116988_) {
+                float f3 = (renderState.ageInTicks + renderState.id);
 
 
-                if (!p_363277_.isInvisible && (0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F || p_363277_.sleep)) {
-                    super.submit(p_116983_, p_116984_, p_116985_, p_363277_, p_116987_, p_116988_);
+                if (!renderState.isInvisible && (0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F || renderState.sleep)) {
+                    super.submit(poseStack, submitNodeCollector, lightCoords, renderState, p_116987_, p_116988_);
+                } else if (!HunterConfig.CLIENT.moveEyeModel.getAsBoolean()) {
+                    submitNodeCollector.order(1)
+                            .submitModel(this.getParentModel(), renderState, poseStack, EYE, lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor, null);
                 }
             }
 
