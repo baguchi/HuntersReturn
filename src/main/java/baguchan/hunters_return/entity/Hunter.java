@@ -96,10 +96,13 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 	private int attackAnimationTick;
 	private int shootAnimationTick;
 	private int thrownAnimationTick;
+	private int dodghAnimationTick;
 	public final AnimationState attackAnimationState = new AnimationState();
 	public final AnimationState shootAnimationState = new AnimationState();
 	public final AnimationState chargeAnimationState = new AnimationState();
 	public final AnimationState thrownAnimationState = new AnimationState();
+	public final AnimationState dodghRightAnimationState = new AnimationState();
+	public final AnimationState dodghLeftAnimationState = new AnimationState();
 
 	public Hunter(EntityType<? extends Hunter> p_i48556_1_, Level p_i48556_2_) {
 		super(p_i48556_1_, p_i48556_2_);
@@ -224,6 +227,16 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 			}
 
 
+			if (this.dodghAnimationTick < 11) {
+				this.dodghAnimationTick++;
+			}
+
+			if (this.dodghAnimationTick >= 11) {
+				this.dodghRightAnimationState.stop();
+				this.dodghLeftAnimationState.stop();
+			}
+
+
 			if (this.isHolding(is -> is.getItem() instanceof BowItem) && this.isAggressive() && this.shootAnimationTick >= this.shootAnimationLength) {
 				if (!this.chargeAnimationState.isStarted()) {
 					this.chargeAnimationState.start(this.tickCount);
@@ -248,6 +261,12 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 		} else if (p_219360_ == 62) {
 			this.thrownAnimationTick = 0;
 			this.thrownAnimationState.start(this.tickCount);
+		} else if (p_219360_ == 64) {
+			this.dodghAnimationTick = 0;
+			this.dodghRightAnimationState.start(this.tickCount);
+		} else if (p_219360_ == 65) {
+			this.dodghAnimationTick = 0;
+			this.dodghLeftAnimationState.start(this.tickCount);
 		} else {
 			super.handleEntityEvent(p_219360_);
 		}

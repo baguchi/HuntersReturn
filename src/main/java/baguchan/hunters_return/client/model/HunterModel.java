@@ -103,6 +103,7 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = entityIn.getArmPose();
 
 		this.root().getAllParts().forEach(ModelPart::resetPose);
+
 		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.head.xRot = headPitch * ((float) Math.PI / 180F);
 		if (this.riding) {
@@ -120,15 +121,20 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 			this.LeftLeg.zRot = -0.07853982F;
 		} else {
 			if (!HunterConfig.CLIENT.oldAnimation.get()) {
-				if (entityIn.chargeAnimationState.isStarted()) {
-					if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
-						this.animateWalk(HunterAnimations.HUNTER_RIGHT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+				if (entityIn.dodghRightAnimationState.isStarted() || entityIn.dodghLeftAnimationState.isStarted()) {
+					this.animate(entityIn.dodghRightAnimationState, HunterAnimations.HUNTER_RIGHT_DODGE, ageInTicks);
+					this.animate(entityIn.dodghLeftAnimationState, HunterAnimations.HUNTER_LEFT_DODGE, ageInTicks);
+				} else {
+					if (entityIn.chargeAnimationState.isStarted()) {
+						if (entityIn.getMainArm() == HumanoidArm.RIGHT) {
+							this.animateWalk(HunterAnimations.HUNTER_RIGHT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
 
-					} else {
-						this.animateWalk(HunterAnimations.HUNTER_LEFT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+						} else {
+							this.animateWalk(HunterAnimations.HUNTER_LEFT_WALK_ATTACK, limbSwing, limbSwingAmount, 1, 1.5F);
+						}
+					} else if (!entityIn.isSleeping()) {
+						this.animateWalk(HunterAnimations.HUNTER_WALK, limbSwing, limbSwingAmount, 1, 1.5F);
 					}
-				} else if (!entityIn.isSleeping()) {
-					this.animateWalk(HunterAnimations.HUNTER_WALK, limbSwing, limbSwingAmount, 1, 1.5F);
 				}
 			} else {
 				this.RightArm.xRot = Mth.cos(limbSwing * 0.6662F + 3.1415927F) * 2.0F * limbSwingAmount * 0.5F;

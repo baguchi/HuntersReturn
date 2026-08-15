@@ -2,6 +2,7 @@ package baguchan.hunters_return.client.model;
 
 
 import bagu_chan.bagus_lib.client.layer.IArmor;
+import baguchan.hunters_return.HunterConfig;
 import baguchan.hunters_return.entity.Hunter;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HeadedModel;
@@ -48,5 +49,13 @@ public class NewHunterModel<T extends Hunter> extends HunterModel<T> implements 
         this.rightEye.x -= (Mth.clamp((eyeRot % 360 - 180) / 90F, 0.0F, 0.5F));
         this.leftEye.x -= (Mth.clamp((eyeRot % 360 - 180) / 90F, -0.5F, 0.0F));
 
+
+        if (!HunterConfig.CLIENT.eyeMoving.getAsBoolean()) {
+            this.rightEye.visible = false;
+            this.leftEye.visible = false;
+        } else {
+            this.rightEye.visible = true;
+            this.leftEye.visible = true;
+        }
     }
 }
