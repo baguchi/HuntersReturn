@@ -1,6 +1,7 @@
 package baguchi.hunters_return.client.model;
 
 
+import baguchi.hunters_return.HunterConfig;
 import baguchi.hunters_return.client.animation.HunterAnimations;
 import baguchi.hunters_return.client.render.state.HunterRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
@@ -141,6 +142,11 @@ public class NewHunterModel<T extends HunterRenderState> extends HunterModel<T> 
         this.leftEye.visible = !entityIn.sleep && !(0 > Math.sin(f3 * 0.05F) + Math.sin(f3 * 0.13F) + Math.sin(f3 * 0.7F) + 2.55F);
         this.rightEye.x -= (Mth.clamp((entityIn.eyeRot % 360 - 180) / 90F, 0.0F, 0.5F));
         this.leftEye.x -= (Mth.clamp((entityIn.eyeRot % 360 - 180) / 90F, -0.5F, 0.0F));
+        if (!HunterConfig.CLIENT.moveEyeModel.getAsBoolean()) {
+            this.rightEye.visible = false;
+            this.leftEye.visible = false;
+        }
+
         if (!entityIn.mouthItem.isEmpty()) {
             this.nose.xRot = -0.5F;
         }
