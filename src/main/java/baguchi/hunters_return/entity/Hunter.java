@@ -48,9 +48,6 @@ import net.minecraft.world.entity.monster.illager.AbstractIllager;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.food.FoodProperties;
@@ -699,26 +696,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 	@Override
 	public void performRangedAttack(LivingEntity p_32141_, float p_32142_) {
-		ItemStack weapon = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
-		ItemStack itemstack1 = this.getProjectile(weapon);
-		AbstractArrow abstractarrow = this.getArrow(itemstack1, p_32142_, weapon);
-		if (weapon.getItem() instanceof net.minecraft.world.item.ProjectileWeaponItem weaponItem)
-			abstractarrow = weaponItem.customArrow(abstractarrow, itemstack1, weapon);
-		double d0 = p_32141_.getX() - this.getX();
-		double d1 = p_32141_.getY(0.3333333333333333) - abstractarrow.getY();
-		double d2 = p_32141_.getZ() - this.getZ();
-		double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-		if (this.level() instanceof ServerLevel serverlevel) {
-			Projectile.spawnProjectileUsingShoot(
-					abstractarrow, serverlevel, itemstack1, d0, d1 + d3 * 0.2F, d2, 1.6F, (float) (13 - serverlevel.getDifficulty().getId() * 4)
-			);
-		}
-		this.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-		this.level().addFreshEntity(abstractarrow);
-	}
-
-    protected AbstractArrow getArrow(ItemStack p_32156_, float p_32157_, @Nullable ItemStack p_346155_) {
-        return ProjectileUtil.getMobArrow(this, p_32156_, p_32157_, p_346155_);
+		this.performCrossbowAttack(this, 1.4F);
 	}
 
     @Override
