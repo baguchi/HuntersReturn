@@ -126,7 +126,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
                 if (i >= itemstack.getUseDuration(this.mob)) {
                     this.mob.releaseUsingItem();
                     this.crossbowState = CrossbowState.CHARGED;
-                    this.attackDelay = 12 + this.mob.getRandom().nextInt(4);
+                    this.attackDelay = 12 + this.mob.getRandom().nextInt(8);
                     this.mob.setChargingCrossbow(false);
                 }
             } else if (this.crossbowState == CrossbowState.CHARGED) {
@@ -137,7 +137,7 @@ public class MiniCrossBowAttackGoal<T extends net.minecraft.world.entity.Mob & C
             } else if (this.crossbowState == CrossbowState.READY_TO_ATTACK && flag) {
                 this.mob.performCrossbowAttack(this.mob, 1.2F);
                 if (this.mob.getItemInHand(hand2).getItem() instanceof CrossbowItem miniCrossBowItem) {
-                    this.attackDelay = 8;
+                    this.attackDelay = 10;
                     this.crossbowState = CrossbowState.READY_TO_ATTACK_SECOND;
                 } else {
                     this.crossbowState = CrossbowState.UNCHARGED;
