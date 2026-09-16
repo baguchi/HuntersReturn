@@ -23,7 +23,7 @@ public class MouthItemLayer<T extends HunterRenderState, M extends HunterModel<T
             getParentModel().body.translateAndRotate(poseStack);
             getParentModel().head.translateAndRotate(poseStack);
             poseStack.translate(0.0D, (double) -(1F / 16), (double) -0.3F);
-            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            poseStack.rotateDegrees(Axis.XP, 90.0F);
             state.mouthItem.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 
             poseStack.popPose();

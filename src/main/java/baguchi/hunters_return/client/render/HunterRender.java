@@ -56,7 +56,7 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
                     super.submit(poseStack, submitNodeCollector, lightCoords, renderState, p_116987_, p_116988_);
                 } else if (!HunterConfig.CLIENT.moveEyeModel.getAsBoolean()) {
                     submitNodeCollector.order(1)
-                            .submitModel(this.getParentModel(), renderState, poseStack, EYE, lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor, null);
+                            .submitModel(this.getParentModel(), renderState, poseStack, EYE, lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor);
                 }
             }
 
@@ -100,7 +100,6 @@ public class HunterRender extends MobRenderer<Hunter, HunterRenderState, HunterM
 				? hunter.getUseItem().getUseDuration(hunter)
 				: 0;
 		hunterState.ticksUsingItem = hunter.getTicksUsingItem();
-		hunterState.attackAnim = hunter.getAttackAnim(p_361157_);
 		hunterState.isAggressive = hunter.isAggressive();
 
         hunterState.boomerangUsing = hunter.isUsingItem() && hunter.isHolding(item -> item.getItem() instanceof BoomerangItem);

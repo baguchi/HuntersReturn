@@ -27,13 +27,13 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
         stackIn.pushPose();
 
         stackIn.translate(-0.0F, 0, 0.15F);
-        stackIn.mulPose(Axis.YP.rotationDegrees(renderState.yRot));
+		stackIn.rotateDegrees(Axis.YP, renderState.yRot);
         if (!renderState.inGround) {
-            stackIn.mulPose(Axis.XP.rotationDegrees(renderState.xRot));
+			stackIn.rotateDegrees(Axis.XP, renderState.xRot);
         }
-        stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
+		stackIn.rotateDegrees(Axis.XP, 90.0F);
         if (!renderState.inGround) {
-            stackIn.mulPose(Axis.ZP.rotationDegrees((renderState.ageInTicks) * (((float) renderState.speed * 80.0F))));
+			stackIn.rotateDegrees(Axis.ZP, (renderState.ageInTicks) * (((float) renderState.speed * 80.0F)));
         }
         stackIn.scale(1.4F, 1.4F, 1.4F);
         renderState.boomerang.submit(stackIn, bufferIn, renderState.lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor);

@@ -116,7 +116,7 @@ public class OldHunterModel<T extends HunterRenderState> extends HunterModel<T> 
                 if (entityIn.getMainHandItemStack().isEmpty()) {
                     AnimationUtils.animateZombieArms(this.LeftArm, this.RightArm, true, entityIn);
                 } else {
-                    AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn.mainArm, entityIn.attackAnim, entityIn.ageInTicks);
+                    AnimationUtils.swingWeaponDown(this.RightArm, this.LeftArm, entityIn.mainArm, entityIn.swingAnimation, entityIn.ageInTicks);
                 }
             } else if (abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.SPELLCASTING) {
                 this.RightArm.z = 0.0F;

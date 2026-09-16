@@ -17,7 +17,7 @@ public class AvatarRendererMixin {
 
     @Inject(method = "getArmPose(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;", at = @At("HEAD"), cancellable = true)
     private static void getArmPose(Avatar avatar, ItemStack itemInHand, InteractionHand hand, CallbackInfoReturnable<HumanoidModel.ArmPose> cir) {
-        if (!avatar.swinging && itemInHand.is(HunterItems.MINI_CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
+        if (!avatar.isSwinging() && itemInHand.is(HunterItems.MINI_CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
             cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
         }
     }

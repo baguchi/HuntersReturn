@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "hunters_return:mini_crossbow"
+        "recipes": "hunters_return:mini_crossbow"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

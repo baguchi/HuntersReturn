@@ -80,7 +80,7 @@ public class CustomHunterHeadLayer<S extends HunterRenderState, M extends Hunter
 
     public static void translateToHead(PoseStack poseStack, CustomHeadLayer.Transforms transforms) {
         poseStack.translate(0.0F, -0.25F + transforms.yOffset(), 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        poseStack.rotateDegrees(Axis.YP, 180.0F);
         poseStack.scale(0.625F, -0.625F, -0.625F);
     }
 }
