@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FirstPersonHandsAndItems.class)
-public class ItemInHandRendererMixin {
+public class FirstPersonHandsAndItemsMixin {
 
     @Inject(method = "isChargedCrossbow", at = @At("HEAD"), cancellable = true)
     private static void isChargedCrossbow(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
