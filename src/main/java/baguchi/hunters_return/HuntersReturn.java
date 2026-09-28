@@ -14,7 +14,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.neoforge.registries.NewDatapackRegistryEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +27,7 @@ public class HuntersReturn {
 	public HuntersReturn(ModContainer modContainer, IEventBus modEventBus) {
 		// Register the setup method for modloading
 		modEventBus.addListener(this::setup);
-        modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> event.dataPackRegistry(HunterVariants.HUNTER_VARIANT_KEY, HunterVariant.DIRECT_CODEC, HunterVariant.DIRECT_CODEC));
+		modEventBus.addListener(NewDatapackRegistryEvent.class, event -> event.worldRegistry(HunterVariants.HUNTER_VARIANT_KEY, HunterVariant.DIRECT_CODEC, HunterVariant.DIRECT_CODEC));
 
         HunterEntityDatas.ENTITY_DATAS.register(modEventBus);
 		HunterEntityRegistry.ENTITIES_REGISTRY.register(modEventBus);
