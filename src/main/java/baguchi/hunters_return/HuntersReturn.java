@@ -12,14 +12,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.registries.NewDatapackRegistryEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(baguchi.hunters_return.HuntersReturn.MODID)
+@Mod(HuntersReturn.MODID)
 public class HuntersReturn {
 	public static final String MODID = "hunters_return";
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -35,11 +33,8 @@ public class HuntersReturn {
         HunterItems.ITEM_REGISTRY.addAlias(HuntersReturn.locate("spawnegg_hunter"), HuntersReturn.locate("hunter_spawn_egg"));
 		HunterSounds.SOUND_EVENTS.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, HunterConfig.COMMON_SPEC);
+		modContainer.registerConfig(ModConfig.Type.LOCAL, HunterConfig.COMMON_SPEC);
 		modContainer.registerConfig(ModConfig.Type.CLIENT, HunterConfig.CLIENT_SPEC);
-
-		// Register ourselves for server and other game events we are interested in
-		NeoForge.EVENT_BUS.addListener(this::serverStart);
 	}
 
 	private void setup(FMLCommonSetupEvent event) {
@@ -49,10 +44,6 @@ public class HuntersReturn {
 
 
     public static Identifier locate(String path) {
-        return Identifier.fromNamespaceAndPath(baguchi.hunters_return.HuntersReturn.MODID, path);
-	}
-
-
-	private void serverStart(final ServerAboutToStartEvent event) {
+		return Identifier.fromNamespaceAndPath(HuntersReturn.MODID, path);
 	}
 }
