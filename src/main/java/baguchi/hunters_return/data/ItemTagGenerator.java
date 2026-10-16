@@ -19,12 +19,12 @@ public class ItemTagGenerator extends ItemTagsProvider {
     @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(ItemTags.CROSSBOW_ENCHANTABLE).add(HunterItems.MINI_CROSSBOW.getKey());
-        tag(ModItemTags.BOOMERANG_ENCHANTABLE).add(HunterItems.BOOMERANG.getKey());
-        tag(ItemTags.DURABILITY_ENCHANTABLE).add(HunterItems.BOOMERANG.getKey()).add(HunterItems.MINI_CROSSBOW.getKey());
-        tag(ItemTags.VANISHING_ENCHANTABLE).add(HunterItems.BOOMERANG.getKey()).add(HunterItems.MINI_CROSSBOW.getKey());
-        tag(Tags.Items.TOOLS_CROSSBOW).add(HunterItems.MINI_CROSSBOW.getKey());
-        tag(Tags.Items.PIGLIN_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.getKey());
-        tag(Tags.Items.PILLAGER_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.getKey());
+        tag(ItemTags.CROSSBOW_ENCHANTABLE).add(HunterItems.MINI_CROSSBOW.key());
+        tag(ModItemTags.BOOMERANG_ENCHANTABLE).add(HunterItems.BOOMERANG.key());
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(HunterItems.BOOMERANG.key()).add(HunterItems.MINI_CROSSBOW.key());
+        tag(ItemTags.VANISHING_ENCHANTABLE).add(HunterItems.BOOMERANG.key()).add(HunterItems.MINI_CROSSBOW.key());
+        tag(Tags.Items.TOOLS_CROSSBOW).add(HunterItems.MINI_CROSSBOW.key());
+        tag(Tags.Items.PIGLIN_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.key());
+        tag(Tags.Items.PILLAGER_USABLE_CROSSBOWS).add(HunterItems.MINI_CROSSBOW.key());
     }
 }
