@@ -71,7 +71,7 @@ public class Boomerang extends Projectile {
     }
 
     public Boomerang(Level world, LivingEntity entity, ItemStack boomerang) {
-        this(HunterEntityRegistry.BOOMERANG, world, entity, boomerang);
+        this(HunterEntityRegistry.BOOMERANG.get(), world, entity, boomerang);
     }
 
     public DamageSource boomerangAttack(@Nullable Entity p_270857_) {
