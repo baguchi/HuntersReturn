@@ -292,6 +292,7 @@ public class Boomerang extends Projectile {
 
     @Override
     public void tick() {
+        this.applyEffectsFromBlocks();
         super.tick();
         int returningLevel = (this.entityData.get(RETURN_LEVEL));
         boolean flag = false;
