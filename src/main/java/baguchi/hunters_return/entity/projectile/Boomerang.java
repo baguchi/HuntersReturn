@@ -19,7 +19,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,35 +34,32 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.phys.*;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BoomerangEntity extends Projectile {
-    private static final EntityDataAccessor<Integer> RETURN_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> BOUNCE_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> TOUCH_GROUND = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
+public class Boomerang extends Projectile {
+    private static final EntityDataAccessor<Integer> RETURN_LEVEL = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> BOUNCE_LEVEL = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.ITEM_STACK);
 
     private static final int RETURN_TICK = 30;
 
     private int totalHits;
 
     private int flyTick;
-    public boolean inGround;
-    protected int inGroundTime;
     private double baseDamage = 3.0;
-    @Nullable
-    private BlockState lastState;
 
-    public BoomerangEntity(EntityType<? extends BoomerangEntity> entityEntityType, Level world) {
+    public Boomerang(EntityType<? extends Boomerang> entityEntityType, Level world) {
         super(entityEntityType, world);
     }
 
-    public BoomerangEntity(EntityType<? extends BoomerangEntity> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
+    public Boomerang(EntityType<? extends Boomerang> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
         super(type, world);
         this.setPos(shootingEntity.getX(), shootingEntity.getEyeY() - 0.1F, shootingEntity.getZ());
         setOwner(shootingEntity);
@@ -72,10 +68,9 @@ public class BoomerangEntity extends Projectile {
         this.entityData.set(RETURN_LEVEL, EnchantmentHelper.getTagEnchantmentLevel(enchantments.getOrThrow(HunterEnchantments.RETURN), boomerang));
         this.entityData.set(BOUNCE_LEVEL, EnchantmentHelper.getTagEnchantmentLevel(enchantments.getOrThrow(HunterEnchantments.BOUNCE), boomerang));
         this.totalHits = 0;
-        this.setTouchGround(false);
     }
 
-    public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
+    public Boomerang(Level world, LivingEntity entity, ItemStack boomerang) {
         this(HunterEntityRegistry.BOOMERANG.get(), world, entity, boomerang);
     }
 
@@ -87,11 +82,10 @@ public class BoomerangEntity extends Projectile {
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         boolean returnToOwner = false;
-        int loyaltyLevel = this.getReturnLevel();
         Entity shooter = getOwner();
         if (result.getEntity() != shooter) {
 
-            if (!isReturning() || loyaltyLevel <= 0) {
+            if (!isReturning()) {
                 int damage = (int) ((baseDamage * Math.sqrt(getDeltaMovement().length())));
 
                 float realDamage = damage;
@@ -135,7 +129,7 @@ public class BoomerangEntity extends Projectile {
 
         }
         if (returnToOwner && !isReturning() && getOwner() != null)
-            if (shouldReturnToThrower() && loyaltyLevel > 0) {
+            if (shouldReturnToThrower()) {
                 this.level().playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
                 Vec3 motion = getDeltaMovement();
                 double motionX = motion.x;
@@ -156,7 +150,7 @@ public class BoomerangEntity extends Projectile {
                 motionX = -motionX;
                 motionZ = -motionZ;
                 setDeltaMovement(motionX, motionY, motionZ);
-                if (loyaltyLevel > 0 && !isReturning() &&
+                if (!isReturning() &&
                         shooter != null) {
                     this.level().playSound(null, shooter.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
                     setReturning(true);
@@ -176,10 +170,9 @@ public class BoomerangEntity extends Projectile {
         BlockState state = this.level().getBlockState(pos);
         SoundType soundType = state.getSoundType(this.level(), pos, this);
         ItemStack itemstack = this.getWeaponItem();
-        int returnLevel = this.getReturnLevel();
         Entity entity = getOwner();
         Vec3 movement = this.getDeltaMovement();
-        if (!isReturning() || returnLevel > 0 && isReturning()) {
+        if (!isReturning()) {
             if (this.level() instanceof ServerLevel serverlevel) {
                 if (itemstack != null) {
                     this.hitBlockEnchantmentEffects(serverlevel, result, itemstack);
@@ -187,20 +180,9 @@ public class BoomerangEntity extends Projectile {
             }
 
             if (movement.length() < 0.35F && movement.y <= 0) {
-                if (returnLevel > 0) {
-                    if (!isReturning() &&
-                            entity != null) {
+                if (!isReturning() && entity != null) {
                         this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
                         setReturning(true);
-                    }
-                } else {
-                    setReturning(false);
-                    this.inGround = true;
-                    this.lastState = this.level().getBlockState(result.getBlockPos());
-                    Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
-                    this.setDeltaMovement(vec3);
-                    Vec3 vec31 = vec3.normalize().scale(0.05F);
-                    this.setPosRaw(this.getX() - vec31.x, this.getY() - vec31.y, this.getZ() - vec31.z);
                 }
             } else {
                 Vec3i direction = result.getDirection().getUnitVec3i();
@@ -214,10 +196,6 @@ public class BoomerangEntity extends Projectile {
                 this.playSound(SoundEvents.WOOD_STEP, 0.5F, 1.0F);
                 if (!isReturning()) {
                     this.level().playSound(null, getX(), getY(), getZ(), soundType.getHitSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch());
-                }
-                if (returnLevel <= 0) {
-                    this.setTouchGround(true);
-                    this.setReturning(false);
                 }
             }
         }
@@ -287,7 +265,7 @@ public class BoomerangEntity extends Projectile {
         super.playerTouch(entityIn);
 
         if (!this.level().isClientSide()) {
-            if ((this.flyTick >= 10 || this.inGround) && entityIn == getOwner()) {
+            if ((this.flyTick >= 10) && entityIn == getOwner()) {
                 if (!entityIn.isCreative() && this.tryPickup(entityIn) || entityIn.isCreative()) {
                     this.playSound(SoundEvents.ITEM_PICKUP);
                     entityIn.take(this, 1);
@@ -313,33 +291,11 @@ public class BoomerangEntity extends Projectile {
     }
 
     @Override
-    public void move(MoverType moverType, Vec3 p_36750_) {
-        super.move(moverType, p_36750_);
-        if (moverType != MoverType.SELF && this.shouldFall()) {
-            this.startFalling();
-        }
-
-    }
-
-    @Override
-    public void shoot(double p_36775_, double p_36776_, double p_36777_, float p_36778_, float p_36779_) {
-        super.shoot(p_36775_, p_36776_, p_36777_, p_36778_, p_36779_);
-        this.inGroundTime = 0;
-    }
-
-
-    @Override
-    public void lerpMotion(Vec3 p_436647_) {
-        super.lerpMotion(p_436647_);
-        this.inGroundTime = 0;
-    }
-
-    @Override
     public void tick() {
         super.tick();
         int returningLevel = (this.entityData.get(RETURN_LEVEL));
         boolean flag = false;
-        boolean flag2 = returningLevel > 0 || !this.isTouchGround();
+        boolean flag2 = returningLevel > 0;
         Vec3 vec3 = this.getDeltaMovement();
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
             double d0 = vec3.horizontalDistance();
@@ -351,44 +307,20 @@ public class BoomerangEntity extends Projectile {
 
         BlockPos blockpos = this.blockPosition();
         BlockState blockstate = this.level().getBlockState(blockpos);
-        if (!blockstate.isAir() && !flag && returningLevel <= 0) {
-            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
-            if (!voxelshape.isEmpty()) {
-                Vec3 vec31 = this.position();
-
-                for (AABB aabb : voxelshape.toAabbs()) {
-                    if (aabb.move(blockpos).contains(vec31)) {
-                        this.inGround = true;
-                        break;
-                    }
-                }
-            }
-        }
-
 
         if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInWater()) {
             this.clearFire();
         }
 
-        if (this.inGround && !flag) {
-            if (this.lastState != blockstate && this.shouldFall()) {
-                this.startFalling();
-            } else if (!this.level().isClientSide()) {
-                this.tickDespawn();
-            }
-
-            this.inGroundTime++;
-        } else {
-            this.inGroundTime = 0;
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            if (hitresult.getType() != HitResult.Type.MISS && !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) {
-                this.hitTargetOrDeflectSelf(hitresult);
-            }
+        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+        if (hitresult.getType() != HitResult.Type.MISS && !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, hitresult)) {
+            this.hitTargetOrDeflectSelf(hitresult);
+        }
 
 
             Entity entity = getOwner();
             if (!isReturning()) {
-                if (this.flyTick >= RETURN_TICK && entity != null && !this.isTouchGround()) {
+                if (this.flyTick >= RETURN_TICK && entity != null) {
                     if (returningLevel > 0) {
                         this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
                     }
@@ -454,7 +386,6 @@ public class BoomerangEntity extends Projectile {
                 }
             }
             this.flyTick++;
-        }
 
         if (this.shouldDropToThrower()) {
             this.drop(this.getX(), this.getY(), this.getZ());
@@ -470,26 +401,6 @@ public class BoomerangEntity extends Projectile {
         return ProjectileUtil.getEntityHitResult(
                 this.level(), this, p_36758_, p_36759_, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0), this::canHitEntity
         );
-    }
-
-
-    protected void tickDespawn() {
-        ++this.inGroundTime;
-        if (this.inGroundTime >= 1200) {
-            this.discard();
-        }
-
-    }
-
-    private boolean shouldFall() {
-        return this.isInGround() && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
-    }
-
-    private void startFalling() {
-        this.setInGround(false);
-        Vec3 vec3 = this.getDeltaMovement();
-        this.setDeltaMovement(vec3.multiply(this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F));
-        this.inGroundTime = 0;
     }
 
     @Override
@@ -508,7 +419,6 @@ public class BoomerangEntity extends Projectile {
         builder.define(RETURN_LEVEL, 0);
         builder.define(BOUNCE_LEVEL, 0);
         builder.define(RETURNING, false);
-        builder.define(TOUCH_GROUND, true);
         builder.define(BOOMERANG, ItemStack.EMPTY);
     }
 
@@ -517,18 +427,11 @@ public class BoomerangEntity extends Projectile {
         super.addAdditionalSaveData(nbt);
         nbt.store("boomerang", ItemStack.CODEC, getBoomerang());
         nbt.putInt("totalHits", this.totalHits);
-        nbt.putInt("InGroundTime", this.inGroundTime);
         nbt.putInt("FlyTick", this.flyTick);
 
         nbt.putInt("ReturnLevel", this.getReturnLevel());
         nbt.putInt("BounceLevel", this.getBounceLevel());
         nbt.putBoolean("returning", isReturning());
-        if (this.lastState != null) {
-            nbt.store("inBlockState", BlockState.CODEC, this.lastState);
-        }
-
-        nbt.putBoolean("inGround", this.isInGround());
-        nbt.putBoolean("TouchGround", this.isTouchGround());
     }
 
 
@@ -537,27 +440,15 @@ public class BoomerangEntity extends Projectile {
         super.readAdditionalSaveData(nbt);
         setBoomerang(nbt.read("boomerang", ItemStack.CODEC).orElse(this.getBoomerang()));
         this.totalHits = nbt.getIntOr("totalHits", 0);
-        this.inGroundTime = nbt.getIntOr("InGroundTime", 0);
-
-        this.lastState = nbt.read("inBlockState", BlockState.CODEC).orElse(null);
-
-
-        this.setInGround(nbt.getBooleanOr("inGround", false));
         this.flyTick = nbt.getIntOr("FlyTick", 0);
         setReturning(nbt.getBooleanOr("returning", false));
         this.setReturnLevel(nbt.getIntOr("ReturnLevel", 0));
         this.setBounceLevel(nbt.getIntOr("BounceLevel", 0));
-        this.setTouchGround(nbt.getBooleanOr("TouchGround", false));
     }
 
     private int getReturnLevel() {
         return (this.entityData.get(RETURN_LEVEL));
     }
-
-    public int getInGroundTime() {
-        return inGroundTime;
-    }
-
 
     public void setReturnLevel(int returning) {
         this.entityData.set(RETURN_LEVEL, returning);
@@ -601,26 +492,10 @@ public class BoomerangEntity extends Projectile {
 
     @Override
     protected double getDefaultGravity() {
-        return this.getReturnLevel() <= 0 && this.isTouchGround() ? 0.05F : 0.0F;
-    }
-
-    public void setInGround(boolean flag) {
-        this.inGround = flag;
-    }
-
-    public boolean isInGround() {
-        return this.inGround;
+        return 0.0F;
     }
 
     public void setBoomerang(ItemStack stack) {
         this.entityData.set(BOOMERANG, stack);
-    }
-
-    public void setTouchGround(boolean flag) {
-        this.entityData.set(TOUCH_GROUND, flag);
-    }
-
-    public boolean isTouchGround() {
-        return this.entityData.get(TOUCH_GROUND);
     }
 }
