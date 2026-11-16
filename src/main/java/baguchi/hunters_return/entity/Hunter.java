@@ -5,7 +5,7 @@ import baguchi.hunters_return.HunterConfig;
 import baguchi.hunters_return.api.HunterVariant;
 import baguchi.hunters_return.data.resources.registries.HunterVariants;
 import baguchi.hunters_return.entity.ai.*;
-import baguchi.hunters_return.entity.projectile.BoomerangEntity;
+import baguchi.hunters_return.entity.projectile.Boomerang;
 import baguchi.hunters_return.init.HunterEnchantments;
 import baguchi.hunters_return.init.HunterEntityDatas;
 import baguchi.hunters_return.init.HunterItems;
@@ -713,7 +713,7 @@ public class Hunter extends AbstractIllager implements CrossbowAttackMob, Ranged
 
 
 	public void performBoomerangAttack(LivingEntity p_82196_1_) {
-		BoomerangEntity boomerang = new BoomerangEntity(this.level(), this, this.getOffhandItem().split(1));
+		Boomerang boomerang = new Boomerang(this.level(), this, this.getOffhandItem().split(1));
 		double d0 = p_82196_1_.getX() - this.getX();
 		double d1 = p_82196_1_.getY(0.3333333333333333D) - boomerang.getY();
 		double d2 = p_82196_1_.getZ() - this.getZ();

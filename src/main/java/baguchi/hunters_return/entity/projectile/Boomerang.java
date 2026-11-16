@@ -41,12 +41,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BoomerangEntity extends Projectile {
-    private static final EntityDataAccessor<Integer> RETURN_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> BOUNCE_LEVEL = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> TOUCH_GROUND = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(BoomerangEntity.class, EntityDataSerializers.ITEM_STACK);
+public class Boomerang extends Projectile {
+    private static final EntityDataAccessor<Integer> RETURN_LEVEL = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> BOUNCE_LEVEL = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> RETURNING = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> TOUCH_GROUND = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<ItemStack> BOOMERANG = SynchedEntityData.defineId(Boomerang.class, EntityDataSerializers.ITEM_STACK);
 
     private static final int RETURN_TICK = 30;
 
@@ -59,11 +59,11 @@ public class BoomerangEntity extends Projectile {
     @Nullable
     private BlockState lastState;
 
-    public BoomerangEntity(EntityType<? extends BoomerangEntity> entityEntityType, Level world) {
+    public Boomerang(EntityType<? extends Boomerang> entityEntityType, Level world) {
         super(entityEntityType, world);
     }
 
-    public BoomerangEntity(EntityType<? extends BoomerangEntity> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
+    public Boomerang(EntityType<? extends Boomerang> type, Level world, LivingEntity shootingEntity, ItemStack boomerang) {
         super(type, world);
         this.setPos(shootingEntity.getX(), shootingEntity.getEyeY() - 0.1F, shootingEntity.getZ());
         setOwner(shootingEntity);
@@ -75,7 +75,7 @@ public class BoomerangEntity extends Projectile {
         this.setTouchGround(false);
     }
 
-    public BoomerangEntity(Level world, LivingEntity entity, ItemStack boomerang) {
+    public Boomerang(Level world, LivingEntity entity, ItemStack boomerang) {
         this(HunterEntityRegistry.BOOMERANG.get(), world, entity, boomerang);
     }
 

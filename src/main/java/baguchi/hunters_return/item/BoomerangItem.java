@@ -1,6 +1,6 @@
 package baguchi.hunters_return.item;
 
-import baguchi.hunters_return.entity.projectile.BoomerangEntity;
+import baguchi.hunters_return.entity.projectile.Boomerang;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -40,8 +40,8 @@ public class BoomerangItem extends Item {
                 stack.hurtAndBreak(1, entity, entity.getUsedItemHand());
 
 				int heldTime = getUseDuration(stack, entity) - timeLeft;
-				float velocity = 1.5F * BowItem.getPowerForTime(heldTime);
-				BoomerangEntity projectile = new BoomerangEntity(world, entity, stack.copy());
+				float velocity = 1.4F * BowItem.getPowerForTime(heldTime);
+				Boomerang projectile = new Boomerang(world, entity, stack.copy());
 				projectile.shootFromRotation((Entity) entity, entity.getXRot(), entity.getYRot(), 0.0F, velocity, 1.0F);
 				world.addFreshEntity((Entity) projectile);
 				world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
