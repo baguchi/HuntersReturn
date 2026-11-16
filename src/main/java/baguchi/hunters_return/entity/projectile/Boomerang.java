@@ -181,8 +181,8 @@ public class Boomerang extends Projectile {
 
             if (movement.length() < 0.35F && movement.y <= 0) {
                 if (!isReturning() && entity != null) {
-                        this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-                        setReturning(true);
+                    this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    setReturning(true);
                 }
             } else {
                 Vec3i direction = result.getDirection().getUnitVec3i();
@@ -319,74 +319,74 @@ public class Boomerang extends Projectile {
         }
 
 
-            Entity entity = getOwner();
-            if (!isReturning()) {
-                if (this.flyTick >= RETURN_TICK && entity != null) {
-                    if (returningLevel > 0) {
-                        this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-                    }
-                    setReturning(true);
+        Entity entity = getOwner();
+        if (!isReturning()) {
+            if (this.flyTick >= RETURN_TICK && entity != null) {
+                if (returningLevel > 0) {
+                    this.level().playSound(null, entity.blockPosition(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 1.0F, 1.0F);
+                }
+                setReturning(true);
+            }
+        }
+        if (returningLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
+            drop(getX(), getY(), getZ());
+        } else if (entity != null && isReturning()) {
+            this.noPhysics = true;
+            Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
+            double d0 = 0.05D * (returningLevel + 1);
+            this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
+        }
+
+
+        vec3 = this.getDeltaMovement();
+        double d5 = vec3.x;
+        double d6 = vec3.y;
+        double d1 = vec3.z;
+
+        double d7 = this.getX() + d5;
+        double d2 = this.getY() + d6;
+        double d3 = this.getZ() + d1;
+        double d4 = vec3.horizontalDistance();
+
+
+        if (flag2) {
+            this.setYRot((float) (Mth.atan2(-d5, -d1) * 180.0F / (float) Math.PI));
+        } else {
+            this.setYRot((float) (Mth.atan2(d5, d1) * 180.0F / (float) Math.PI));
+        }
+
+        this.setXRot((float) (Mth.atan2(d6, d4) * 180.0F / (float) Math.PI));
+        this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+        this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
+        float f = returningLevel > 0 ? 1.0F : 0.99F;
+        if (this.isInWater()) {
+            for (int j = 0; j < 4; j++) {
+                float f1 = 0.25F;
+                this.level().addParticle(ParticleTypes.BUBBLE, d7 - d5 * 0.25, d2 - d6 * 0.25, d3 - d1 * 0.25, d5, d6, d1);
+            }
+
+            f = this.getWaterInertia();
+        }
+
+        if (!flag2) {
+            this.applyGravity();
+        }
+
+        this.setDeltaMovement(this.getDeltaMovement().scale(f));
+
+
+        this.setPos(d7, d2, d3);
+        if (!this.level().isClientSide()) {
+
+            List<ItemEntity> list = this.level().getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
+
+            if (this.getPassengers().isEmpty()) {
+                if (list != null && !list.isEmpty()) {
+                    list.get(0).startRiding(this);
                 }
             }
-            if (returningLevel > 0 && entity != null && !shouldReturnToThrower() && isReturning()) {
-                drop(getX(), getY(), getZ());
-            } else if (entity != null && isReturning()) {
-                this.noPhysics = true;
-                Vec3 vec3d3 = new Vec3(entity.getX() - getX(), entity.getEyeY() - getY(), entity.getZ() - getZ());
-                double d0 = 0.05D * (returningLevel + 1);
-                this.setDeltaMovement(getDeltaMovement().scale(0.95D).add(vec3d3.normalize().scale(d0)));
-            }
-
-
-            vec3 = this.getDeltaMovement();
-            double d5 = vec3.x;
-            double d6 = vec3.y;
-            double d1 = vec3.z;
-
-            double d7 = this.getX() + d5;
-            double d2 = this.getY() + d6;
-            double d3 = this.getZ() + d1;
-            double d4 = vec3.horizontalDistance();
-
-
-            if (flag2) {
-                this.setYRot((float) (Mth.atan2(-d5, -d1) * 180.0F / (float) Math.PI));
-            } else {
-                this.setYRot((float) (Mth.atan2(d5, d1) * 180.0F / (float) Math.PI));
-            }
-
-            this.setXRot((float) (Mth.atan2(d6, d4) * 180.0F / (float) Math.PI));
-            this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
-            this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-            float f = returningLevel > 0 ? 1.0F : 0.99F;
-            if (this.isInWater()) {
-                for (int j = 0; j < 4; j++) {
-                    float f1 = 0.25F;
-                    this.level().addParticle(ParticleTypes.BUBBLE, d7 - d5 * 0.25, d2 - d6 * 0.25, d3 - d1 * 0.25, d5, d6, d1);
-                }
-
-                f = this.getWaterInertia();
-            }
-
-            if (!flag2) {
-                this.applyGravity();
-            }
-
-            this.setDeltaMovement(this.getDeltaMovement().scale(f));
-
-
-            this.setPos(d7, d2, d3);
-            if (!this.level().isClientSide()) {
-
-                List<ItemEntity> list = this.level().getEntities(EntityTypeTest.forClass(ItemEntity.class), this.getBoundingBox().inflate(0.1F), Entity::isAlive);
-
-                if (this.getPassengers().isEmpty()) {
-                    if (list != null && !list.isEmpty()) {
-                        list.get(0).startRiding(this);
-                    }
-                }
-            }
-            this.flyTick++;
+        }
+        this.flyTick++;
 
         if (this.shouldDropToThrower()) {
             this.drop(this.getX(), this.getY(), this.getZ());
