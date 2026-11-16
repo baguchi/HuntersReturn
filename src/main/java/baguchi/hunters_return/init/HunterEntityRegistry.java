@@ -2,7 +2,7 @@ package baguchi.hunters_return.init;
 
 import baguchi.hunters_return.HuntersReturn;
 import baguchi.hunters_return.entity.Hunter;
-import baguchi.hunters_return.entity.projectile.BoomerangEntity;
+import baguchi.hunters_return.entity.projectile.Boomerang;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -24,7 +24,7 @@ public class HunterEntityRegistry {
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<Hunter>> HUNTERILLAGER = ENTITIES_REGISTRY.registerEntityType("hunter", Hunter::new, MobCategory.MONSTER, (builder) -> builder.sized(0.6F, 1.95F).passengerAttachments(2.0F).ridingOffset(-0.6F).clientTrackingRange(8).notInPeaceful());
-    public static final DeferredHolder<EntityType<?>, EntityType<BoomerangEntity>> BOOMERANG = ENTITIES_REGISTRY.registerEntityType("boomerang", BoomerangEntity::new, MobCategory.MISC, (builder) -> builder.sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(20));
+    public static final DeferredHolder<EntityType<?>, EntityType<Boomerang>> BOOMERANG = ENTITIES_REGISTRY.registerEntityType("boomerang", Boomerang::new, MobCategory.MISC, (builder) -> builder.sized(0.4F, 0.4F).clientTrackingRange(4).updateInterval(20));
 
 
 	@SubscribeEvent

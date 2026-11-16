@@ -1,7 +1,7 @@
 package baguchi.hunters_return.client.render;
 
 import baguchi.hunters_return.client.render.state.BoomerangRenderState;
-import baguchi.hunters_return.entity.projectile.BoomerangEntity;
+import baguchi.hunters_return.entity.projectile.Boomerang;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 
 
-public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRenderState> {
+public class BoomerangRender extends EntityRenderer<Boomerang, BoomerangRenderState> {
 	private final ItemModelResolver itemModelResolver;
 
 
@@ -28,13 +28,11 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 
         stackIn.translate(-0.0F, 0, 0.15F);
         stackIn.mulPose(Axis.YP.rotationDegrees(renderState.yRot));
-        if (!renderState.inGround) {
-            stackIn.mulPose(Axis.XP.rotationDegrees(renderState.xRot));
-        }
+		stackIn.mulPose(Axis.XP.rotationDegrees(-renderState.xRot));
+
         stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
-        if (!renderState.inGround) {
-            stackIn.mulPose(Axis.ZP.rotationDegrees((renderState.ageInTicks) * (((float) renderState.speed * 80.0F))));
-        }
+		stackIn.mulPose(Axis.ZP.rotationDegrees(renderState.ageInTicks * renderState.speed * 40.0F + 40F));
+
         stackIn.scale(1.4F, 1.4F, 1.4F);
         renderState.boomerang.submit(stackIn, bufferIn, renderState.lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor);
         stackIn.popPose();
@@ -47,11 +45,10 @@ public class BoomerangRender extends EntityRenderer<BoomerangEntity, BoomerangRe
 	}
 
 	@Override
-	public void extractRenderState(BoomerangEntity p_361771_, BoomerangRenderState p_364204_, float p_360538_) {
+	public void extractRenderState(Boomerang p_361771_, BoomerangRenderState p_364204_, float p_360538_) {
 		super.extractRenderState(p_361771_, p_364204_, p_360538_);
 		p_364204_.xRot = p_361771_.getXRot(p_360538_);
 		p_364204_.yRot = p_361771_.getYRot(p_360538_);
-		p_364204_.inGround = p_361771_.inGround;
 		p_364204_.speed = (float) p_361771_.getSpeed();
 		this.itemModelResolver.updateForNonLiving(p_364204_.boomerang, p_361771_.getBoomerang(), ItemDisplayContext.GROUND, p_361771_);
 	}
