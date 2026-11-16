@@ -31,7 +31,7 @@ public class BoomerangRender extends EntityRenderer<Boomerang, BoomerangRenderSt
 		stackIn.mulPose(Axis.XP.rotationDegrees(-renderState.xRot));
 
         stackIn.mulPose(Axis.XP.rotationDegrees(90.0F));
-		stackIn.mulPose(Axis.ZP.rotationDegrees(renderState.ageInTicks * renderState.speed * 40.0F + 40F));
+		stackIn.mulPose(Axis.ZP.rotationDegrees(renderState.ageInTicks * (renderState.speed * 40.0F + 40F)));
 
         stackIn.scale(1.4F, 1.4F, 1.4F);
         renderState.boomerang.submit(stackIn, bufferIn, renderState.lightCoords, OverlayTexture.NO_OVERLAY, renderState.outlineColor);
